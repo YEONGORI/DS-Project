@@ -27,7 +27,7 @@ public:
     //     this->front = front;
     //     this->back = back;
     // }
-    Node(string file_name, string dir_name, string number, Node *back):file_name(file_name), dir_name(dir_name), number(number), back(back) {}
+    Node(string file_name, string dir_name, string number, Node *fron, Node *back):file_name(file_name), dir_name(dir_name), number(number), front(front) , back(back) {}
 };
 
 class Loaded_LIST
@@ -35,8 +35,9 @@ class Loaded_LIST
 private:
     Node *first;
     Node *last;
-    int size;
+    
 public:
+    int size;
     Loaded_LIST(void){
         first = NULL;
         last = NULL;
@@ -52,14 +53,16 @@ public:
         }
     }
 
-    void QueuePush(Node data){
+    void QueuePush(string file, string dir, string index){
         // last = last->front = new Node(data.file_name, data.dir_name, data.number, NULL);
         // O <-> O <-> O
         if (isEmpty())
-            first = last = new Node(data.file_name, data.dir_name, data.number, NULL, NULL);
+            first = last = new Node(file, dir, index, NULL , NULL);
         else {
-            first->front = data;
-            first = new Node(data.file_name, data.dir_name, data.number, NULL, first);
+            Node* Node_tmp = new Node(file, dir, index, NULL , NULL);
+            first->front = Node_tmp;
+            Node_tmp->back = first;
+            first = Node_tmp;
         }
         size++;
     }
@@ -69,17 +72,22 @@ public:
             cout<<"queuepop:empty"<<endl;
         }
         else {
-            cout<<"queuepop"<<end->number<<endl;
-            last = end->front;
+            cout<<"queuepop: "<<end->number<<endl;
+            last = last->front;
+            last->back = NULL;
             delete end;
         }
         size--;
     }
-    void StackPush(Node data){
-        first = new Node(data.file_name, data.dir_name, data.number, NULL, first->back);
-        O <-> O <-> O <->
-        O.front
-        cout<<"StackPush: " << data.number<<endl;
+    void StackPush(string file, string dir, string index){
+        if (isEmpty())
+            first = last = new Node(file, dir, index, NULL , NULL);
+        else {
+            Node* Node_tmp = new Node(file, dir, index, NULL , NULL);
+            first->front = Node_tmp;
+            Node_tmp->back = first;
+            first = Node_tmp;
+        }
         size++;
     }
     void StackPop(void){
@@ -89,7 +97,8 @@ public:
         }
         else{
             cout<< "StackPop: "<<top->number<<endl;
-            first = top->front;
+            first = first->back;
+            first->front = NULL;
             delete top;
         }
         size--;
