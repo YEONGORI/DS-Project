@@ -37,7 +37,7 @@ void Manager::Run(const char* filepath)
                 int index;
                 string raw;
                 fdata >> index;
-                fdata >> raw;
+                fdata >> raw;git 
                 cout << index << raw << endl;
             }
 
