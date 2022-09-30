@@ -20,7 +20,8 @@ void Manager::Run(const char* filepath)
     fin.open("command.txt");
     fdata.open("filesnumbers.csv");
 
-    Loaded_LIST* data = new Loaded_LIST;
+
+    Middle_LIST* data = new Middle_LIST;
 
     char cmd[100];
 
@@ -54,6 +55,35 @@ void Manager::Run(const char* filepath)
                 }
                 data->QueuePush(r2, "images", r1);
                 cout<<r1<<r2<<endl;
+                
+            }
+        }
+        else if (strcmp(tmp, "ADD") == 0)
+        {
+            char path[100] = {'\0'};
+            char* tmp2 = strtok(NULL, " ");
+            char* tmp3 = strtok(NULL, " ");
+            strcat(path, tmp2);
+            strcat(path, "/");
+            strcat(path, tmp3);
+            // cout << "path: " << path << '\n';
+            ndata.open(path);
+            while (!ndata.eof())
+            {
+                char raw1[100], raw2[100];
+                
+                fdata.getline(raw1, sizeof(raw1), ',');
+                fdata.getline(raw2, sizeof(raw2) , '\n');
+
+                string r1 = raw1;
+                string r2 = raw2;                
+            
+                // if(data->size >= 100){
+                //     data->QueuePop();
+                //     cout<<"check"<<endl;                   
+                // }
+                // data->QueuePush(r2, "images", r1);
+                // cout<<r1<<r2<<endl;
                 
             }
         }
