@@ -8,10 +8,15 @@
 
 class Node
 {
+    friend class Loaded_LIST;
 private:
-    string file_name;
-    string dir_name;
+    char* file_name;
+    char* dir_name;
     int number;
+    Node* link;
+public:
+    Node(char* file_name, char* dir_name, int number, Node* link): file_name(file_name), dir_name(dir_name), number(number), link(link){}
+
 };
 
 class Loaded_LIST
@@ -20,16 +25,67 @@ private:
     Node *first;
     Node *last;
 public:
-    Loaded_LIST(void);
-    virtual ~Loaded_LIST();
+    Loaded_LIST(void){
+        first = NULL;
+        last = NULL;
+    }
+    virtual ~Loaded_LIST(){
+        Node* next = NULL;
 
-    void QueuePush(Node data);
-    void QueuePop(void);
-    void StackPush(Node data);
-    void StackPop(void);
+        while(first != NULL){
+            next = first->link;
+            delete first;
+            first = next;
+        }
+    }
+
+    void QueuePush(Node data){
+        if(isEmpty()){
+            first = last = new Node(data.file_name, data.dir_name, data.number, NULL);
+        }
+        else {
+            last = last->link = new Node(data.file_name, data.dir_name, data.number, NULL);
+        }
+    }
+    void QueuePop(void){
+        Node* front = first;
+        if(isEmpty()){
+            cout<<"queuepop:empty"<<endl;
+        }
+        else {
+            cout<<"queuepop"<<front->number<<endl;
+            first = front->link;
+            delete front;
+        }
+    }
+    void StackPush(Node data){
+        first = new Node(data.file_name, data.dir_name, data.number, first);
+        cout<<"StackPush: " << data.number<<endl;
+    }
+    void StackPop(void){
+        Node* top = first;
+        if(isEmpty()){
+            cout<<"StackPop: empty" <<endl;
+        }
+        else{
+            cout<< "StackPop: "<<top->number<<endl;
+            first = top->link;
+            delete top;
+        }
+    }
     
-    bool isEmpty(void);
-    void Print(void);
+    bool isEmpty(void){
+        return first == NULL;
+    }
+    void Print(void){
+        Node* current = first;
+        cout<<"Print: ";
+        while(current != NULL){
+            cout<<current->number<<" ";
+            current = current->link;
+        }
+        cout<<endl;
+    }
 };
 
 class Manager
