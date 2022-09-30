@@ -34,16 +34,26 @@ void Manager::Run(const char* filepath)
             fout << "=========LOAD=========" << endl;
             while (!fdata.eof())
             {
-                char* raw1;
-                char* raw2;
-                raw1 = new char[100];
-                raw2 = new char[100];
+                char raw1[100], raw2[100];
+                
                 fdata.getline(raw1, sizeof(raw1), ',');
                 fdata.getline(raw2, sizeof(raw2) , '\n');
-                char* images = "images";
-                Node tmp(raw2, images, raw1, NULL);
+
+                string r1 = raw1;
+                string r2 = raw2;
                 
-                data->StackPush();
+                Node n(r2, "images", r1, NULL);
+                data->isEmpty();
+                data->StackPush(n);
+                data->QueuePush(n);
+                data->QueuePush(n);
+                data->StackPush(n);
+                data->StackPush(n);
+                data->QueuePop();
+                data->QueuePop();
+                data->StackPop();
+                data->isEmpty();
+                while (1);
             }
         }
     }
