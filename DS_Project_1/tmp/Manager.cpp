@@ -36,13 +36,9 @@ void Manager::Run(const char* filepath)
                 fdata.getline(raw1, sizeof(raw1), ',');
                 fdata.getline(raw2, sizeof(raw2) , '\n');
 
-                cout << "raw1: " << raw1 << '\n';
-                cout << "raw2: " << raw2 << '\n';
-                while (1)
-                    ;
+                
             }
         }
-
     }
 
     // TODO: implement
