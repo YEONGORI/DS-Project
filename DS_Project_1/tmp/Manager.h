@@ -3,6 +3,34 @@
 #define SOLUTION_H
 
 #include <fstream>
+#include <cstring>
+#include <string>
+
+class Node
+{
+private:
+    string file_name;
+    string dir_name;
+    int number;
+};
+
+class Loaded_LIST
+{
+private:
+    Node *first;
+    Node *last;
+public:
+    Loaded_LIST(void);
+    virtual ~Loaded_LIST();
+
+    void QueuePush(Node data);
+    void QueuePop(void);
+    void StackPush(Node data);
+    void StackPop(void);
+    
+    bool isEmpty(void);
+    void Print(void);
+};
 
 class Manager
 {
@@ -18,11 +46,6 @@ private:
 public:
     ~Manager();
     void Run(const char* filepath);
-
-
-private:
-
-
 };
 
 #endif

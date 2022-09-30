@@ -27,21 +27,20 @@ void Manager::Run(const char* filepath)
         //Read the command
         fin.getline(cmd, 32);
         char* tmp = strtok(cmd, " ");
-
         if (strcmp(tmp, "LOAD") == 0)
         {
             fout << "=========LOAD=========" << endl;
-
             while (!fdata.eof())
             {
-                int index;
-                string raw;
-                fdata >> index;
-                fdata >> raw;
-                cout << index << raw << endl;
+                char raw1[100], raw2[100];
+                fdata.getline(raw1, sizeof(raw1), ',');
+                fdata.getline(raw2, sizeof(raw2) , '\n');
+
+                cout << "raw1: " << raw1 << '\n';
+                cout << "raw2: " << raw2 << '\n';
+                while (1)
+                    ;
             }
-
-
         }
 
     }
