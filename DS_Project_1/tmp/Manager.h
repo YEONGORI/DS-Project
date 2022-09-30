@@ -2,7 +2,6 @@
 #ifndef SOLUTION_H
 #define SOLUTION_H
 
-#include "Result.h"
 #include <fstream>
 
 class Manager
@@ -19,10 +18,10 @@ private:
 public:
     ~Manager();
     void Run(const char* filepath);
-    void PrintError(Result result);
+
 
 private:
-    Result Load(const char* filepath);
+
 
 };
 

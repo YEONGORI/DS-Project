@@ -48,18 +48,5 @@ void Manager::Run(const char* filepath)
 
     // TODO: implement
 }
-void Manager::PrintError(Result result)
-{
-    ferr << "Error code: " << result << std::endl;
-}
 
 
-Result Manager::Load(const char* filepath)
-{
-    // TODO: implement
-}
-
-Result Manager::Print()
-{
-    // TODO: implement
-}
