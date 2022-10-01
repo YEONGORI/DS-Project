@@ -73,10 +73,35 @@ public:
         if (isEmpty())
             first = last = new Node(file, dir, index, NULL , NULL);
         else {
+            bool case1=false;
             Node* Node_tmp = new Node(file, dir, index, NULL , NULL);
-            first->front = Node_tmp;
-            Node_tmp->back = first;
-            first = Node_tmp;
+            Node* curNode = first;
+            while(curNode->dir_name != dir){
+                if(curNode->down == NULL){
+                    case1 = true;
+                    break;
+                }
+                curNode = curNode->down;
+            }
+            
+            if(case1){
+                curNode->down
+                
+            }
+            else{
+                Node_tmp->up = curNode->up;
+                Node_tmp->down = curNode->down;
+
+                curNode->up->down = Node_tmp;
+                curNode->down->up = Node_tmp;
+
+                curNode->front = Node_tmp;
+                Node_tmp->back = curNode;
+
+                curNode->up = NULL;
+                curNode->down = NULL;   
+            }
+            
         }
         size++;
     }

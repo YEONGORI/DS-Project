@@ -38,7 +38,7 @@ void Manager::Run(const char* filepath)
 
             fout << "=========LOAD=========" << endl;
             if(!fdata){
-                ferr<<"========ERROR========\n300\n===================="<<endl;
+                ferr<<"========ERROR========\n100\n===================="<<endl;
                 return;
             }
 
@@ -108,10 +108,6 @@ void Manager::Run(const char* filepath)
             char* tmp3 = strtok(NULL, " "); //file
             char* tmp4 = strtok(NULL, " "); //index
 
-            char* dir =" ";
-            char* file = " ";
-            char* index = " ";
-
             Node* current = data->ff_first;
 
             while(tmp2 != current->dir_name){
@@ -128,7 +124,7 @@ void Manager::Run(const char* filepath)
             if(current->up != NULL){
                 current->back->up = current->up;
                 current->back->down = current->down;
-                
+
                 current->up->down = current->back;
                 current->down->up = current->back;
                 
@@ -138,6 +134,13 @@ void Manager::Run(const char* filepath)
                 current->front->back = current->back;
                 delete current;
             }
+
+            char* tmp2 = strtok(NULL, " "); //dir
+            char* tmp3 = strtok(NULL, " "); //file
+            char* tmp4 = strtok(NULL, " "); //index
+            data->QueuePush(, "images", r1);
+            //push
+            data-
 
         }
     }
