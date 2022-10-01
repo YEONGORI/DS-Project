@@ -28,17 +28,6 @@ public:
 
 class Loaded_LIST
 {
-    // O <-> O <-> O <-> O
-    // |
-    // O <-> O <-> O
-    // |
-    // O <-> O
-// private:
-//     Node *first;
-//     Node *last;
-//     Node *ff_first;
-//     Node *ll_last;
-public:
     int size;
     Node *first;
     Node *last;
@@ -60,7 +49,7 @@ public:
             first = front;
         }
     }
-    // 기존의 리리스스트
+    // 기존의 리스트
     void LIST_push(Loaded_LIST* new_data) {
         ll_last->down = new_data->first;
         new_data->first->up = ll_last;
@@ -68,14 +57,13 @@ public:
     }
 
     void QueuePush(string file, string dir, string index){
-        // last = last->front = new Node(data.file_name, data.dir_name, data.number, NULL);
-        // O <-> O <-> O
         if (isEmpty())
             first = last = new Node(file, dir, index, NULL , NULL);
         else {
             bool case1=false;
             Node* Node_tmp = new Node(file, dir, index, NULL , NULL);
             Node* curNode = first;
+
             while(curNode->dir_name != dir){
                 if(curNode->down == NULL){
                     case1 = true;
@@ -85,8 +73,8 @@ public:
             }
             
             if(case1){
-                curNode->down
-                
+                curNode->down = Node_tmp;
+                Node_tmp->up = curNode;
             }
             else{
                 Node_tmp->up = curNode->up;
@@ -101,7 +89,6 @@ public:
                 curNode->up = NULL;
                 curNode->down = NULL;   
             }
-            
         }
         size++;
     }
@@ -144,12 +131,11 @@ public:
     }
     
     bool isEmpty(void){
-        if (first == NULL)
-            cout << "ET size: " << size << '\n';
-        else
-            cout << "NET size: " << size << '\n';
-        return first == NULL;
+        if (first ==NULL && last==NULL && ff_first==NULL && ll_last==NULL) // 모든 리스트에 아무것도 없을 때
+            return true;
+        return false; // 로디드 리스트에 뭔가가 있을 때
     }
+
     void Print(void){
         Node* current = first;
         cout<<"Print: ";
