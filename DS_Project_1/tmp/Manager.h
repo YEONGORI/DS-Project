@@ -13,15 +13,16 @@ class Node
 {
     friend class Middle_LIST;
     friend class Loaded_LIST;
-private:
-    string file_name;
-    string dir_name;
-    string number;
+private: 
+    
+public:
     Node* front;
     Node* back;
     Node* up;
     Node* down;
-public:
+    string file_name;
+    string dir_name;
+    string number;
     Node(string file_name, string dir_name, string number, Node *fron, Node *back):file_name(file_name), dir_name(dir_name), number(number), front(front) , back(back), up(up), down(down) {}
 };
 

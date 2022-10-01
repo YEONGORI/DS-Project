@@ -26,6 +26,7 @@ void Manager::Run(const char* filepath)
     char cmd[100];
 
     Loaded_LIST* data = new Loaded_LIST;
+
     while (!fin.eof())
     {
         //Read the command
@@ -89,16 +90,55 @@ void Manager::Run(const char* filepath)
                 string r2 = raw2;
                 cout << "r1: " << r1 <<'\n';
                 cout << "r2: " << r2 <<'\n';
-
+                
                 if (new_data->size >= 100){
                     new_data->QueuePop();
                     cout << "Check" << endl;
                 }
                 new_data->QueuePush(r2, "images", r1);
-                
+                cout << "first: "<<  new_data->first->number<< " last: "<<new_data->last->number<<endl;
                 // while(1);
             }
             data->LIST_push(new_data);
+        }
+
+         else if (strcmp(tmp, "MODIFY") == 0)
+        {
+            char* tmp2 = strtok(NULL, " "); //dir
+            char* tmp3 = strtok(NULL, " "); //file
+            char* tmp4 = strtok(NULL, " "); //index
+
+            char* dir =" ";
+            char* file = " ";
+            char* index = " ";
+
+            Node* current = data->ff_first;
+
+            while(tmp2 != current->dir_name){
+                current = current->down;
+            }
+            while(tmp3 != current->file_name){
+                current = current->back;
+            }
+
+            if(current == NULL){
+                cout<< "없음"<<endl;
+            }
+
+            if(current->up != NULL){
+                current->back->up = current->up;
+                current->back->down = current->down;
+                
+                current->up->down = current->back;
+                current->down->up = current->back;
+                
+            }
+            else {
+                current->back->front = current->front;
+                current->front->back = current->back;
+                delete current;
+            }
+
         }
     }
 
