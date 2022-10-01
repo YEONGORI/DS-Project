@@ -11,140 +11,77 @@ using namespace std;
 
 class Node
 {
-    friend class Middle_LIST;
-    friend class Loaded_LIST;
-private: 
-    
 public:
     Node* front;
     Node* back;
-    Node* up;
-    Node* down;
-    string file_name;
-    string dir_name;
+    string dir;
+    string file;
     string number;
-    Node(string file_name, string dir_name, string number, Node *fron, Node *back):file_name(file_name), dir_name(dir_name), number(number), front(front) , back(back), up(up), down(down) {}
+    Node(string dir, string file, string number, Node *front, Node *back):
+    file(file), dir(dir), number(number), front(front) , back(back) {}
 };
 
-class Loaded_LIST
+class ROW_LIST
 {
+public:
     int size;
-    Node *first;
-    Node *last;
-    Node *ff_first;
-    Node *ll_last;
-    Loaded_LIST(void){
-        first = NULL;
-        last = NULL;
-        ff_first = NULL;
-        ll_last = NULL;
-        size = 0;
-    }
-    virtual ~Loaded_LIST(){
-        Node* front = NULL;
+    Node* last;
+    Node* first;
+    ROW_LIST* up;
+    ROW_LIST* down;
 
-        while(first != NULL){
-            front = first->front;
-            delete first;
-            first = front;
-        }
-    }
-    // 기존의 리스트
-    void LIST_push(Loaded_LIST* new_data) {
-        ll_last->down = new_data->first;
-        new_data->first->up = ll_last;
-        ll_last = new_data->first;
-    }
+ROW_LIST(void){
+    size =0;
+    last =NULL;
+    first =NULL;
+    up =NULL;
+    down =NULL;
+};
+~ROW_LIST(void){
+    Node* next = NULL;
 
-    void QueuePush(string file, string dir, string index){
-        if (isEmpty())
-            first = last = new Node(file, dir, index, NULL , NULL);
-        else {
-            bool case1=false;
-            Node* Node_tmp = new Node(file, dir, index, NULL , NULL);
-            Node* curNode = first;
-
-            while(curNode->dir_name != dir){
-                if(curNode->down == NULL){
-                    case1 = true;
-                    break;
-                }
-                curNode = curNode->down;
-            }
-            
-            if(case1){
-                curNode->down = Node_tmp;
-                Node_tmp->up = curNode;
-            }
-            else{
-                Node_tmp->up = curNode->up;
-                Node_tmp->down = curNode->down;
-
-                curNode->up->down = Node_tmp;
-                curNode->down->up = Node_tmp;
-
-                curNode->front = Node_tmp;
-                Node_tmp->back = curNode;
-
-                curNode->up = NULL;
-                curNode->down = NULL;   
-            }
-        }
-        size++;
+    while (first !=NULL){
+        next = first->back;
+        cout << "DELETE: " << first->back << endl;
+        delete first;
+        first = next;
     }
-    void QueuePop(void){
-        Node* end = last;
-        if(isEmpty()){
-            cout<<"queuepop:empty"<<endl;
-        }
-        else {
-            cout<<"queuepop: "<<end->number<<endl;
-            last = last->front;
-            last->back = NULL;
-            delete end;
-        }
-        size--;
+}
+
+void QueuePush(string file, string dir, string index){
+    if (isEmpty())
+        first = last = new Node(file, dir, index, NULL , NULL);
+    else {
+        last = last->back = new Node(file, dir, index, NULL, NULL);   
     }
-    void StackPush(string file, string dir, string index){
-        if (isEmpty())
-            first = last = new Node(file, dir, index, NULL , NULL);
-        else {
-            Node* Node_tmp = new Node(file, dir, index, NULL , NULL);
-            first->front = Node_tmp;
-            Node_tmp->back = first;
-            first = Node_tmp;
-        }
-        size++;
+    size++;
+};
+void QueuePop(void){
+    Node *front = first;
+    if (isEmpty()){
+        cout << "EMPTY\n";
     }
-    void StackPop(void){
-        Node* top = first;
-        if(isEmpty()){
-            cout<<"StackPop: empty" <<endl;
-        }
-        else{
-            cout<< "StackPop: "<<top->number<<endl;
-            first = first->back;
-            first->front = NULL;
-            delete top;
-        }
-        size--;
-    }
-    
-    bool isEmpty(void){
-        if (first ==NULL && last==NULL && ff_first==NULL && ll_last==NULL) // 모든 리스트에 아무것도 없을 때
-            return true;
-        return false; // 로디드 리스트에 뭔가가 있을 때
+    else{
+        cout << "Q pop\n";
+        first = front->back;
+        delete front;
     }
 
-    void Print(void){
-        Node* current = first;
-        cout<<"Print: ";
-        while(current != NULL){
-            cout<<current->number<<" ";
-            current = current->front;
-        }
-        cout<<endl;
+};
+void StackPop(void){
+    Node* end = last;
+    if (isEmpty()){
+        cout << "EMPTY\n";
     }
+    else{
+        cout << "Q pop\n";
+        last = end->front;
+        delete end;
+    }
+}
+bool isEmpty(void){
+    return first ==NULL;
+}
 };
 
 class Manager
@@ -165,3 +102,142 @@ public:
 };
 
 #endif
+
+
+// class Node
+// {
+//     friend class Middle_LIST;
+//     friend class Loaded_LIST;
+// private: 
+    
+// public:
+//     Node* front;
+//     Node* back;
+//     Node* up;
+//     Node* down;
+//     string file_name;
+//     string dir_name;
+//     string number;
+//     Node(string file_name, string dir_name, string number, Node *fron, Node *back):file_name(file_name), dir_name(dir_name), number(number), front(front) , back(back), up(up), down(down) {}
+// };
+
+// class Loaded_LIST
+// {
+//     int size;
+//     Node *first;
+//     Node *last;
+//     Node *ff_first;
+//     Node *ll_last;
+//     Loaded_LIST(void){
+//         first = NULL;
+//         last = NULL;
+//         ff_first = NULL;
+//         ll_last = NULL;
+//         size = 0;
+//     }
+//     virtual ~Loaded_LIST(){
+//         Node* front = NULL;
+
+//         while(first != NULL){
+//             front = first->front;
+//             delete first;
+//             first = front;
+//         }
+//     }
+//     // 기존의 리스트
+//     void LIST_push(Loaded_LIST* new_data) {
+//         ll_last->down = new_data->first;
+//         new_data->first->up = ll_last;
+//         ll_last = new_data->first;
+//     }
+
+//     void QueuePush(string file, string dir, string index){
+//         if (isEmpty())
+//             first = last = new Node(file, dir, index, NULL , NULL);
+//         else {
+//             bool case1=false;
+//             Node* Node_tmp = new Node(file, dir, index, NULL , NULL);
+//             Node* curNode = first;
+
+//             while(curNode->dir_name != dir){
+//                 if(curNode->down == NULL){
+//                     case1 = true;
+//                     break;
+//                 }
+//                 curNode = curNode->down;
+//             }
+            
+//             if(case1){
+//                 curNode->down = Node_tmp;
+//                 Node_tmp->up = curNode;
+//             }
+//             else{
+//                 Node_tmp->up = curNode->up;
+//                 Node_tmp->down = curNode->down;
+
+//                 curNode->up->down = Node_tmp;
+//                 curNode->down->up = Node_tmp;
+
+//                 curNode->front = Node_tmp;
+//                 Node_tmp->back = curNode;
+
+//                 curNode->up = NULL;
+//                 curNode->down = NULL;   
+//             }
+//         }
+//         size++;
+//     }
+//     void QueuePop(void){
+//         Node* end = last;
+//         if(isEmpty()){
+//             cout<<"queuepop:empty"<<endl;
+//         }
+//         else {
+//             cout<<"queuepop: "<<end->number<<endl;
+//             last = last->front;
+//             last->back = NULL;
+//             delete end;
+//         }
+//         size--;
+//     }
+//     void StackPush(string file, string dir, string index){
+//         if (isEmpty())
+//             first = last = new Node(file, dir, index, NULL , NULL);
+//         else {
+//             Node* Node_tmp = new Node(file, dir, index, NULL , NULL);
+//             first->front = Node_tmp;
+//             Node_tmp->back = first;
+//             first = Node_tmp;
+//         }
+//         size++;
+//     }
+//     void StackPop(void){
+//         Node* top = first;
+//         if(isEmpty()){
+//             cout<<"StackPop: empty" <<endl;
+//         }
+//         else{
+//             cout<< "StackPop: "<<top->number<<endl;
+//             first = first->back;
+//             first->front = NULL;
+//             delete top;
+//         }
+//         size--;
+//     }
+    
+//     bool isEmpty(void){
+//         if (first ==NULL && last==NULL && ff_first==NULL && ll_last==NULL) // 모든 리스트에 아무것도 없을 때
+//             return true;
+//         return false; // 로디드 리스트에 뭔가가 있을 때
+//     }
+
+//     void Print(void){
+//         Node* current = first;
+//         cout<<"Print: ";
+//         while(current != NULL){
+//             cout<<current->number<<" ";
+//             current = current->front;
+//         }
+//         cout<<endl;
+//     }
+// };

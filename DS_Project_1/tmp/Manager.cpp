@@ -20,9 +20,6 @@ void Manager::Run(const char* filepath)
     fin.open("command.txt");
     fdata.open("filesnumbers.csv");
 
-
-    
-
     char cmd[100];
 
     Loaded_LIST* data = new Loaded_LIST;
