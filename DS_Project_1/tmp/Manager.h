@@ -19,7 +19,6 @@ private:
     string number;
     Node* front;
     Node* back;
-    Node* next;
 public:
     // Node(string file_name, string dir_name, int number, Node* front, Node * back)
     // {
@@ -32,21 +31,23 @@ public:
     Node(string file_name, string dir_name, string number, Node *fron, Node *back):file_name(file_name), dir_name(dir_name), number(number), front(front) , back(back) {}
 };
 
-class Middle_LIST
+class Loaded_LIST
 {
-    friend class Loaded_LIST;
+    
 private:
     Node *first;
     Node *last; 
-   
+    Node *next;
+    Node *pre;
 public:
     int size;
-    Middle_LIST(void){
+    Loaded_LIST(void){
         first = NULL;
         last = NULL;
+        next = NULL;
         size = 0;
     }
-    virtual ~Middle_LIST(){
+    virtual ~Loaded_LIST(){
         Node* front = NULL;
 
         while(first != NULL){
@@ -54,6 +55,13 @@ public:
             delete first;
             first = front;
         }
+    }
+
+    void LIST_push(Loaded_LIST* new_data){
+        this->next = new_data->first;
+        new_data->pre = this->first;
+        
+
     }
 
     void QueuePush(string file, string dir, string index){
@@ -124,20 +132,6 @@ public:
         cout<<endl;
     }
 };
-
-class Loaded_LIST{
-
-private:
-    Node *first;
-    Node *last;
-public:
-    Loaded_LIST(){
-        
-    }
-
-
-}
-
 
 class Manager
 {

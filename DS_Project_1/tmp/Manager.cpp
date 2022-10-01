@@ -21,7 +21,7 @@ void Manager::Run(const char* filepath)
     fdata.open("filesnumbers.csv");
 
 
-    Middle_LIST* data = new Middle_LIST;
+    
 
     char cmd[100];
 
@@ -32,8 +32,10 @@ void Manager::Run(const char* filepath)
         char* tmp = strtok(cmd, " ");
         if (strcmp(tmp, "LOAD") == 0)
         {
-            fout << "=========LOAD=========" << endl;
+             Loaded_LIST* data = new Loaded_LIST;
 
+
+            fout << "=========LOAD=========" << endl;
             if(!fdata){
                 ferr<<"========ERROR========\n300\n===================="<<endl;
                 return;
@@ -60,6 +62,10 @@ void Manager::Run(const char* filepath)
         }
         else if (strcmp(tmp, "ADD") == 0)
         {
+            Loaded_LIST* new_data = new Loaded_LIST;
+
+            data->LIST_push(new_data);
+
             char path[100] = {'\0'};
             char* tmp2 = strtok(NULL, " ");
             char* tmp3 = strtok(NULL, " ");
