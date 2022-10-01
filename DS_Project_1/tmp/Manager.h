@@ -65,9 +65,65 @@ void QueuePop(void){
         cout << "Q pop\n";
         first = front->back;
         delete front;
+        size--;
     }
 
 };
+void StackPop(void){
+    Node* end = last;
+    if (isEmpty()){
+        cout << "EMPTY\n";
+    }
+    else{
+        cout << "Q pop\n";
+        last = end->front;
+        delete end;
+        size--;
+    }
+}
+bool isEmpty(void){
+    return first ==NULL;
+}
+};
+
+class Loaded_LIST{
+public:
+    ROW_LIST* first;
+    ROW_LIST* last;
+    
+    Loaded_LIST(void){
+        
+        first = new ROW_LIST;
+        last = new ROW_LIST;
+    }
+    ~Loaded_LIST(){
+        ROW_LIST* next = NULL;
+
+        while(first != NULL){
+            next = first->down;
+            delete first;
+            first = next;
+        }
+    }
+
+    // number, file, dir
+    void QueuePush(ROW_LIST* data){
+        last = last->down = data;
+    }
+
+    /*void QueuePop(void){
+
+
+        Node *front = first;
+        if (isEmpty()){
+            cout << "EMPTY\n";
+        }
+        else{
+            cout << "Q pop\n";
+            first = front->back;
+            delete front;
+        }
+    }
 void StackPop(void){
     Node* end = last;
     if (isEmpty()){
@@ -81,8 +137,12 @@ void StackPop(void){
 }
 bool isEmpty(void){
     return first ==NULL;
-}
+}*/
+
+
 };
+
+
 
 class Manager
 {

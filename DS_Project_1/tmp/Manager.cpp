@@ -22,7 +22,7 @@ void Manager::Run(const char* filepath)
 
     char cmd[100];
 
-    Loaded_LIST* data = new Loaded_LIST;
+    Loaded_LIST* LIST = new Loaded_LIST;
 
     while (!fin.eof())
     {
@@ -38,6 +38,7 @@ void Manager::Run(const char* filepath)
                 ferr<<"========ERROR========\n100\n===================="<<endl;
                 return;
             }
+            
 
             while (!fdata.eof())
             {
@@ -48,20 +49,19 @@ void Manager::Run(const char* filepath)
 
                 string r1 = raw1;
                 string r2 = raw2;                
-            
-                if(data->size >= 100){
-                    data->QueuePop();
+                
+                if(LIST->first->size >= 100){
+                    LIST->first->QueuePop();
                     cout<<"check"<<endl;                   
                 }
-                data->QueuePush(r2, "images", r1);
-                cout<<r1<<r2<<endl;
+                LIST->first->QueuePush(r2, "images", r1);
                 
             }
+           
         }
         else if (strcmp(tmp, "ADD") == 0)
         {
-            Loaded_LIST* new_data = new Loaded_LIST;
-
+            ROW_LIST* rowlist = new ROW_LIST;
 
             char path[100] = {0};
             char* tmp2 = strtok(NULL, " ");
@@ -71,11 +71,11 @@ void Manager::Run(const char* filepath)
             strcat(path, tmp3);
 
             int i;
-            for (i=0;path[i];i++)
-                ;
+            for (i=0;path[i];i++);
             path[i-1] = 0;
 
             ndata.open(path);
+
             while (!ndata.eof())
             {
                 char raw1[100], raw2[100];
@@ -84,19 +84,23 @@ void Manager::Run(const char* filepath)
                 ndata.getline(raw2, sizeof(raw2) , '\n');
 
                 string r1 = raw1;
-                string r2 = raw2;
-                cout << "r1: " << r1 <<'\n';
-                cout << "r2: " << r2 <<'\n';
+                string r2 = raw2;           
                 
-                if (new_data->size >= 100){
-                    new_data->QueuePop();
-                    cout << "Check" << endl;
+                if (rowlist->size >= 100){
+                    rowlist->QueuePop();
+                    
                 }
-                new_data->QueuePush(r2, "images", r1);
-                cout << "first: "<<  new_data->first->number<< " last: "<<new_data->last->number<<endl;
-                // while(1);
+                rowlist->QueuePush(r2, "images", r1);              
             }
-            data->LIST_push(new_data);
+
+            LIST->QueuePush(rowlist);
+            
+        
+
+            cout<<LIST->first->first->number<< "  "<<LIST->first->last->front->number<<endl;
+
+            while(1){}
+            
         }
 
          else if (strcmp(tmp, "MODIFY") == 0)
@@ -105,7 +109,7 @@ void Manager::Run(const char* filepath)
             char* tmp3 = strtok(NULL, " "); //file
             char* tmp4 = strtok(NULL, " "); //index
 
-            Node* current = data->ff_first;
+            /*Node* current = data->ff_first;
 
             while(tmp2 != current->dir_name){
                 current = current->down;
@@ -137,7 +141,7 @@ void Manager::Run(const char* filepath)
             char* tmp4 = strtok(NULL, " "); //index
             data->QueuePush(, "images", r1);
             //push
-            data-
+            data-*/
 
         }
     }
