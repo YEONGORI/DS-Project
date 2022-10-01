@@ -31,14 +31,13 @@ void Manager::Run(const char* filepath)
         char* tmp = strtok(cmd, " ");
         if (strcmp(tmp, "LOAD") == 0)
         {
-
+            ROW_LIST * R_LIST = new ROW_LIST;
 
             fout << "=========LOAD=========" << endl;
             if(!fdata){
                 ferr<<"========ERROR========\n100\n===================="<<endl;
                 return;
             }
-            
 
             while (!fdata.eof())
             {
@@ -47,17 +46,15 @@ void Manager::Run(const char* filepath)
                 fdata.getline(raw1, sizeof(raw1), ',');
                 fdata.getline(raw2, sizeof(raw2) , '\n');
 
-                string r1 = raw1;
-                string r2 = raw2;                
-                
-                if(LIST->first->size >= 100){
-                    LIST->first->QueuePop();
-                    cout<<"check"<<endl;                   
-                }
-                LIST->first->QueuePush(r2, "images", r1);
-                
+                string r1 = raw1; // r1 = 고유번호
+                string r2 = raw2; // 파일 이름
+                // if(LIST->first->size >= 100){
+                //     LIST->first->QueuePop();
+                //     cout<<"check"<<endl;                   
+                // }
+                R_LIST->QueuePush(r2, "images", r1);
             }
-           
+            LIST->QueuePush(R_LIST);
         }
         else if (strcmp(tmp, "ADD") == 0)
         {
@@ -96,10 +93,10 @@ void Manager::Run(const char* filepath)
             LIST->QueuePush(rowlist);
             
         
+            cout << "\n===This is add===\n\n";
+            cout << LIST->lt->first->file << "\n\n=====\n" << LIST->lt->last->file << endl;
 
-            cout<<LIST->first->first->number<< "  "<<LIST->first->last->front->number<<endl;
-
-            while(1){}
+            while(1);
             
         }
 
@@ -108,6 +105,18 @@ void Manager::Run(const char* filepath)
             char* tmp2 = strtok(NULL, " "); //dir
             char* tmp3 = strtok(NULL, " "); //file
             char* tmp4 = strtok(NULL, " "); //index
+
+
+        }
+    }
+
+    // TODO: implement
+}
+
+
+
+
+
 
             /*Node* current = data->ff_first;
 
@@ -142,11 +151,3 @@ void Manager::Run(const char* filepath)
             data->QueuePush(, "images", r1);
             //push
             data-*/
-
-        }
-    }
-
-    // TODO: implement
-}
-
-

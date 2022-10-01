@@ -17,7 +17,7 @@ public:
     string dir;
     string file;
     string number;
-    Node(string dir, string file, string number, Node *front, Node *back):
+    Node(string file,string dir,  string number, Node *front, Node *back):
     file(file), dir(dir), number(number), front(front) , back(back) {}
 };
 
@@ -53,6 +53,7 @@ void QueuePush(string file, string dir, string index){
         first = last = new Node(file, dir, index, NULL , NULL);
     else {
         last = last->back = new Node(file, dir, index, NULL, NULL);   
+        cout << last->file << '\n';
     }
     size++;
 };
@@ -67,7 +68,6 @@ void QueuePop(void){
         delete front;
         size--;
     }
-
 };
 void StackPop(void){
     Node* end = last;
@@ -88,27 +88,27 @@ bool isEmpty(void){
 
 class Loaded_LIST{
 public:
-    ROW_LIST* first;
-    ROW_LIST* last;
+    ROW_LIST* ft;
+    ROW_LIST* lt;
     
     Loaded_LIST(void){
         
-        first = new ROW_LIST;
-        last = new ROW_LIST;
+        ft = new ROW_LIST;
+        lt = new ROW_LIST;
     }
     ~Loaded_LIST(){
         ROW_LIST* next = NULL;
 
-        while(first != NULL){
-            next = first->down;
-            delete first;
-            first = next;
+        while(ft != NULL){
+            next = ft->down;
+            delete ft;
+            ft = next;
         }
     }
 
     // number, file, dir
     void QueuePush(ROW_LIST* data){
-        last = last->down = data;
+        lt = lt->down = data;
     }
 
     /*void QueuePop(void){
