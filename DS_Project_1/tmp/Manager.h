@@ -19,32 +19,35 @@ private:
     string number;
     Node* front;
     Node* back;
+    Node* up;
+    Node* down;
 public:
-    // Node(string file_name, string dir_name, int number, Node* front, Node * back)
-    // {
-    //     this->file_name = file_name;
-    //     this->dir_name = dir_name;
-    //     this->number = number;
-    //     this->front = front;
-    //     this->back = back;
-    // }
-    Node(string file_name, string dir_name, string number, Node *fron, Node *back):file_name(file_name), dir_name(dir_name), number(number), front(front) , back(back) {}
+    Node(string file_name, string dir_name, string number, Node *fron, Node *back):file_name(file_name), dir_name(dir_name), number(number), front(front) , back(back), up(up), down(down) {}
 };
 
 class Loaded_LIST
 {
-    
-private:
-    Node *first;
-    Node *last; 
-    Node *next;
-    Node *pre;
+    // O <-> O <-> O <-> O
+    // |
+    // O <-> O <-> O
+    // |
+    // O <-> O
+// private:
+//     Node *first;
+//     Node *last;
+//     Node *ff_first;
+//     Node *ll_last;
 public:
     int size;
+    Node *first;
+    Node *last;
+    Node *ff_first;
+    Node *ll_last;
     Loaded_LIST(void){
         first = NULL;
         last = NULL;
-        next = NULL;
+        ff_first = NULL;
+        ll_last = NULL;
         size = 0;
     }
     virtual ~Loaded_LIST(){
@@ -56,12 +59,11 @@ public:
             first = front;
         }
     }
-
-    void LIST_push(Loaded_LIST* new_data){
-        this->next = new_data->first;
-        new_data->pre = this->first;
-        
-
+    // 기존의 리리스스트
+    void LIST_push(Loaded_LIST* new_data) {
+        ll_last->down = new_data->first;
+        new_data->first->up = ll_last;
+        ll_last = new_data->first;
     }
 
     void QueuePush(string file, string dir, string index){

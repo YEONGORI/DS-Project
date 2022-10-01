@@ -25,6 +25,7 @@ void Manager::Run(const char* filepath)
 
     char cmd[100];
 
+    Loaded_LIST* data = new Loaded_LIST;
     while (!fin.eof())
     {
         //Read the command
@@ -32,7 +33,6 @@ void Manager::Run(const char* filepath)
         char* tmp = strtok(cmd, " ");
         if (strcmp(tmp, "LOAD") == 0)
         {
-             Loaded_LIST* data = new Loaded_LIST;
 
 
             fout << "=========LOAD=========" << endl;
@@ -64,34 +64,41 @@ void Manager::Run(const char* filepath)
         {
             Loaded_LIST* new_data = new Loaded_LIST;
 
-            data->LIST_push(new_data);
 
-            char path[100] = {'\0'};
+            char path[100] = {0};
             char* tmp2 = strtok(NULL, " ");
             char* tmp3 = strtok(NULL, " ");
             strcat(path, tmp2);
             strcat(path, "/");
             strcat(path, tmp3);
-            // cout << "path: " << path << '\n';
+
+            int i;
+            for (i=0;path[i];i++)
+                ;
+            path[i-1] = 0;
+
             ndata.open(path);
             while (!ndata.eof())
             {
                 char raw1[100], raw2[100];
                 
-                fdata.getline(raw1, sizeof(raw1), ',');
-                fdata.getline(raw2, sizeof(raw2) , '\n');
+                ndata.getline(raw1, sizeof(raw1), ',');
+                ndata.getline(raw2, sizeof(raw2) , '\n');
 
                 string r1 = raw1;
-                string r2 = raw2;                
-            
-                // if(data->size >= 100){
-                //     data->QueuePop();
-                //     cout<<"check"<<endl;                   
-                // }
-                // data->QueuePush(r2, "images", r1);
-                // cout<<r1<<r2<<endl;
+                string r2 = raw2;
+                cout << "r1: " << r1 <<'\n';
+                cout << "r2: " << r2 <<'\n';
+
+                if (new_data->size >= 100){
+                    new_data->QueuePop();
+                    cout << "Check" << endl;
+                }
+                new_data->QueuePush(r2, "images", r1);
                 
+                // while(1);
             }
+            data->LIST_push(new_data);
         }
     }
 
