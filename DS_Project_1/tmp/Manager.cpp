@@ -1,6 +1,7 @@
 #include "Manager.h"
 #include <cstring>
 #include <iostream>
+#include <strings.h>
 
 using namespace std;
 
@@ -36,7 +37,7 @@ void Manager::Run(const char* filepath)
             fout << "=========LOAD=========" << endl;
             if(!fdata){
                 ferr<<"========ERROR========\n100\n===================="<<endl;
-                return;
+                break;;
             }
 
             while (!fdata.eof())
@@ -64,6 +65,10 @@ void Manager::Run(const char* filepath)
             char path[100] = {0};
             char* tmp2 = strtok(NULL, " ");
             char* tmp3 = strtok(NULL, " ");
+            if (tmp2 == NULL || tmp3 == NULL)
+            {
+                ferr<<"========ERROR========\n200\n===================="<<endl;
+            }
             strcat(path, tmp2);
             strcat(path, "/");
             strcat(path, tmp3);
@@ -87,63 +92,62 @@ void Manager::Run(const char* filepath)
                 
                 if (rowlist->size >= 100){
                     rowlist->QueuePop();
-                    
+                }
+                if (LIST->isEmpty()) {
+                    ferr<<"========ERROR========\n200\n===================="<<endl;
                 }
                 rowlist->QueuePush(r2, "images", r1);              
             }
             LIST->QueuePush(rowlist);
-            while(1);
             
         }
-
-         else if (strcmp(tmp, "MODIFY") == 0)
+        else if (strcmp(tmp, "MODIFY") == 0)
         {
-            char* tmp2 = strtok(NULL, " "); //dir
-            char* tmp3 = strtok(NULL, " "); //file
-            char* tmp4 = strtok(NULL, " "); //index
+            char* dir = strtok(NULL, " "); //dir
+            char* file = strtok(NULL, "\""); //file
+            char* index = strtok(NULL, " "); //index
+            if (dir == NULL || file == NULL || index == NULL)
+            {
+                ferr<<"========ERROR========\n300\n===================="<<endl;
+                break;
+            }
 
-
+            Node* curNode = LIST->start_list->first;
+            ROW_LIST* curRowList = LIST->start_list;
+            while (curNode->dir != dir)
+            {
+                if (curNode == NULL || curRowList == NULL)
+                {
+                    ferr<<"========ERROR========\n300\n===================="<<endl;
+                    break;
+                }
+                curRowList = curRowList->down;
+                if (curRowList == NULL)
+                    break;
+                curNode = curRowList->first;
+            }
+                while(1);
+            while (curNode->file != file)
+            {
+                curNode = curNode->back;
+                if (curNode == NULL)
+                {
+                    ferr<<"========ERROR========\n300\n===================="<<endl;
+                    break;
+                }
+            }
+            Node* frontNode;
+            Node* backNode;
+            frontNode = curNode->front;
+            backNode = curNode->back;
+            frontNode->back = backNode;
+            backNode->front = frontNode;
+            delete curNode;
+            curRowList->QueuePush(file, dir, index);
+            cout << curRowList->last->number << "&\n";
+            cout << LIST->end_list->last->number << "*\n";
         }
     }
 
     // TODO: implement
 }
-
-
-
-
-
-
-            /*Node* current = data->ff_first;
-
-            while(tmp2 != current->dir_name){
-                current = current->down;
-            }
-            while(tmp3 != current->file_name){
-                current = current->back;
-            }
-
-            if(current == NULL){
-                cout<< "없음"<<endl;
-            }
-
-            if(current->up != NULL){
-                current->back->up = current->up;
-                current->back->down = current->down;
-
-                current->up->down = current->back;
-                current->down->up = current->back;
-                
-            }
-            else {
-                current->back->front = current->front;
-                current->front->back = current->back;
-                delete current;
-            }
-
-            char* tmp2 = strtok(NULL, " "); //dir
-            char* tmp3 = strtok(NULL, " "); //file
-            char* tmp4 = strtok(NULL, " "); //index
-            data->QueuePush(, "images", r1);
-            //push
-            data-*/

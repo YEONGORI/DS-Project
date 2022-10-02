@@ -12,12 +12,12 @@ using namespace std;
 class Node
 {
 public:
+    string file;
+    string dir;
+    string number;
     Node* front;
     Node* back;
-    string dir;
-    string file;
-    string number;
-    Node(string file,string dir,  string number, Node *front, Node *back):
+    Node(string file, string dir,  string number, Node *front, Node *back):
     file(file), dir(dir), number(number), front(front) , back(back) {}
 };
 
