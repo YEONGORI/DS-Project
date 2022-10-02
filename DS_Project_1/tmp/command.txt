@@ -10,4 +10,3 @@ EDIT -r
 EDIT -l 16
 EDIT -f
 EXIT
-MOVE

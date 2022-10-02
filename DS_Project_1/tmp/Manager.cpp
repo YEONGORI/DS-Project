@@ -26,10 +26,11 @@ void Manager::Run(const char* filepath)
 
     while (!fin.eof())
     {
+        
         //Read the command
         fin.getline(cmd, 100);
         char* tmp = strtok(cmd, " ");
-        cout<<tmp<<endl;
+
         if (strcmp(tmp, "LOAD") == 0)
         {
             ROW_LIST * R_LIST = new ROW_LIST;
@@ -120,8 +121,8 @@ void Manager::Run(const char* filepath)
             char* index = strtok(NULL, " "); //index
             if (dir == NULL || file == NULL || index == NULL)
             {
-                fout<<"========ERROR========\n300\n====================\n"<<endl;
-                break;
+                fout<<"========ERROR========\n301\n====================\n"<<endl;
+                continue;
             }
             Node* curNode = LIST->start_list->first;
             ROW_LIST* curRowList = LIST->start_list;
@@ -131,7 +132,7 @@ void Manager::Run(const char* filepath)
             {
                 curRowList = curRowList->down;               
                 if ( curRowList == NULL){
-                    fout<<"========ERROR========\n300\n====================\n"<<endl;
+                    fout<<"========ERROR========\n302\n====================\n"<<endl;
                     dir_case = true;
                     break;
                 }
@@ -162,35 +163,35 @@ void Manager::Run(const char* filepath)
             curRowList->QueuePush(file, dir, index);       
             fout<<"=======MODIFY========\nSUCCESS\n====================\n"<<endl;
         }
-        else if (strcmp(tmp, "MOVE") == 0)
+        else if (cmd[0] == 'M' && cmd[1] == 'O' && cmd[2]=='V' && cmd[3] == 'E')
         {
-            cout<<"1\n";
             if(LIST->isEmpty()){
                 fout<<"========ERROR========\n400\n====================\n"<<endl;
                 continue;
             }
-            Node* curNode = LIST->end_list->last;
-            ROW_LIST* currowlist = LIST->end_list;
-            while(LIST->start_list->first){
-                cout<<"1\n";
-                while(!currowlist->isEmpty()){
-                    if(BST->size > 300){
-                        //삭제 고유번호 낮은 순서대로
-                    }
-                    BST->insert(curNode);
-                    currowlist->StackPop();
-                    
-                }   
-                 cout<<"2\n";            
-                currowlist = currowlist->up;
-                curNode = currowlist->last;
-            }
-            fout<<"=======MOVE========\nSUCCESS\n===================\n"<<endl;
-            cout<<BST->m_root->getLeftNode()<<endl;
-
         }
 
     }
 
     // TODO: implement
 }
+
+            // ROW_LIST* currowlist = LIST->end_list;
+            // Node* curNode = currowlist->last;
+            // for(int i=0;i<2;i++){ //  ROW_LIST를 올려주는 용도=
+
+            //     while (curNode) { // ROW_LIST안의 Node들을 제거해주는 용도
+            //         BST->insert(curNode);
+            //         curNode = curNode->front;
+            //         currowlist->StackPop();
+            //         cout << "3";
+            //     }
+            //     while (1);
+            //     currowlist = currowlist->up;
+
+            //     curNode = currowlist->last;
+            //     cout << "4";
+            // }
+            // cout<<BST->m_root->getLeftNode()<<"\n\n";
+            // fout<<"=======MOVE========\nSUCCESS\n===================\n"<<endl;
+            // cout << "5";

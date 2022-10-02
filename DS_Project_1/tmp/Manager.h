@@ -73,20 +73,21 @@ void QueuePop(void){
         size--;
     }
 };
+
 void StackPop(void){
     Node* end = last;
     if (isEmpty()){
         cout << "EMPTY\n";
     }
     else{
-        cout << "Q pop\n";
         last = end->front;
         delete end;
         size--;
     }
 }
+
 bool isEmpty(void){
-    return first ==NULL;
+    return (last ==NULL && first ==NULL);
 }
 };
 
