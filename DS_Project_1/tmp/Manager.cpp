@@ -2,6 +2,7 @@
 #include <cstring>
 #include <iostream>
 #include <strings.h>
+#include "BinarySearchTree.h"
 
 using namespace std;
 
@@ -20,12 +21,15 @@ void Manager::Run(const char* filepath)
     char cmd[100];
 
     Loaded_LIST* LIST = new Loaded_LIST;
+    BinarySearchTree* BST = new BinarySearchTree;
+
 
     while (!fin.eof())
     {
         //Read the command
         fin.getline(cmd, 100);
         char* tmp = strtok(cmd, " ");
+        cout<<tmp<<endl;
         if (strcmp(tmp, "LOAD") == 0)
         {
             ROW_LIST * R_LIST = new ROW_LIST;
@@ -156,8 +160,36 @@ void Manager::Run(const char* filepath)
             backNode->front = frontNode;
             delete curNode;
             curRowList->QueuePush(file, dir, index);       
-            fout<<"=======MODIFY========\nSUCCESS\n====================\n"<<endl;  
+            fout<<"=======MODIFY========\nSUCCESS\n====================\n"<<endl;
         }
+        else if (strcmp(tmp, "MOVE") == 0)
+        {
+            cout<<"1\n";
+            if(LIST->isEmpty()){
+                fout<<"========ERROR========\n400\n====================\n"<<endl;
+                continue;
+            }
+            Node* curNode = LIST->end_list->last;
+            ROW_LIST* currowlist = LIST->end_list;
+            while(LIST->start_list->first){
+                cout<<"1\n";
+                while(!currowlist->isEmpty()){
+                    if(BST->size > 300){
+                        //삭제 고유번호 낮은 순서대로
+                    }
+                    BST->insert(curNode);
+                    currowlist->StackPop();
+                    
+                }   
+                 cout<<"2\n";            
+                currowlist = currowlist->up;
+                curNode = currowlist->last;
+            }
+            fout<<"=======MOVE========\nSUCCESS\n===================\n"<<endl;
+            cout<<BST->m_root->getLeftNode()<<endl;
+
+        }
+
     }
 
     // TODO: implement

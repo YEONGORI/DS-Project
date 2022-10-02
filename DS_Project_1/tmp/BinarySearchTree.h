@@ -9,9 +9,11 @@ class BinarySearchTree
 {
 	friend class TreeManager;
 private:
-	TreeNode * m_root;
+	
 
 public:
+	TreeNode * m_root;
+	int size=0;
 	BinarySearchTree() { m_root = NULL; }
 	~BinarySearchTree();
 
@@ -35,6 +37,7 @@ public:
 		}
 		else
 			m_root = p;
+		size++;
 	}; //Data
 
 	void deletion(  ); //unique number = key
