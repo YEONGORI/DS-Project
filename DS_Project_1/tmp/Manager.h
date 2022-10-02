@@ -132,10 +132,8 @@ class Manager
 private:
     // the filepath for the result log
     const char* RESULT_LOG_PATH = "log.txt";
-    
 
     std::ofstream fout;
-    std::ofstream ferr;
     std::ifstream fin;
     std::ifstream fdata;
     std::ifstream ndata;

@@ -9,15 +9,11 @@ Manager::~Manager()
 {
     if (fout.is_open())
         fout.close();
-
-    if (ferr.is_open())
-        ferr.close();
 }
 
 void Manager::Run(const char* filepath)
 {
     fout.open(RESULT_LOG_PATH);
-    ferr.open(RESULT_LOG_PATH);
     fin.open("command.txt");
     fdata.open("filesnumbers.csv");
 
@@ -36,17 +32,25 @@ void Manager::Run(const char* filepath)
 
             fout << "=========LOAD=========" << endl;
             if(!fdata){
-                ferr<<"========ERROR========\n100\n===================="<<endl;
+                fout<<"========ERROR========\n100\n===================="<<endl;
                 break;;
             }
 
             while (!fdata.eof())
             {
-                char raw1[100], raw2[100];
+                char buffer[100];
+                bzero(buffer, sizeof(buffer));
+                char* raw1, *raw2;
                 
-                if (!fdata.getline(raw1, sizeof(raw1), ','))
+                if (!fdata.getline(buffer, sizeof(buffer)))
                     break;
-                fdata.getline(raw2, sizeof(raw2) , '\n');
+                raw1 = strtok(buffer, ",");
+                raw2 = strtok(NULL, "\n");
+                
+                int i;
+                for(i=0;raw2[i];i++);
+                raw2[i-1] = '\0';
+
                 string r1 = raw1; // r1 = 고유번호
                 string r2 = raw2; // 파일 이름
                 if (R_LIST->size >= 100){
@@ -54,8 +58,12 @@ void Manager::Run(const char* filepath)
                     cout<<"check"<<endl;                   
                 }
                 R_LIST->QueuePush(r2, "images", r1);
+                fout<<r2<<"/";
+                fout<<r1<< endl;
             }
             LIST->QueuePush(R_LIST);
+
+            fout<<"=================\n"<<endl;
 
         }
         else if (strcmp(tmp, "ADD") == 0)
@@ -63,15 +71,15 @@ void Manager::Run(const char* filepath)
             ROW_LIST* rowlist = new ROW_LIST;
 
             char path[100] = {0};
-            char* tmp2 = strtok(NULL, " ");
-            char* tmp3 = strtok(NULL, " ");
-            if (tmp2 == NULL || tmp3 == NULL)
+            char* dir = strtok(NULL, " ");
+            char* file = strtok(NULL, " ");
+            if (dir == NULL || file == NULL)
             {
-                ferr<<"========ERROR========\n200\n===================="<<endl;
+                fout<<"========ERROR========\n200\n====================\n"<<endl;
             }
-            strcat(path, tmp2);
+            strcat(path, dir);
             strcat(path, "/");
-            strcat(path, tmp3);
+            strcat(path, file);
 
             int i;
             for (i=0;path[i];i++);
@@ -94,12 +102,12 @@ void Manager::Run(const char* filepath)
                     rowlist->QueuePop();
                 }
                 if (LIST->isEmpty()) {
-                    ferr<<"========ERROR========\n200\n===================="<<endl;
+                    fout<<"========ERROR========\n200\n====================\n"<<endl;
                 }
-                rowlist->QueuePush(r2, "images", r1);              
+                rowlist->QueuePush(r2, dir, r1);              
             }
             LIST->QueuePush(rowlist);
-            
+            fout<<"=======ADD========\nSUCCESS\n===================\n"<<endl;                   
         }
         else if (strcmp(tmp, "MODIFY") == 0)
         {
@@ -108,34 +116,38 @@ void Manager::Run(const char* filepath)
             char* index = strtok(NULL, " "); //index
             if (dir == NULL || file == NULL || index == NULL)
             {
-                ferr<<"========ERROR========\n300\n===================="<<endl;
+                fout<<"========ERROR========\n300\n====================\n"<<endl;
                 break;
             }
-
             Node* curNode = LIST->start_list->first;
             ROW_LIST* curRowList = LIST->start_list;
+            bool dir_case = false;
+            bool file_case = false;
             while (curNode->dir != dir)
             {
-                if (curNode == NULL || curRowList == NULL)
-                {
-                    ferr<<"========ERROR========\n300\n===================="<<endl;
+                curRowList = curRowList->down;               
+                if ( curRowList == NULL){
+                    fout<<"========ERROR========\n300\n====================\n"<<endl;
+                    dir_case = true;
                     break;
                 }
-                curRowList = curRowList->down;
-                if (curRowList == NULL)
-                    break;
                 curNode = curRowList->first;
+                
             }
-                while(1);
+            if(dir_case)
+                continue;
             while (curNode->file != file)
-            {
-                curNode = curNode->back;
+            {                
+                curNode = curNode->back;              
                 if (curNode == NULL)
                 {
-                    ferr<<"========ERROR========\n300\n===================="<<endl;
+                    fout<<"========ERROR========\n300\n====================\n"<<endl;
+                    file_case = true;
                     break;
                 }
             }
+            if(file_case)
+                continue;            
             Node* frontNode;
             Node* backNode;
             frontNode = curNode->front;
@@ -143,9 +155,8 @@ void Manager::Run(const char* filepath)
             frontNode->back = backNode;
             backNode->front = frontNode;
             delete curNode;
-            curRowList->QueuePush(file, dir, index);
-            cout << curRowList->last->number << "&\n";
-            cout << LIST->end_list->last->number << "*\n";
+            curRowList->QueuePush(file, dir, index);       
+            fout<<"=======MODIFY========\nSUCCESS\n====================\n"<<endl;  
         }
     }
 
