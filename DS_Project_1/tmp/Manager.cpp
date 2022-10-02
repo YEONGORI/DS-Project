@@ -43,18 +43,19 @@ void Manager::Run(const char* filepath)
             {
                 char raw1[100], raw2[100];
                 
-                fdata.getline(raw1, sizeof(raw1), ',');
+                if (!fdata.getline(raw1, sizeof(raw1), ','))
+                    break;
                 fdata.getline(raw2, sizeof(raw2) , '\n');
-
                 string r1 = raw1; // r1 = 고유번호
                 string r2 = raw2; // 파일 이름
-                // if(LIST->first->size >= 100){
-                //     LIST->first->QueuePop();
-                //     cout<<"check"<<endl;                   
-                // }
+                if (R_LIST->size >= 100){
+                    R_LIST->QueuePop();
+                    cout<<"check"<<endl;                   
+                }
                 R_LIST->QueuePush(r2, "images", r1);
             }
             LIST->QueuePush(R_LIST);
+
         }
         else if (strcmp(tmp, "ADD") == 0)
         {
@@ -77,7 +78,8 @@ void Manager::Run(const char* filepath)
             {
                 char raw1[100], raw2[100];
                 
-                ndata.getline(raw1, sizeof(raw1), ',');
+                if (!ndata.getline(raw1, sizeof(raw1), ','))
+                    break;
                 ndata.getline(raw2, sizeof(raw2) , '\n');
 
                 string r1 = raw1;
@@ -89,13 +91,7 @@ void Manager::Run(const char* filepath)
                 }
                 rowlist->QueuePush(r2, "images", r1);              
             }
-
             LIST->QueuePush(rowlist);
-            
-        
-            cout << "\n===This is add===\n\n";
-            cout << LIST->lt->first->file << "\n\n=====\n" << LIST->lt->last->file << endl;
-
             while(1);
             
         }
