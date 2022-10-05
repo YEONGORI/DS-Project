@@ -89,7 +89,7 @@ void Manager::Run(const char* filepath)
             for (i = 0; path[i]; i++)
                 ;
             path[i - 1] = 0;
-            ndata.open("new_filenumbers.csv");
+            ndata.open(path);
             while (!ndata.eof())
             {
                 char raw1[100], raw2[100];
