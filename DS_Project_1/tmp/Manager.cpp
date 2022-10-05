@@ -19,8 +19,7 @@ void Manager::Run(const char *filepath)
     fdata.open("filesnumbers.csv");
 
     char cmd[100];
-    if (filepath)
-        cout << "";
+
     Loaded_LIST *LIST = new Loaded_LIST;
     BinarySearchTree *BST = new BinarySearchTree;
 
@@ -174,37 +173,31 @@ void Manager::Run(const char *filepath)
             fout << "=======MODIFY========\nSUCCESS\n====================\n"
                  << endl;
         }
-        else if (strtmp)
+        else if (tmp[0] == 'M')
         {
-            cout << "4" << ' ';
             if (LIST->isEmpty())
             {
                 fout << "========ERROR========\n400\n====================\n"
                      << endl;
                 continue;
             }
-            // new_files가 있는지 없는지 찾기
-            // 찾으면 그거부LI터 옮기고 삭제
-            // 다 옮기면 img_files에 있는거 옮기고 삭제
             ROW_LIST *StartList = LIST->end_list;
             while (StartList != NULL)
             {
-                cout << "1" << ' ';
                 Node *StartNode = StartList->last;
-                while (StartNode != NULL)
+                while (StartNode)
                 {
                     Node *TmpNode = new Node("", "", "", NULL, NULL);
-                    BST->insert(StartNode);
                     TmpNode = StartNode;
-                    delete (TmpNode);
+                    BST->insert(TmpNode);
+                    delete (StartNode);
                     StartNode = StartNode->front;
-                    cout << "2" << ' ';
                 }
                 StartList = StartList->up;
             }
-            cout << BST->m_root->getLeftNode() << "\n\n";
+            cout << "NULL\n";
+            // cout << BST->m_root->getLeftNode() << "\n\n";
         }
-        // cout << "4" << ' ';
     }
 
     // TODO: implement

@@ -19,9 +19,11 @@ public:
 	void insert(Node *node)
 	{
 		TreeNode *p = m_root, *pp = NULL;
+
 		while (p)
 		{
 			pp = p;
+			cout << m_root;
 			if (stoi(node->number) < p->m_data.unique_number)
 				p = p->m_left;
 			else if (stoi(node->number) > p->m_data.unique_number)
