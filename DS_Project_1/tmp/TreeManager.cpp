@@ -4,20 +4,19 @@
 
 TreeManager::ImageControl::ImageControl()
 {
-	//Funtion must be added (Skeleton codes function is not define every features in this project)
+	// Funtion must be added (Skeleton codes function is not define every features in this project)
 }
 
-TreeManager::ImageControl::ImageControl( ) // parameter must be added
+TreeManager::ImageControl::ImageControl() // parameter must be added
 {
 	this->node_f = node_f;
 }
 
-std::ostream& operator<<(std::ostream& os, const TreeManager::ImageControl& ) //parameter must be added
+std::ostream &operator<<(std::ostream &os, const TreeManager::ImageControl &) // parameter must be added
 {
 
 	return os;
 }
-
 
 TreeManager::TreeManager(std::string file_dir, int unique_number)
 {
@@ -28,13 +27,11 @@ TreeManager::TreeManager(std::string file_dir, int unique_number)
 
 	while (std::getline(in, line))
 	{
-
 	}
 }
 
-std::ostream& operator<<(std::ostream& os, const TreeManager& manager)
+std::ostream &operator<<(std::ostream &os, const TreeManager &manager)
 {
-
 
 	return os;
 }
