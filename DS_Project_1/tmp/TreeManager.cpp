@@ -14,7 +14,6 @@ TreeManager::ImageControl::ImageControl() // parameter must be added
 
 std::ostream &operator<<(std::ostream &os, const TreeManager::ImageControl &) // parameter must be added
 {
-
 	return os;
 }
 
