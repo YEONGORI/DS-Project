@@ -4,22 +4,30 @@
 #include <string.h>
 #include <string>
 #include "BinarySearchTree.h"
+#include "TreeManager.h"
+#include "Queue.h"
+#include "Stack.h"
+
 using namespace std;
+
 Manager::~Manager()
 {
     if (fout.is_open())
         fout.close();
 }
+
 void Manager::Run(const char* filepath)
 {
     fout.open(RESULT_LOG_PATH);
     fin.open("command.txt");
     fdata.open("filesnumbers.csv");
+
     char cmd[100];
     if (filepath)
         cout << "";
     Loaded_LIST* LIST = new Loaded_LIST;
     BinarySearchTree* BST = new BinarySearchTree;
+
     while (!fin.eof())
     {
         // Read the command
@@ -29,6 +37,7 @@ void Manager::Run(const char* filepath)
         if (strcmp(tmp, "LOAD") == 0)
         {
             ROW_LIST* R_LIST = new ROW_LIST;
+
             fout << "=========LOAD=========" << endl;
             if (!fdata)
             {
@@ -40,8 +49,10 @@ void Manager::Run(const char* filepath)
             {
                 char buffer[100];
                 char* raw1, * raw2;
+
                 if (!fdata.getline(buffer, sizeof(buffer)))
-                    break;         
+                    break;          
+
                 if (byte3_int == 0) {
                     string byte3 = buffer;
                     byte3 = byte3.substr(3);
@@ -50,14 +61,16 @@ void Manager::Run(const char* filepath)
                     }
                     byte3_int++;
                 }
+
                 raw1 = strtok(buffer, ",");
                 raw2 = strtok(NULL, "\n");
+
                 int i;
                 for (i = 0; raw2[i]; i++)
                     ;
                 raw2[i - 1] = '\0';
-                string r1 = raw1; // r1 = Í≥†Ïú†Î≤àÌò∏
-                string r2 = raw2; // ÌååÏùº Ïù¥Î¶Ñ
+                string r1 = raw1; // r1 = ∞Ì¿Øπ¯»£
+                string r2 = raw2; // ∆ƒ¿œ ¿Ã∏ß
                 if (R_LIST->size >= 100)
                 {
                     R_LIST->QueuePop();
@@ -68,12 +81,14 @@ void Manager::Run(const char* filepath)
                 fout << r1 << endl;
             }
             LIST->QueuePush(R_LIST);
+
             fout << "=================\n"
                 << endl;
         }
         else if (strcmp(tmp, "ADD") == 0)
         {
             ROW_LIST* rowlist = new ROW_LIST;
+
             char path[100] = { 0 };
             char* dir = strtok(NULL, " ");
             char* file = strtok(NULL, " ");
@@ -85,23 +100,29 @@ void Manager::Run(const char* filepath)
             strcat(path, dir);
             strcat(path, "/");
             strcat(path, file);
+
             int i;
             for (i = 0; path[i]; i++)
                 ;
             path[i - 1] = 0;
-            ndata.open(path);
+
+            ndata.open("new_filenumbers.csv");
+
             while (!ndata.eof())
             {
                 char raw1[100], raw2[100];
+
                 if (!ndata.getline(raw1, sizeof(raw1), ','))
                     break;
                 ndata.getline(raw2, sizeof(raw2), '\n');
+
                 string r1 = raw1;
                 string r2 = raw2;
-                if (rowlist->size >= 100)
+
+                /*if (rowlist->size >= 100)
                 {
                     rowlist->QueuePop();
-                }
+                }*/
                 if (LIST->isEmpty())
                 {
                     fout << "========ERROR========\n200\n====================\n"
@@ -120,7 +141,7 @@ void Manager::Run(const char* filepath)
             char* index = strtok(NULL, " "); // index
             if (dir == NULL || file == NULL || index == NULL)
             {
-                fout << "========ERROR========\n301\n====================\n"
+                fout << "========ERROR========\n300\n====================\n"
                     << endl;
                 continue;
             }
@@ -133,7 +154,7 @@ void Manager::Run(const char* filepath)
                 curRowList = curRowList->down;
                 if (curRowList == NULL)
                 {
-                    fout << "========ERROR========\n302\n====================\n"
+                    fout << "========ERROR========\n300\n====================\n"
                         << endl;
                     dir_case = true;
                     break;
@@ -171,27 +192,145 @@ void Manager::Run(const char* filepath)
             if (LIST->isEmpty()) {
                 fout << "========ERROR========\n400\n====================\n" << endl;
                 continue;
+        
             }
-            // new_filesÍ∞Ä ÏûàÎäîÏßÄ ÏóÜÎäîÏßÄ Ï∞æÍ∏∞
-            // Ï∞æÏúºÎ©¥ Í∑∏Í±∞Î∂ÄLIÌÑ∞ ÏòÆÍ∏∞Í≥† ÏÇ≠Ï†ú
-            // Îã§ ÏòÆÍ∏∞Î©¥ img_filesÏóê ÏûàÎäîÍ±∞ ÏòÆÍ∏∞Í≥† ÏÇ≠Ï†ú
+            // new_files∞° ¿÷¥¬¡ˆ æ¯¥¬¡ˆ √£±‚
+            // √£¿∏∏È ±◊∞≈∫ŒLI≈Õ ø≈±‚∞Ì ªË¡¶
+            // ¥Ÿ ø≈±‚∏È img_filesø° ¿÷¥¬∞≈ ø≈±‚∞Ì ªË¡¶
             ROW_LIST* StartList = LIST->end_list;
+            int low_index = 10000;
             while (StartList != NULL)
             {
                 Node* StartNode = StartList->last;
                 while (StartNode != NULL)
                 {
                     Node* TmpNode = new Node("", "", "", NULL, NULL);
+                    if (BST->size > 300) {//300∞≥ ≥—¿∏∏È
+                        TreeNode* curTreeNode = BST->m_root;
+                        
+                        while (curTreeNode->m_left) { //øﬁ¬  ≥° ≥ÎµÂ∑Œ ¿Ãµø
+                            curTreeNode = curTreeNode->m_left;
+                        }
+                        
+                        low_index = curTreeNode->m_data.unique_number;//∞°¿Â ¿€¿∫ ∞Ì¿Øπ¯»£ ±∏«‘
+                        cout << curTreeNode->m_data.unique_number << endl;
+                        BST->deletion(low_index); // ªË¡¶
+                        cout << curTreeNode->m_data.unique_number << "abc"<< endl;
+                        BST->size--;
+                    }
+
                     BST->insert(StartNode);
                     TmpNode = StartNode;
                     StartNode = StartNode->front;
-                    delete (TmpNode);          
+                    delete (TmpNode);           
+                    
                 }
                 StartList = StartList->up;
             }
             cout << BST->m_root->getLeftNode() << "\n\n";
         }
+        else if (strcmp(tmp, "PRINT") == 0)
+        {               
+            if (!BST->m_root) {
+                fout << "========ERROR========\n500\n====================\n"
+                    << endl;
+                continue;
+            }
+            fout << "=======PRINT================" << endl;
+
+            BST->print_inorder(BST->m_root, &fout);
+
+            fout << "===========================\n" << endl;
+        }
+        else if (strcmp(tmp, "SEARCH") == 0)
+        {
+            if (BST->m_root->m_data.unique_number == NULL) {
+                fout << "========ERROR========\n600\n====================\n" << endl;
+                continue;
+             }
+
+            fout << "=======SEARCH===============\n";
+
+            char *filename  =  strtok(NULL, "\"");
+            string file_name = filename;
+
+            MiniStack *s = new MiniStack();
+            s->push(BST->m_root);
+            MiniStack* out = new MiniStack();
+
+            while (!s->empty()) {
+                TreeNode* curr = s->peek();
+                s->pop();
+                
+                out->push(curr);
+
+                if (curr->getLeftNode()) {
+                    s->push(curr->getLeftNode());
+                }
+                if (curr->getRightNode()) {
+                    s->push(curr->getRightNode());
+                }
+            }
+            
+            Queue* q = new Queue;
+
+            while (!out->empty()) { //≈• ≥÷±‚
+                q->push(out->peek());
+                out->pop();
+            }
+
+            while (!q->empty()) {              
+                for (int i = 0; i < q->top()->m_data.m_name.length(); i++) {
+                    int j;
+                    for (j = 0; j < file_name.length(); j++) {
+                        if (q->top()->m_data.m_name[i + j] != file_name[j])
+                            break;
+                    }
+                    if (j == file_name.length())
+                        fout << "\"" << q->top()->m_data.m_name << "\" / " << q->top()->m_data.unique_number << endl;
+                }
+
+                q->pop();
+            }
+            fout << "======================\n" << endl;
+        }
+
+        else if (strcmp(tmp, "SELECT") == 0)
+        {   
+            char* tmp = strtok(NULL, " ");
+            string tmp_num = tmp;
+            int tmp_number = stoi(tmp_num);
+
+            TreeNode* inputdata = BST->print_preorder(BST->m_root, &fout, tmp_number);
+
+
+
+
+            //rawreader
+            int width = 512, height = 512;
+            FILE* input_file, * output_file;
+
+            unsigned char input_data[512][512];
+            unsigned char output_data[512][512];
+
+            char path[100];
+            strcpy(path, inputdata->m_data.m_name.c_str());
+            strcat(path, ".RAW");
+            // raw ∆ƒ¿œ ¿–æÓø¿±‚
+            input_file = fopen(path, "rb");
+            if (input_file == NULL)
+            {
+                fout << "========ERROR========\n700\n====================\n" << endl;
+                return;
+            }
+            fread(input_data, sizeof(unsigned char), width* height, input_file);
+            fout << "=======SEARCH===============\n";
+            fout << "SUCCESS" << endl;
+            fout << "======================\n" << endl;
+        }
+        
         // cout << "4" << ' ';
     }
+
     // TODO: implement
 }

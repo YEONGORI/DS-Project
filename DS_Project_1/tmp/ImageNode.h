@@ -14,12 +14,12 @@ public:
 	std::string dirname;
 	int unique_number;
 
-	ImageNode() { }
+	ImageNode():m_name(m_name), dirname(dirname), unique_number(unique_number) { }
 	ImageNode(std::string name, std::string dir, int number)
 		:
 		m_name(name),
 		dirname(dir),
-		unique_number(number)		
+		unique_number(number)
 	{}
 
 	friend std::ostream& operator<<(std::ostream& os, const ImageNode& node) {

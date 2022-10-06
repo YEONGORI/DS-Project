@@ -1,5 +1,11 @@
 // Implement code on Manager.c file (recommandation)
+#include <cstring>
+#include <list>
+#include <string>
+#include<iostream>
 #include "Manager.h"
+
+using namespace std;
 
 int main(int argc, char* argv[])
 {
