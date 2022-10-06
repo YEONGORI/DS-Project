@@ -4,6 +4,7 @@
 #include "Manager.h"
 #include <iostream>
 #include <string>
+#include <unistd.h>
 
 class BinarySearchTree
 {
@@ -13,7 +14,10 @@ private:
 public:
 	TreeNode *m_root;
 	int size = 0;
-	BinarySearchTree() { m_root = NULL; }
+	BinarySearchTree()
+	{
+		m_root = NULL;
+	}
 	~BinarySearchTree();
 
 	void insert(Node *node)
@@ -22,12 +26,16 @@ public:
 
 		while (p)
 		{
+			cout << p;
 			pp = p;
 			cout << m_root;
+			usleep(700 * 1000);
 			if (stoi(node->number) < p->m_data.unique_number)
-				p = p->m_left;
+				p =
+					->m_left;
 			else if (stoi(node->number) > p->m_data.unique_number)
 				p = p->m_right;
+			else
 		}
 
 		p = new TreeNode;
