@@ -14,28 +14,19 @@ private:
 public:
 	TreeNode *m_root;
 	int size = 0;
-	BinarySearchTree()
-	{
-		m_root = NULL;
-	}
+	BinarySearchTree() { m_root = NULL; }
 	~BinarySearchTree();
 
 	void insert(Node *node)
 	{
 		TreeNode *p = m_root, *pp = NULL;
-
 		while (p)
 		{
-			cout << p;
 			pp = p;
-			cout << m_root;
-			usleep(700 * 1000);
 			if (stoi(node->number) < p->m_data.unique_number)
-				p =
-					->m_left;
+				p = p->m_left;
 			else if (stoi(node->number) > p->m_data.unique_number)
 				p = p->m_right;
-			else
 		}
 
 		p = new TreeNode;
@@ -56,10 +47,10 @@ public:
 
 	void deletion(); // unique number = key
 
-	// friend std::ostream &operator<<(std::ostream &os, const BinarySearchTree &tree)
-	// {
+	friend std::ostream &operator<<(std::ostream &os, const BinarySearchTree &tree)
+	{
 
-	// 	// fill in your code to print a node in binary search tree
-	// 	return os;
-	// }
+		// fill in your code to print a node in binary search tree
+		return os;
+	}
 };

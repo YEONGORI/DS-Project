@@ -1,5 +1,5 @@
 =========LOAD=========
-there are lots of people in the park.RAW/﻿100
+there are lots of people in the park.RAWAW/100
 the man is gorgeous.RAW/111
 the woman is smiling.RAW/200
 the man takes a picture.RAW/222
@@ -22,12 +22,4 @@ fence is near trees.RAW/999
 =======ADD========
 SUCCESS
 ===================
-
-========ERROR========
-302
-====================
-
-=======MODIFY========
-SUCCESS
-====================
 
