@@ -11,7 +11,7 @@ void main(void)
     unsigned char output_data[512][512];
 
 
-    // raw ÆÄÀÏ ÀÐ¾î¿À±â
+    // raw ï¿½ï¿½ï¿½ï¿½ ï¿½Ð¾ï¿½ï¿½ï¿½ï¿½
     input_file = fopen("./images/couple.raw", "rb");
     if (input_file == NULL)
     {
@@ -21,14 +21,14 @@ void main(void)
     fread(input_data, sizeof(unsigned char), width * height, input_file);
 
 
-    // input ÀÌ¹ÌÁö¸¦ ¿ª»óÀ¸·Î º¯È¯ÇÏ¿© ÀúÀå
+    // input ï¿½Ì¹ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È¯ï¿½Ï¿ï¿½ ï¿½ï¿½ï¿½ï¿½
     for (int i = 0; i < height; i++)
         for (int j = 0; j < width; j++)
             output_data[i][j] = 255 - input_data[i][j];
             //output_data[i][j] = input_data[i][j];
 
 
-    // º¯È¯ÇÑ ÀÌ¹ÌÁö ÀúÀå
+    // ï¿½ï¿½È¯ï¿½ï¿½ ï¿½Ì¹ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
     output_file = fopen("./couple_change.raw", "wb");
     fwrite(output_data, sizeof(unsigned char), width * height, output_file);
 
@@ -50,7 +50,7 @@ void main(void)
 //		if (0 == err_Out)
 //		{
 //			char	ch = 0;
-//			// ¿øº» ÆÄÀÏÀÇ »çÀÌÁî º¹»ç
+//			// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 //
 //			while (true)
 //			{

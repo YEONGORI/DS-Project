@@ -1,85 +1,23 @@
 #ifndef STACK_H
 #define STACK_H
 
-#ifndef NULL
-#define NULL 0
-#endif
-
 #include "Manager.h"
 #include "TreeNode.h"
 
-// This stack is Refernce code (Do Not Use directly)
+#define IMG_SIZE 512
 
-/*
-class Stack
-{
-private:
-    class StackNode
-    {
-    public:
-        T Data;
-        StackNode* pNext;
-
-        StackNode(T data) : Data(data), pNext(NULL) {}
-    };
-
-private:
-    // the head pointer of the stack and queue
-    StackNode* m_pTop;
-
-public:
-    Stack();
-    ~Stack();
-
-    /// <summary>
-    /// push the data into this stack and queue
-    /// </summary>
-    ///
-    /// <param name="data">
-    /// a data to push into this stack and queue
-    /// </param>
-    void Push(T data);
-    /// <summary>
-    /// pop(remove) the last-in data from this stack and queue
-    /// </summary>
-    void Pop();
-    /// <summary>
-    /// get the last-in data of this stack and queue
-    /// </summary>
-    ///
-    /// <returns>
-    /// the last-in data of this stack and queue
-    /// </returns>
-    T Top();
-    /// <summary>
-    /// check whether this stack and queue is empty or not.
-    /// </summary>
-    ///
-    /// <returns>
-    /// true if this stack and queue is empty.
-    /// false otherwise.
-    /// </returns>
-    bool IsEmpty();
-};*/
-
-class MiniStack
+class TREE_STACK
 {
 public:
     int pos;
-    TreeNode *dat[500];
+    TreeNode *dat[1000];
 
-    MiniStack()
+    TREE_STACK()
     {
         pos = 0;
-        // TreeNode treenode[500];
-        /*for (int i = 0; i < 500; i++) {
-            dat[i] = new TreeNode(NULL,NULL, NULL);
-        }*/
-    }
-    ~MiniStack()
-    {
-        delete[] dat;
-    }
+    };
+
+    ~TREE_STACK();
 
     void push(TreeNode *tmp)
     {
@@ -92,30 +30,29 @@ public:
             pos--;
     }
 
-    TreeNode *peek()
+    TreeNode *top()
     {
-        return dat[pos - 1];
+        return (dat[pos - 1]);
     }
 
     int empty(void)
     {
-        return pos == 0;
+        return (pos == 0);
     }
 };
 
-class IntStack
+class INT_STACK
 {
 public:
     int pos;
-    int data[512 * 512];
+    int data[IMG_SIZE * IMG_SIZE + 1];
 
-    IntStack()
+    INT_STACK()
     {
         pos = 0;
-    }
-    ~IntStack()
-    {
-    }
+    };
+
+    ~INT_STACK();
 
     void push(int tmp)
     {
@@ -128,14 +65,14 @@ public:
             pos--;
     }
 
-    int peek()
+    int top()
     {
-        return data[pos - 1];
+        return (data[pos - 1]);
     }
 
     int empty(void)
     {
-        return pos == 0;
+        return (pos == 0);
     }
 };
 

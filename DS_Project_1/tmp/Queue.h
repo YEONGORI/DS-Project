@@ -1,37 +1,26 @@
 #ifndef QUEUE_H
 #define QUEUE_H
 
-#ifndef NULL
-#define NULL 0
-#endif
-
 #include "Manager.h"
 #include "TreeNode.h"
 
-// This queue is Refernce code (Do Not Use directly)
 
-class Queue
+class TREE_QUEUE
 {
 public:
     int head;
     int tail;
-    int size; // Free to define (recommand 100 or 200)
-    TreeNode *dat[500];
+    int size;
 
-    Queue()
+    TreeNode *dat[1000];
+
+    TREE_QUEUE()
     {
         head = 0;
         tail = 0;
-        // TreeNode treenode[500];
-        /*for (int i = 0; i < 500; i++) {
-            ImageNode* n = new ImageNode();
-            dat[i] = new TreeNode(n, NULL, NULL);
-        }*/
-    }
-    ~Queue()
-    {
-        delete[] dat;
-    }
+    };
+
+    ~TREE_QUEUE();
 
     void push(TreeNode *tmp)
     {
@@ -45,18 +34,38 @@ public:
 
     TreeNode *top()
     {
-        return dat[head];
+        return (dat[head]);
     }
 
     bool empty()
     {
-        return tail == head;
+        return (tail == head);
     }
 
     bool isFull()
     {
-        // Check queue is full or not
+        return (tail == 1001);
     }
 };
 
 #endif
+
+void boyer_moore(TREE_QUEUE *Q, ofstream *f_log, string file_name)
+{
+    while (!Q->empty())
+    {
+        for (int i = 0; i < Q->top()->tree_data.f_name.length(); i++)
+        {
+            int j;
+            for (j = 0; j < file_name.length(); j++)
+            {
+                if (Q->top()->tree_data.f_name[i + j] != file_name[j])
+                    break;
+            }
+            if (j == file_name.length())
+                *f_log << "\"" << Q->top()->tree_data.f_name << "\" / " << Q->top()->tree_data.index << "\n";
+        }
+
+        Q->pop();
+    }
+};

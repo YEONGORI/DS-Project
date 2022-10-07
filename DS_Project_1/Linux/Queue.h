@@ -1,49 +1,49 @@
 #ifndef QUEUE_H
 #define QUEUE_H
 
-#ifndef NULL
-#define NULL 0
-#endif
+#include "Manager.h"
+#include "TreeNode.h"
 
-// This queue is Refernce code (Do Not Use directly)
-
-template <class T>
-class Queue
+class MINI_QUEUE
 {
 public:
-    int front;
-    int rear;
-    int size; // Free to define (recommand 100 or 200)
-    T *val;
+    int head;
+    int tail;
+    int size;
 
-    Queue()
-    {
-        val = new T[size];
-        // Needs extra init
-    }
-    ~Queue()
-    {
-        delete[] val;
-    }
+    TreeNode *dat[100];
 
-    void push(T value)
+    MINI_QUEUE()
     {
-        // input data
+        head = 0;
+        tail = 0;
+    };
+
+    ~MINI_QUEUE();
+
+    void push(TreeNode *tmp)
+    {
+        dat[tail++] = tmp;
     }
 
     void pop()
     {
-        // Change Front
+        head++;
+    }
+
+    TreeNode *top()
+    {
+        return (dat[head]);
     }
 
     bool empty()
     {
-        // Check its empty or not
+        return (tail == head);
     }
 
     bool isFull()
     {
-        // Check queue is full or not
+        return (tail == 1001);
     }
 };
 

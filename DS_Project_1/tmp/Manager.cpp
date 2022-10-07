@@ -1,394 +1,282 @@
-#include "Manager.h"
-#include <cstring>
 #include <iostream>
-#include <string.h>
+#include <fstream>
 #include <string>
-#include "BinarySearchTree.h"
-#include "TreeManager.h"
+#include <cstring>
+
+#include "Manager.h"
 #include "Queue.h"
 #include "Stack.h"
+#include "TreeManager.h"
+#include "BinarySearchTree.h"
+
+#define BUFF_SIZE 128
 
 using namespace std;
 
 Manager::~Manager()
 {
-    if (fout.is_open())
-        fout.close();
+    if (f_log.is_open())
+        f_log.close();
 }
 
 void Manager::Run(const char *filepath)
 {
-    fout.open(RESULT_LOG_PATH);
-    fin.open("command.txt");
-    fdata.open("filesnumbers.csv");
+    f_log.open(RESULT_LOG_PATH);
+    f_cmd.open("command.txt");
+    f_file.open("filesnumbers.csv");
+    f_new.open("new_filenumbers.csv");
 
-    char cmd[100];
-    if (filepath)
-        cout << "";
+
     Loaded_LIST *LIST = new Loaded_LIST;
     BinarySearchTree *BST = new BinarySearchTree;
+    
+    FILE *input_file, *output_file;
 
-    char data_path[100] = {};
+    string img_path;
 
+    char cmd[BUFF_SIZE] = {};
     unsigned char input_data[512][512];
     unsigned char output_data[512][512];
 
-    FILE *input_file, *output_file;
-
-    while (!fin.eof())
+    while (!f_cmd.eof())
     {
         // Read the command
-        fin.getline(cmd, 100);
+        f_cmd.getline(cmd, BUFF_SIZE);
         char *tmp = strtok(cmd, " ");
-        cout << tmp << '\n';
-
+        char *ch_cr = strrchr(tmp, 13);
+        if (ch_cr)
+            *ch_cr = 0;
         if (strcmp(tmp, "LOAD") == 0)
         {
-            ROW_LIST *R_LIST = new ROW_LIST;
+            ROW_LIST *NEW_LIST = new ROW_LIST;
 
-            fout << "=========LOAD=========" << endl;
-            if (!fdata)
-            {
-                fout << "========ERROR========\n100\n====================" << endl;
-                break;
+            f_log << "==========LOAD==========\n";
+            if(!f_log) {
+                f_log << "==========ERROR==========\n100\n=========================\n";
+                return ;
             }
-            int byte3_int = 0;
-            while (!fdata.eof())
+            while (!f_file.eof())
             {
-                char buffer[100];
-                char *raw1, *raw2;
+                char buff[BUFF_SIZE];
+                string index, file_name;
 
-                if (!fdata.getline(buffer, sizeof(buffer)))
+                if (!f_file.getline(buff, sizeof(buff)))
                     break;
 
-                if (byte3_int == 0)
-                {
-                    string byte3 = buffer;
-                    byte3 = byte3.substr(3);
-                    for (int j = 0; j < byte3.length(); j++)
-                    {
-                        buffer[j] = byte3[j];
-                    }
-                    byte3_int++;
-                }
+                index = strtok(buff, ",");
+                file_name = strtok(NULL, "\n");
+                file_name = file_name.substr(0, file_name.find('.'));
 
-                raw1 = strtok(buffer, ",");
-                raw2 = strtok(NULL, "\n");
-
-                int i;
-                for (i = 0; raw2[i]; i++)
-                    ;
-                raw2[i - 1] = '\0';
-                string r1 = raw1; // r1 = 고유번호
-                string r2 = raw2; // 파일 이름
-                if (R_LIST->size >= 100)
-                {
-                    R_LIST->QueuePop();
-                    cout << "check" << endl;
-                }
-                R_LIST->QueuePush(r2, "images", r1);
-                fout << r2 << "/";
-                fout << r1 << endl;
+                if (NEW_LIST->edge_left == NULL)
+                    index = index.substr(3, index.size());
+                if (NEW_LIST->size >= 100)
+                    ; // 이거 팝이 잘못됨
+                
+                NEW_LIST->PushNode(file_name, "images", index);
+                f_log << file_name << "/" << index << '\n';
             }
-            LIST->QueuePush(R_LIST);
-
-            fout << "=================\n"
-                 << endl;
+            LIST->PushList(NEW_LIST);
+            f_log << "========================\n\n";
         }
         else if (strcmp(tmp, "ADD") == 0)
         {
-            ROW_LIST *rowlist = new ROW_LIST;
+            ROW_LIST *NEW_LIST = new ROW_LIST;
+            string path, d_name, f_name;
 
-            char path[100] = {0};
-            char *dir = strtok(NULL, " ");
-            char *file = strtok(NULL, " ");
-            if (dir == NULL || file == NULL)
+            d_name = strtok(NULL, " ");
+            f_name = strtok(NULL, "\n");
+
+            path.append(d_name).append("/").append(f_name);
+            path.erase(find(path.begin(), path.end(), 13));
+            while (!f_new.eof())
             {
-                fout << "========ERROR========\n200\n====================\n"
-                     << endl;
-            }
-            strcat(path, dir);
-            strcat(path, "/");
-            strcat(path, file);
+                char buff[BUFF_SIZE];
+                string index, file_name;
 
-            int i;
-            for (i = 0; path[i]; i++)
-                ;
-            path[i - 1] = 0;
-
-            ndata.open("new_filenumbers.csv");
-
-            while (!ndata.eof())
-            {
-                char raw1[100], raw2[100];
-
-                if (!ndata.getline(raw1, sizeof(raw1), ','))
+                if (!f_new.getline(buff, BUFF_SIZE))
                     break;
-                ndata.getline(raw2, sizeof(raw2), '\n');
+                index = strtok(buff, ",");
+                file_name = strtok(NULL, "\n");
+                file_name.erase(find(file_name.begin(), file_name.end(), 13));
+                // file_name = file_name.substr(0, file_name.find('.'));
 
-                string r1 = raw1;
-                string r2 = raw2;
-
-                /*if (rowlist->size >= 100)
-                {
-                    rowlist->QueuePop();
-                }*/
-                if (LIST->isEmpty())
-                {
-                    fout << "========ERROR========\n200\n====================\n"
-                         << endl;
-                }
-                rowlist->QueuePush(r2, dir, r1);
+                // if (1) 전체 리스트의 크기가 100이 넘는 경우 에러처리
+                if (LIST->IsEmpty())
+                    f_log << "==========ERROR==========\n100\n=========================\n";
+                NEW_LIST->PushNode(file_name, d_name, index);
             }
-            LIST->QueuePush(rowlist);
-            fout << "=======ADD========\nSUCCESS\n===================\n"
-                 << endl;
+            LIST->PushList(NEW_LIST);
+            f_log << "==========ADD===========\nSUCCESS\n========================\n\n";
         }
         else if (strcmp(tmp, "MODIFY") == 0)
         {
-            char *dir = strtok(NULL, " ");   // dir
-            char *file = strtok(NULL, "\""); // file
-            char *index = strtok(NULL, " "); // index
-            if (dir == NULL || file == NULL || index == NULL)
-            {
-                fout << "========ERROR========\n300\n====================\n"
-                     << endl;
-                continue;
-            }
-            Node *curNode = LIST->start_list->first;
-            ROW_LIST *curRowList = LIST->start_list;
-            bool dir_case = false;
-            bool file_case = false;
-            while (curNode->dir != dir)
-            {
-                curRowList = curRowList->down;
-                if (curRowList == NULL)
-                {
-                    fout << "========ERROR========\n300\n====================\n"
-                         << endl;
-                    dir_case = true;
+            string d_name, f_name, index;
+            Node *cur_node = LIST->top_list->edge_left;
+            Node *tmp_node;
+            ROW_LIST *CUR_LIST = LIST->top_list;
+
+            d_name = strtok(NULL, " ");
+            f_name = strtok(NULL, "\"");
+            index = strtok(NULL, " ");
+
+            // if () dir_name, file_name, index 중 하나라도 안들어 있으면 에러처리
+
+            while (cur_node->dir_name != d_name) {
+                CUR_LIST = CUR_LIST->go_down;
+                if (CUR_LIST == NULL) {
+                    f_log << "==========ERROR==========\n300\n=========================\n";
                     break;
                 }
-                curNode = curRowList->first;
+                cur_node = CUR_LIST->edge_left;
             }
-            if (dir_case)
-                continue;
-            while (curNode->file != file)
-            {
-                curNode = curNode->back;
-                if (curNode == NULL)
-                {
-                    fout << "========ERROR========\n300\n====================\n"
-                         << endl;
-                    file_case = true;
+            if (!CUR_LIST) continue;
+
+            while (cur_node->file_name != f_name) {
+                cur_node = cur_node->next;
+                if (cur_node ==  NULL) {
+                    f_log << "==========ERROR==========\n300\n=========================\n";
                     break;
                 }
             }
-            if (file_case)
-                continue;
-            Node *frontNode;
-            Node *backNode;
-            frontNode = curNode->front;
-            backNode = curNode->back;
-            frontNode->back = backNode;
-            backNode->front = frontNode;
-            delete curNode;
-            curRowList->QueuePush(file, dir, index);
-            fout << "=======MODIFY========\nSUCCESS\n====================\n"
-                 << endl;
+            if (!cur_node) continue;
+
+            tmp_node = cur_node->next;
+            tmp_node->prev = cur_node->prev;
+            cur_node->prev->next = tmp_node;
+            cur_node->next->prev = tmp_node->prev;
+            delete cur_node;
+            CUR_LIST->PushNode(f_name, d_name, index);
+            f_log << "=========MODIFY==========\nSUCCESS\n=========================\n\n";
         }
-        else if (cmd[0] == 'M' && cmd[1] == 'O' && cmd[2] == 'V' && cmd[3] == 'E')
+        else if (strcmp(tmp, "MOVE") == 0)
         {
-            if (LIST->isEmpty())
+            if (LIST->IsEmpty())
             {
-                fout << "========ERROR========\n400\n====================\n"
-                     << endl;
+                f_log << "==========ERROR==========\n400\n=========================\n";
                 continue;
             }
-            // new_files가 있는지 없는지 찾기
-            // 찾으면 그거부LI터 옮기고 삭제
-            // 다 옮기면 img_files에 있는거 옮기고 삭제
-            ROW_LIST *StartList = LIST->end_list;
-            int low_index = 10000;
-            while (StartList != NULL)
+
+            int low_index = BUFF_SIZE * BUFF_SIZE;
+            ROW_LIST *START_LIST = LIST->bottom_list;
+            while (START_LIST != NULL)
             {
-                Node *StartNode = StartList->last;
-                while (StartNode != NULL)
-                {
-                    Node *TmpNode = new Node("", "", "", NULL, NULL);
-                    if (BST->size > 300)
-                    { // 300개 넘으면
-                        TreeNode *curTreeNode = BST->m_root;
+                Node *start_node = START_LIST->edge_right;
+                while (start_node != NULL)
+                {    
+                    if (BST->bst_size > 300)
+                    {
+                        TreeNode *cur_tree_node = BST->tree_root;
 
-                        while (curTreeNode->m_left)
-                        { //왼쪽 끝 노드로 이동
-                            curTreeNode = curTreeNode->m_left;
-                        }
+                        while (cur_tree_node->tree_left) //왼쪽 끝 노드로 이동
+                            cur_tree_node = cur_tree_node->tree_left;
 
-                        low_index = curTreeNode->m_data.unique_number; //가장 작은 고유번호 구함
-                        cout << curTreeNode->m_data.unique_number << endl;
+                        low_index = cur_tree_node->tree_data.index; //가장 작은 고유번호 구함
                         BST->deletion(low_index); // 삭제
-                        cout << curTreeNode->m_data.unique_number << "abc" << endl;
-                        BST->size--;
                     }
+                    Node *tmp_node = new Node("", "", "", NULL, NULL);
 
-                    BST->insert(StartNode);
-                    TmpNode = StartNode;
-                    StartNode = StartNode->front;
-                    delete (TmpNode);
+                    BST->insert(start_node);
+                    tmp_node = start_node;
+                    start_node = start_node->prev;
+                    delete (tmp_node);
                 }
-                StartList = StartList->up;
+                START_LIST = START_LIST->go_up;
             }
-            cout << BST->m_root->getLeftNode() << "\n\n";
+            f_log << "==========MOVE===========\nSUCCESS\n=========================\n\n";
         }
         else if (strcmp(tmp, "PRINT") == 0)
         {
-            if (!BST->m_root)
+            if (!BST->tree_root)
             {
-                fout << "========ERROR========\n500\n====================\n"
-                     << endl;
+                f_log << "==========ERROR==========\n500\n=========================\n";
                 continue;
             }
-            fout << "=======PRINT================" << endl;
+            f_log << "=========PRINT===========\n";
+            traversal_inorder(BST->tree_root, &f_log);
+            f_log << "=========================\n\n";
 
-            BST->print_inorder(BST->m_root, &fout);
-
-            fout << "===========================\n"
-                 << endl;
         }
         else if (strcmp(tmp, "SEARCH") == 0)
         {
-            if (BST->m_root->m_data.unique_number == NULL)
+            if (BST->tree_root->tree_data.index == NULL)
             {
-                fout << "========ERROR========\n600\n====================\n"
-                     << endl;
+                f_log << "==========ERROR==========\n600\n=========================\n";
                 continue;
             }
 
-            fout << "=======SEARCH===============\n";
+            f_log << "=========SEARCH==========\n";
+            string file_name;
+            TREE_STACK *S = new TREE_STACK();
+            TREE_STACK *out = new TREE_STACK();
+            TREE_QUEUE *Q = new TREE_QUEUE();
 
-            char *filename = strtok(NULL, "\"");
-            string file_name = filename;
+            file_name = strtok(NULL, "\"");
+            S->push(BST->tree_root);
 
-            MiniStack *s = new MiniStack();
-            s->push(BST->m_root);
-            MiniStack *out = new MiniStack();
-
-            while (!s->empty())
+            while (!S->empty())
             {
-                TreeNode *curr = s->peek();
-                s->pop();
+                TreeNode *curr = S->top();
+                S->pop();
 
                 out->push(curr);
-
                 if (curr->getLeftNode())
-                {
-                    s->push(curr->getLeftNode());
-                }
+                    S->push(curr->getLeftNode());
                 if (curr->getRightNode())
-                {
-                    s->push(curr->getRightNode());
-                }
+                    S->push(curr->getRightNode());
             }
-
-            Queue *q = new Queue;
 
             while (!out->empty())
-            { //큐 넣기
-                q->push(out->peek());
+            {
+                Q->push(out->top());
                 out->pop();
             }
+            boyer_moore(Q, &f_log, file_name);
+            f_log << "=========================\n\n";
 
-            while (!q->empty())
-            {
-                for (int i = 0; i < q->top()->m_data.m_name.length(); i++)
-                {
-                    int j;
-                    for (j = 0; j < file_name.length(); j++)
-                    {
-                        if (q->top()->m_data.m_name[i + j] != file_name[j])
-                            break;
-                    }
-                    if (j == file_name.length())
-                        fout << "\"" << q->top()->m_data.m_name << "\" / " << q->top()->m_data.unique_number << endl;
-                }
-
-                q->pop();
-            }
-            fout << "======================\n"
-                 << endl;
         }
-
         else if (strcmp(tmp, "SELECT") == 0)
         {
-            char *tmp = strtok(NULL, " ");
-            string tmp_num = tmp;
-            int tmp_number = stoi(tmp_num);
+            int index = stoi(strtok(NULL, " "));
 
-            TreeNode *inputdata = BST->print_preorder(BST->m_root, &fout, tmp_number);
+            TreeNode *inputdata = traversal_preorder(BST->tree_root, &f_log, index);
+            img_path = inputdata->tree_data.f_name;
+            img_path.append(".RAW");
 
-            // rawreader
-            int width = 512, height = 512;
-
-            strcpy(data_path, inputdata->m_data.m_name.c_str());
-            strcat(data_path, ".RAW");
-            // raw 파일 읽어오기
-            input_file = fopen(data_path, "rb");
+            input_file = fopen(img_path.c_str(), "rb");
             if (input_file == NULL)
             {
-                fout << "========ERROR========\n700\n====================\n"
-                     << endl;
-                return;
+                f_log << "==========ERROR==========\n700\n=========================\n";
+                continue;
             }
-            fread(input_data, sizeof(unsigned char), width * height, input_file);
-            fout << "=======SEARCH===============\n";
-            fout << "SUCCESS" << endl;
-            fout << "======================\n"
-                 << endl;
+            fread(input_data, sizeof(unsigned char), IMG_SIZE * IMG_SIZE, input_file);
+            f_log << "==========SELECT==========\nSUCCESS\n========================\n\n";
         }
-
         else if (strcmp(tmp, "EDIT") == 0)
         {
-            char *tmp = strtok(NULL, " ");
-            int number;
-            /*if (strcmp(tmp, "-l")) {
-                char* tmp2 = strtok(NULL, " ");
-                string num = tmp2;
-                number = stoi(num);
-            }*/
+            char *opt = strtok(NULL, " ");
 
-            IntStack *s = new IntStack;
+            INT_STACK *S = new INT_STACK;
 
-            if (strcmp(tmp, "-f") == 0)
+            if (strcmp(opt, "-f") == 0)
             {
-                for (int i = 0; i < 512; i++)
-                { //스택에 인풋 데이터 넣음
-                    for (int j = 0; j < 512; j++)
-                    {
-                        s->push(input_data[i][j]);
-                    }
+                for (int i = 0; i < IMG_SIZE; i++)
+                {
+                    for (int j = 0; j < IMG_SIZE; j++)
+                        S->push(input_data[i][j]);
+                }
+                for (int i = 0; i < IMG_SIZE; i++)
+                {
+                    for (int j = 0; j < IMG_SIZE; j++)
+                        output_data[i][j] = S->top();
+                        S->pop();
                 }
 
-                for (int i = 0; i < 512; i++)
-                { // 아웃풋 데이터에 스택 데이터 넣음
-                    for (int j = 0; j < 512; j++)
-                    {
-                        output_data[i][j] = s->peek();
-                        s->pop();
-                    }
-                }
+                img_path = img_path.substr(0, img_path.find('.'));
+                img_path.append("_flipped.RAW");
 
-                char *path_tmp = data_path;
-                path_tmp = strtok(data_path, ".");
-                strcat(path_tmp, "_flipped");
-                strcat(path_tmp, ".RAW");
-
-                output_file = fopen(path_tmp, "wb+");
-                fwrite(output_data, sizeof(unsigned char), 512 * 512, output_file);
+                output_file = fopen(img_path.c_str(), "wb+");
+                fwrite(output_data, sizeof(unsigned char), IMG_SIZE * IMG_SIZE, output_file);
             }
         }
-        // cout << "4" << ' ';
     }
-
-    // TODO: implement
 }

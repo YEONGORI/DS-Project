@@ -7,24 +7,24 @@ class ImageNode
 	friend class TreeNode;
 	friend class BinarySearchTree;
 	friend class TreeManager;
+
 private:
+public:
 	std::string m_name;
 	std::string dirname;
-
 	int unique_number;
 
-public:
-	ImageNode() { }
+	ImageNode() : m_name(m_name), dirname(dirname), unique_number(unique_number) {}
 	ImageNode(std::string name, std::string dir, int number)
-		:
-		m_name(name),
-		dirname(dir),
-		unique_number(number),
+		: m_name(name),
+		  dirname(dir),
+		  unique_number(number)
 	{
 	}
 
-	friend std::ostream& operator<<(std::ostream& os, const ImageNode& node) {
-		os << "(node.m_name: " << node.m_name << "), "; //Debug with print
+	friend std::ostream &operator<<(std::ostream &os, const ImageNode &node)
+	{
+		os << "(node.m_name: " << node.m_name << "), "; // Debug with print
 		return os;
 	}
 };

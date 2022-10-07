@@ -4,6 +4,7 @@
 
 #include <iostream>
 #include <string>
+#include "Manager.h"
 
 class TreeManager
 {
@@ -13,7 +14,6 @@ private:
 	BinarySearchTree imageBST;
 
 public:
-
 	struct ImageControl
 	{
 		ImageNode node_f;
@@ -23,9 +23,8 @@ public:
 	};
 
 	TreeManager(std::string file_dir);
-	
-	friend std::ostream& operator<<(std::ostream& os, const TreeManager& manager);
+
+	friend std::ostream &operator<<(std::ostream &os, const TreeManager &manager);
 
 	ImageControl deletion();
 };
-

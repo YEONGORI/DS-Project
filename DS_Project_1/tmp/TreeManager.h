@@ -1,10 +1,10 @@
 #pragma once
 
+#include "Manager.h"
 #include "BinarySearchTree.h"
 
 #include <iostream>
 #include <string>
-#include "Manager.h"
 
 class TreeManager
 {

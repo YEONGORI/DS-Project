@@ -2,12 +2,15 @@
 #define STACK_H
 
 #ifndef NULL
-#define NULL    0
+#define NULL 0
 #endif
+
+#include "Manager.h"
+#include "TreeNode.h"
 
 // This stack is Refernce code (Do Not Use directly)
 
-template <typename T>
+/*
 class Stack
 {
 private:
@@ -43,7 +46,7 @@ public:
     /// <summary>
     /// get the last-in data of this stack and queue
     /// </summary>
-    /// 
+    ///
     /// <returns>
     /// the last-in data of this stack and queue
     /// </returns>
@@ -57,6 +60,77 @@ public:
     /// false otherwise.
     /// </returns>
     bool IsEmpty();
+};*/
+
+class MINI_STACK
+{
+public:
+    int pos;
+    TreeNode *dat[500];
+
+    MINI_STACK()
+    {
+        pos = 0;
+    };
+
+    ~MINI_STACK();
+
+    void push(TreeNode *tmp)
+    {
+        dat[pos++] = tmp;
+    }
+
+    void pop(void)
+    {
+        if (pos > 0)
+            pos--;
+    }
+
+    TreeNode *top()
+    {
+        return (dat[pos - 1]);
+    }
+
+    int empty(void)
+    {
+        return (pos == 0);
+    }
+};
+
+class IntStack
+{
+public:
+    int pos;
+    int data[512 * 512];
+
+    IntStack()
+    {
+        pos = 0;
+    }
+    ~IntStack()
+    {
+    }
+
+    void push(int tmp)
+    {
+        data[pos++] = tmp;
+    }
+
+    void pop(void)
+    {
+        if (pos > 0)
+            pos--;
+    }
+
+    int top()
+    {
+        return data[pos - 1];
+    }
+
+    int empty(void)
+    {
+        return pos == 0;
+    }
 };
 
 #endif
