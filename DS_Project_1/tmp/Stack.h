@@ -2,15 +2,13 @@
 #define STACK_H
 
 #ifndef NULL
-#define NULL    0
+#define NULL 0
 #endif
 
 #include "Manager.h"
 #include "TreeNode.h"
 
 // This stack is Refernce code (Do Not Use directly)
-
-
 
 /*
 class Stack
@@ -48,7 +46,7 @@ public:
     /// <summary>
     /// get the last-in data of this stack and queue
     /// </summary>
-    /// 
+    ///
     /// <returns>
     /// the last-in data of this stack and queue
     /// </returns>
@@ -64,16 +62,16 @@ public:
     bool IsEmpty();
 };*/
 
-
 class MiniStack
 {
 public:
     int pos;
-    TreeNode* dat[500];
+    TreeNode *dat[500];
 
-    MiniStack() {
+    MiniStack()
+    {
         pos = 0;
-        //TreeNode treenode[500];
+        // TreeNode treenode[500];
         /*for (int i = 0; i < 500; i++) {
             dat[i] = new TreeNode(NULL,NULL, NULL);
         }*/
@@ -83,20 +81,60 @@ public:
         delete[] dat;
     }
 
-    void push(TreeNode* tmp) {
+    void push(TreeNode *tmp)
+    {
         dat[pos++] = tmp;
     }
 
-    void pop(void) {
+    void pop(void)
+    {
         if (pos > 0)
             pos--;
     }
 
-    TreeNode* peek() {
+    TreeNode *peek()
+    {
         return dat[pos - 1];
     }
 
-    int empty(void) {
+    int empty(void)
+    {
+        return pos == 0;
+    }
+};
+
+class IntStack
+{
+public:
+    int pos;
+    int data[512 * 512];
+
+    IntStack()
+    {
+        pos = 0;
+    }
+    ~IntStack()
+    {
+    }
+
+    void push(int tmp)
+    {
+        data[pos++] = tmp;
+    }
+
+    void pop(void)
+    {
+        if (pos > 0)
+            pos--;
+    }
+
+    int peek()
+    {
+        return data[pos - 1];
+    }
+
+    int empty(void)
+    {
         return pos == 0;
     }
 };

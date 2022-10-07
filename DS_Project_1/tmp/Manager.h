@@ -16,19 +16,19 @@ public:
     string file;
     string dir;
     string number;
-    Node* front;
-    Node* back;
-    Node(string file, string dir, string number, Node* front, Node* back) : file(file), dir(dir), number(number), front(front), back(back) {}
+    Node *front;
+    Node *back;
+    Node(string file, string dir, string number, Node *front, Node *back) : file(file), dir(dir), number(number), front(front), back(back) {}
 };
 
 class ROW_LIST
 {
 public:
     int size;
-    Node* last;
-    Node* first;
-    ROW_LIST* up;
-    ROW_LIST* down;
+    Node *last;
+    Node *first;
+    ROW_LIST *up;
+    ROW_LIST *down;
 
     ROW_LIST(void)
     {
@@ -40,7 +40,7 @@ public:
     };
     ~ROW_LIST(void)
     {
-        Node* next = NULL;
+        Node *next = NULL;
 
         while (first != NULL)
         {
@@ -58,7 +58,7 @@ public:
         else
         {
             // O - O [ - O ]
-            Node* next = new Node(file, dir, index, NULL, NULL);
+            Node *next = new Node(file, dir, index, NULL, NULL);
             last->back = next;
             next->front = last;
             last = next;
@@ -68,7 +68,7 @@ public:
 
     void QueuePop(void)
     {
-        Node* front = first;
+        Node *front = first;
         if (isEmpty())
         {
             cout << "EMPTY\n";
@@ -84,7 +84,7 @@ public:
 
     void StackPop(void)
     {
-        Node* end = last;
+        Node *end = last;
         if (isEmpty())
         {
             cout << "EMPTY\n";
@@ -106,8 +106,8 @@ public:
 class Loaded_LIST
 {
 public:
-    ROW_LIST* start_list;
-    ROW_LIST* end_list;
+    ROW_LIST *start_list;
+    ROW_LIST *end_list;
 
     Loaded_LIST(void)
     {
@@ -117,7 +117,7 @@ public:
     }
     ~Loaded_LIST()
     {
-        ROW_LIST* next = NULL; 
+        ROW_LIST *next = NULL;
 
         while (start_list != NULL)
         {
@@ -128,7 +128,7 @@ public:
     }
 
     // number, file, dir
-    void QueuePush(ROW_LIST* data)
+    void QueuePush(ROW_LIST *data)
     {
         if (isEmpty())
         {
@@ -148,13 +148,11 @@ public:
     }
 };
 
-
-
 class Manager
 {
 private:
     // the filepath for the result log
-    const char* RESULT_LOG_PATH = "log.txt";
+    const char *RESULT_LOG_PATH = "log.txt";
 
     std::ofstream fout;
     std::ofstream fout2;
@@ -164,11 +162,7 @@ private:
 
 public:
     ~Manager();
-    void Run(const char* filepath);
-
-    
-
-
+    void Run(const char *filepath);
 };
 
 #endif

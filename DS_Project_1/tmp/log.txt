@@ -1,6 +1,5 @@
 =========LOAD=========
-there are lots of people in the park.RAW
-AW/100
+there are lots of people in the park.RAWAW/100
 the man is gorgeous.RAW/111
 the woman is smiling.RAW/200
 the man takes a picture.RAW/222
@@ -34,8 +33,7 @@ SUCCESS
 
 =======SEARCH===============
 "airplane fly on the mountain.RAW" / 888
-"A cup on the table
-" / 789
+"A cup on the table" / 789
 ======================
 
 ========ERROR========

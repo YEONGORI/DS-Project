@@ -2,24 +2,24 @@
 //#include <fstream>
 //#include <string>
 //
-//TreeManager::ImageControl::ImageControl()
+// TreeManager::ImageControl::ImageControl()
 //{
 //	//Funtion must be added (Skeleton codes function is not define every features in this project)
 //}
 //
-//TreeManager::ImageControl::ImageControl( ) // parameter must be added
+// TreeManager::ImageControl::ImageControl( ) // parameter must be added
 //{
 //	this->node_f = node_f;
 //}
 //
-//std::ostream& operator<<(std::ostream& os, const TreeManager::ImageControl& ) //parameter must be added
+// std::ostream& operator<<(std::ostream& os, const TreeManager::ImageControl& ) //parameter must be added
 //{
 //
 //	return os;
 //}
 //
 //
-//TreeManager::TreeManager(std::string file_dir, int unique_number)
+// TreeManager::TreeManager(std::string file_dir, int unique_number)
 //{
 //	m_unique_number = unique_number;
 //
@@ -32,14 +32,14 @@
 //	}
 //}
 //
-//std::ostream& operator<<(std::ostream& os, const TreeManager& manager)
+// std::ostream& operator<<(std::ostream& os, const TreeManager& manager)
 //{
 //
 //
 //	return os;
 //}
 //
-//TreeManager::ImageControl TreeManager::node_edit()
+// TreeManager::ImageControl TreeManager::node_edit()
 //{
 //	ImageControl deletion;
 //
