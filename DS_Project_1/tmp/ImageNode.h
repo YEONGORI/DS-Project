@@ -1,5 +1,3 @@
-#pragma once
-
 #include <string>
 #include <iostream>
 
@@ -17,11 +15,9 @@ public:
 	string d_name;
 	int index;
 
-	ImageNode() :
-	f_name(f_name), d_name(d_name), index(index) {};
+	ImageNode() : f_name(f_name), d_name(d_name), index(index){};
 
-	ImageNode(string name, string dir, int index) :
-		f_name(name), d_name(dir), index(index) {};
+	ImageNode(string name, string dir, int index) : f_name(name), d_name(dir), index(index){};
 
 	// friend ostream &operator<<(ostream &os, const ImageNode &node)
 	// {

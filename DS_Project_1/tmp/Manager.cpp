@@ -26,10 +26,9 @@ void Manager::Run(const char *filepath)
     f_file.open("filesnumbers.csv");
     f_new.open("new_filenumbers.csv");
 
-
     Loaded_LIST *LIST = new Loaded_LIST;
     BinarySearchTree *BST = new BinarySearchTree;
-    
+
     FILE *input_file, *output_file;
 
     string img_path;
@@ -51,9 +50,10 @@ void Manager::Run(const char *filepath)
             ROW_LIST *NEW_LIST = new ROW_LIST;
 
             f_log << "==========LOAD==========\n";
-            if(!f_log) {
+            if (!f_log)
+            {
                 f_log << "==========ERROR==========\n100\n=========================\n";
-                return ;
+                continue;
             }
             while (!f_file.eof())
             {
@@ -71,7 +71,7 @@ void Manager::Run(const char *filepath)
                     index = index.substr(3, index.size());
                 if (NEW_LIST->size >= 100)
                     ; // 이거 팝이 잘못됨
-                
+
                 NEW_LIST->PushNode(file_name, "images", index);
                 f_log << file_name << "/" << index << '\n';
             }
@@ -85,9 +85,9 @@ void Manager::Run(const char *filepath)
 
             d_name = strtok(NULL, " ");
             f_name = strtok(NULL, "\n");
-
             path.append(d_name).append("/").append(f_name);
-            path.erase(find(path.begin(), path.end(), 13));
+            path.erase(path.find(13));
+
             while (!f_new.eof())
             {
                 char buff[BUFF_SIZE];
@@ -97,8 +97,7 @@ void Manager::Run(const char *filepath)
                     break;
                 index = strtok(buff, ",");
                 file_name = strtok(NULL, "\n");
-                file_name.erase(find(file_name.begin(), file_name.end(), 13));
-                // file_name = file_name.substr(0, file_name.find('.'));
+                file_name.erase(file_name.find(13));
 
                 // if (1) 전체 리스트의 크기가 100이 넘는 경우 에러처리
                 if (LIST->IsEmpty())
@@ -121,24 +120,30 @@ void Manager::Run(const char *filepath)
 
             // if () dir_name, file_name, index 중 하나라도 안들어 있으면 에러처리
 
-            while (cur_node->dir_name != d_name) {
+            while (cur_node->dir_name != d_name)
+            {
                 CUR_LIST = CUR_LIST->go_down;
-                if (CUR_LIST == NULL) {
+                if (CUR_LIST == NULL)
+                {
                     f_log << "==========ERROR==========\n300\n=========================\n";
                     break;
                 }
                 cur_node = CUR_LIST->edge_left;
             }
-            if (!CUR_LIST) continue;
+            if (!CUR_LIST)
+                continue;
 
-            while (cur_node->file_name != f_name) {
+            while (cur_node->file_name != f_name)
+            {
                 cur_node = cur_node->next;
-                if (cur_node ==  NULL) {
+                if (cur_node == NULL)
+                {
                     f_log << "==========ERROR==========\n300\n=========================\n";
                     break;
                 }
             }
-            if (!cur_node) continue;
+            if (!cur_node)
+                continue;
 
             tmp_node = cur_node->next;
             tmp_node->prev = cur_node->prev;
@@ -162,7 +167,7 @@ void Manager::Run(const char *filepath)
             {
                 Node *start_node = START_LIST->edge_right;
                 while (start_node != NULL)
-                {    
+                {
                     if (BST->bst_size > 300)
                     {
                         TreeNode *cur_tree_node = BST->tree_root;
@@ -171,7 +176,7 @@ void Manager::Run(const char *filepath)
                             cur_tree_node = cur_tree_node->tree_left;
 
                         low_index = cur_tree_node->tree_data.index; //가장 작은 고유번호 구함
-                        BST->deletion(low_index); // 삭제
+                        BST->deletion(low_index);                   // 삭제
                     }
                     Node *tmp_node = new Node("", "", "", NULL, NULL);
 
@@ -194,7 +199,6 @@ void Manager::Run(const char *filepath)
             f_log << "=========PRINT===========\n";
             traversal_inorder(BST->tree_root, &f_log);
             f_log << "=========================\n\n";
-
         }
         else if (strcmp(tmp, "SEARCH") == 0)
         {
@@ -232,7 +236,6 @@ void Manager::Run(const char *filepath)
             }
             boyer_moore(Q, &f_log, file_name);
             f_log << "=========================\n\n";
-
         }
         else if (strcmp(tmp, "SELECT") == 0)
         {
@@ -255,10 +258,13 @@ void Manager::Run(const char *filepath)
         {
             char *opt = strtok(NULL, " ");
 
-            INT_STACK *S = new INT_STACK;
-
+            if (opt[2] != NULL)
+                opt[2] = 0;
+            cout << opt << ' ';
             if (strcmp(opt, "-f") == 0)
             {
+                img_path = img_path.erase(img_path.find("_"));
+                INT_STACK *S = new INT_STACK();
                 for (int i = 0; i < IMG_SIZE; i++)
                 {
                     for (int j = 0; j < IMG_SIZE; j++)
@@ -268,15 +274,73 @@ void Manager::Run(const char *filepath)
                 {
                     for (int j = 0; j < IMG_SIZE; j++)
                         output_data[i][j] = S->top();
-                        S->pop();
+                    S->pop();
                 }
-
                 img_path = img_path.substr(0, img_path.find('.'));
                 img_path.append("_flipped.RAW");
 
                 output_file = fopen(img_path.c_str(), "wb+");
                 fwrite(output_data, sizeof(unsigned char), IMG_SIZE * IMG_SIZE, output_file);
             }
+            else if (strcmp(opt, "-l") == 0)
+            {
+                img_path = img_path.erase(img_path.find("_"));
+                string temp = strtok(tmp, " ");
+                CHAR_QUEUE *Q = new CHAR_QUEUE();
+                if (temp.empty())
+                {
+                    f_log << "==========ERROR==========\n900\n=========================\n";
+                    continue;
+                }
+                cout << temp;
+                int val = 16;
+                for (int i = 0; i < IMG_SIZE; i++)
+                {
+                    for (int j = 0; j < IMG_SIZE; j++)
+                        Q->push(input_data[i][j]);
+                }
+                for (int i = 0; i < IMG_SIZE; i++)
+                {
+                    for (int j = 0; j < IMG_SIZE; j++)
+                    {
+                        int pix = Q->top() + val;
+                        if (pix >= 255)
+                            output_data[i][j] = 255;
+                        else
+                            output_data[i][j] = pix;
+                        Q->pop();
+                    }
+                }
+
+                img_path = img_path.substr(0, img_path.find('.'));
+                img_path.append("_resized.RAW");
+
+                output_file = fopen(img_path.c_str(), "wb+");
+                fwrite(output_data, sizeof(unsigned char), IMG_SIZE * IMG_SIZE, output_file);
+            }
+            else if (strcmp(opt, "-r") == 0)
+            {
+                for (int i = 0; i < IMG_SIZE; i += 2)
+                {
+                    for (int j = 0; j < IMG_SIZE; j += 2)
+                        output_data[i / 2][j / 2] = (input_data[i][j] + input_data[i][j + 1] + input_data[i + 1][j] + input_data[i + 1][j + 1]) / 4;
+                }
+
+                img_path = img_path.substr(0, img_path.find('.'));
+                img_path.append("_adjusted.RAW");
+
+                output_file = fopen(img_path.c_str(), "wb+");
+                fwrite(output_data, sizeof(unsigned char), (IMG_SIZE / 2) * (IMG_SIZE / 2), output_file);
+            }
+            f_log << "===========EDIT===========\nSUCCESS\n========================\n\n";
+        }
+        else if (strcmp(tmp, "EXIT") == 0)
+        {
+            f_log << "===========EDIT===========\nSUCCESS\n========================\n\n";
+        }
+        else
+        {
+            f_log << "==========ERROR==========\n777\n=========================\n";
         }
     }
 }

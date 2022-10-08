@@ -8,8 +8,7 @@
 #include "BinarySearchTree.h"
 
 #ifndef BINARY_SEARCH_TREE_H
-# define BINARY_SEARCH_TREE_H
-
+#define BINARY_SEARCH_TREE_H
 
 TreeNode *visit_inputdata(TreeNode *t, ofstream *fout, int index);
 TreeNode *traversal_preorder(TreeNode *t, ofstream *fout, int index);
@@ -26,7 +25,8 @@ public:
 	int bst_size;
 	TreeNode *tree_root;
 
-	BinarySearchTree() {
+	BinarySearchTree()
+	{
 		bst_size = 0;
 		tree_root = NULL;
 	};

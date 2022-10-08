@@ -3,7 +3,9 @@
 
 #include "Manager.h"
 #include "TreeNode.h"
+#include "BinarySearchTree.h"
 
+#define IMG_SIZE 512
 
 class TREE_QUEUE
 {
@@ -33,6 +35,50 @@ public:
     }
 
     TreeNode *top()
+    {
+        return (dat[head]);
+    }
+
+    bool empty()
+    {
+        return (tail == head);
+    }
+
+    bool isFull()
+    {
+        return (tail == 1001);
+    }
+};
+
+class CHAR_QUEUE
+{
+public:
+    int head;
+    int tail;
+    int size;
+
+    char dat[IMG_SIZE * IMG_SIZE];
+
+    CHAR_QUEUE()
+    {
+        head = 0;
+        tail = 0;
+    };
+
+    ~CHAR_QUEUE();
+
+    void push(char tmp)
+    {
+
+        dat[tail++] = tmp;
+    }
+
+    void pop()
+    {
+        head++;
+    }
+
+    char top()
     {
         return (dat[head]);
     }
