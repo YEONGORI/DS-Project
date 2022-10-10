@@ -5,181 +5,118 @@
 
 #include "TreeNode.h"
 #include "Manager.h"
-#include "BinarySearchTree.h"
+
+TreeNode *visit_inputdata(TreeNode *t, ofstream *fout, int index);
+TreeNode *traversal_preorder(TreeNode *t, ofstream *fout, int index);
+TreeNode *visit_inputdata(TreeNode *t, ofstream *fout, int index);
+void traversal_inorder(TreeNode *t, ofstream *fout);
 
 
-class BinarySearchTree
+class Database_BST
 {
 	friend class TreeManager;
 
 public:
-	TreeNode *m_root;
-	int size;
+	TreeNode *tree_root;
 
-	BinarySearchTree() {
-		m_root = NULL;
-		size = 0;
+	Database_BST()
+	{
+		tree_root = NULL;
 	};
 
-	~BinarySearchTree();
+	~Database_BST() {};
 
 	void insert(Node *node)
 	{
-		TreeNode *p = m_root, *pp = NULL;
+		int idx = stoi(node->index);
+		TreeNode *p = tree_root, *pp = NULL;
+
 		while (p)
 		{
 			pp = p;
-			if (stoi(node->index) < p->m_data.unique_number)
-				p = p->m_left;
-			else if (stoi(node->index) > p->m_data.unique_number)
-				p = p->m_right;
+			if (idx < p->tree_data->index)
+				p = p->tree_left;
+			else if (idx > p->tree_data->index)
+				p = p->tree_right;
 		}
 
-		p = new TreeNode;
-		p->m_data.dirname = node->dir_name;
-		p->m_data.m_name = node->file_name;
-		p->m_data.unique_number = stoi(node->index);
-		if (m_root != NULL)
+		ImageNode *img_node = new ImageNode(node->file_name, node->dir_name, idx);
+		p = new TreeNode(img_node, NULL, NULL);
+	
+		if (tree_root != NULL)
 		{
-			if (stoi(node->index) < pp->m_data.unique_number)
-				pp->m_left = p;
+			if (idx < pp->tree_data->index)
+				pp->tree_left = p;
 			else
-				pp->m_right = p;
+				pp->tree_right = p;
 		}
 		else
-			m_root = p;
-		size++;
-	}; // Data
+			tree_root = p;
+	};
 
-	void deletion(int key)
-	{ // unique number = key
-		TreeNode *p = m_root;
-		TreeNode *q = 0;
-		while (p && key != p->m_data.unique_number)
+	void deletion(int index)
+	{
+		TreeNode *p = tree_root;
+		TreeNode *pp = NULL;
+		while (p && index != p->tree_data->index)
 		{
-			q = p;
-			if (key < p->m_data.unique_number)
-			{
-				p = p->m_left;
-			}
+			pp = p;
+			if (index < p->tree_data->index)
+				p = p->tree_left;
 			else
-			{
-				p = p->m_right;
-			}
+				p = p->tree_right;
 		}
-		if (p == 0)
-		{
+		if (p == NULL)
 			return;
-		}
-		if (p->m_left == 0 && p->m_right == 0)
-		{ // leaf
-			if (q == 0)
-			{
-				m_root = 0;
-			}
-			else if (q->m_left == p)
-			{
-				q->m_left = 0;
-			}
+		if (p->tree_left == NULL && p->tree_right == NULL)
+		{
+			if (pp == NULL)
+				tree_root = NULL;
+			else if (pp->tree_left == p)
+				pp->tree_left = NULL;
 			else
-			{
-				q->m_right = 0;
-			}
+				pp->tree_right = NULL;
 			delete p;
 		}
-		else if (p->m_left == 0)
-		{ //오른쪽 자식만 있음
-			if (q == 0)
-			{
-				m_root = p->m_right;
-			}
-			else if (q->m_left == p)
-			{
-				q->m_left = p->m_right;
-			}
+		else if (p->tree_left == NULL)
+		{
+			if (pp == NULL)
+				tree_root = p->tree_right;
+			else if (pp->tree_left == p)
+				pp->tree_left = p->tree_right;
 			else
-			{
-				q->m_right = p->m_right;
-			}
+				pp->tree_right = p->tree_right;
 			delete p;
 		}
-		else if (p->m_right == 0)
-		{ //왼쪽 자식만 있음
-			if (q == 0)
-			{
-				m_root = p->m_left;
-			}
-			else if (q->m_left == p)
-			{
-				q->m_left = p->m_left;
-			}
+		else if (p->tree_right == 0)
+		{
+			if (pp == 0)
+				tree_root = p->tree_left;
+			else if (pp->tree_left == p)
+				pp->tree_left = p->tree_left;
 			else
-			{
-				q->m_left = p->m_left;
-			}
+				pp->tree_left = p->tree_left;
 			delete p;
 		}
 		else
-		{ //양쪽 다 자식이 있는 경우
-			TreeNode *prevprev = p;
-			TreeNode *prev = p->m_left;
-			TreeNode *curr = p->m_left->m_right;
+		{
+			TreeNode *pp = p;
+			TreeNode *prev = p->tree_left;
+			TreeNode *curr = p->tree_left->tree_right;
 
 			while (curr)
-			{ // 왼쪽에서 가장 큰 값 찾기
-				prevprev = prev;
+			{
+				pp = prev;
 				prev = curr;
-				curr = curr->m_right;
+				curr = curr->tree_right;
 			}
 
-			p->m_data.unique_number = prev->m_data.unique_number;
-			if (prevprev == p)
-			{
-				prevprev->m_left = prev->m_left;
-			}
+			p->tree_data->index = prev->tree_data->index;
+			if (pp == p)
+				pp->tree_left = prev->tree_left;
 			else
-			{
-				prevprev->m_right = prev->m_left;
-			}
+				pp->tree_right = prev->tree_left;
 			delete prev;
 		}
-	}
-
-	void visit(TreeNode *t, ofstream *fout)
-	{
-		*fout << t->m_data.dirname << " / \"" << t->m_data.m_name << "\" / " << t->m_data.unique_number << endl;
-	}
-
-	void print_inorder(TreeNode *t, ofstream *fout)
-	{
-		if (t != NULL)
-		{
-			print_inorder(t->m_left, fout);
-			visit(t, fout);
-			print_inorder(t->m_right, fout);
-		}
-	}
-
-	TreeNode *visit_inputdata(TreeNode *t, ofstream *fout, int key)
-	{
-		if (t->m_data.unique_number == key)
-			return t;
-		else
-			return (NULL);
-	}
-
-	TreeNode *print_preorder(TreeNode *t, ofstream *fout, int key)
-	{
-		if (t != NULL)
-		{
-
-			if (visit_inputdata(t, fout, key))
-			{
-				return (t);
-			}
-			print_preorder(t->m_left, fout, key);
-			print_preorder(t->m_right, fout, key);
-		}
-		return (NULL);
-	}
+	};
 };

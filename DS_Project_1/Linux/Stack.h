@@ -1,135 +1,84 @@
 #ifndef STACK_H
 #define STACK_H
 
-#ifndef NULL
-#define NULL 0
-#endif
-
-#include "Manager.h"
 #include "TreeNode.h"
+#include "Manager.h"
 
-// This stack is Refernce code (Do Not Use directly)
+#define IMG_SIZE 512
 
-/*
-class Stack
-{
-private:
-    class StackNode
-    {
-    public:
-        T Data;
-        StackNode* pNext;
-
-        StackNode(T data) : Data(data), pNext(NULL) {}
-    };
-
-private:
-    // the head pointer of the stack and queue
-    StackNode* m_pTop;
-
-public:
-    Stack();
-    ~Stack();
-
-    /// <summary>
-    /// push the data into this stack and queue
-    /// </summary>
-    ///
-    /// <param name="data">
-    /// a data to push into this stack and queue
-    /// </param>
-    void Push(T data);
-    /// <summary>
-    /// pop(remove) the last-in data from this stack and queue
-    /// </summary>
-    void Pop();
-    /// <summary>
-    /// get the last-in data of this stack and queue
-    /// </summary>
-    ///
-    /// <returns>
-    /// the last-in data of this stack and queue
-    /// </returns>
-    T Top();
-    /// <summary>
-    /// check whether this stack and queue is empty or not.
-    /// </summary>
-    ///
-    /// <returns>
-    /// true if this stack and queue is empty.
-    /// false otherwise.
-    /// </returns>
-    bool IsEmpty();
-};*/
-
-class MINI_STACK
+class TREE_STACK
 {
 public:
-    int pos;
-    TreeNode *dat[500];
+    int idx;
+    TreeNode *tree_element;
 
-    MINI_STACK()
+    TREE_STACK()
     {
-        pos = 0;
+        idx = 0;
+        tree_element = new TreeNode[IMG_SIZE];
     };
 
-    ~MINI_STACK();
-
-    void push(TreeNode *tmp)
+    ~TREE_STACK()
     {
-        dat[pos++] = tmp;
+        delete[] tree_element;
+    };
+
+    void push(TreeNode tmp)
+    {
+        tree_element[idx++] = tmp;
     }
 
     void pop(void)
     {
-        if (pos > 0)
-            pos--;
+        if (idx > 0)
+            idx--;
     }
 
-    TreeNode *top()
+    TreeNode top()
     {
-        return (dat[pos - 1]);
+        return (tree_element[idx - 1]);
     }
 
     int empty(void)
     {
-        return (pos == 0);
+        return (idx == 0);
     }
 };
 
-class IntStack
+class INT_STACK
 {
 public:
-    int pos;
-    int data[512 * 512];
+    int idx;
+    int *int_element;
 
-    IntStack()
+    INT_STACK()
     {
-        pos = 0;
-    }
-    ~IntStack()
-    {
-    }
+        idx = 0;
+        int_element = new int[IMG_SIZE * IMG_SIZE];
+    };
+
+    ~INT_STACK() {
+        delete[] int_element;
+    };
 
     void push(int tmp)
     {
-        data[pos++] = tmp;
+        int_element[idx++] = tmp;
     }
 
     void pop(void)
     {
-        if (pos > 0)
-            pos--;
+        idx--;
     }
 
     int top()
     {
-        return data[pos - 1];
+        return (int_element[idx - 1]);
     }
 
-    int empty(void)
+    bool empty(void)
     {
-        return pos == 0;
+        return (idx == 0);
     }
 };
 
