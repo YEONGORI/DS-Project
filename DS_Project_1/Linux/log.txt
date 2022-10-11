@@ -36,17 +36,18 @@ SUCCESS
 
 =========PRINT===========
 images / "there are lots of people in the park" / 100
+new_files / "The Alchemist" / 109
 images / "the man is gorgeous" / 111
 images / "the woman is smiling" / 200
 images / "the man takes a picture" / 222
 images / "three peppers are big" / 300
+new_files / "Moby Dick" / 309
 images / "the building is like a pyramid" / 333
 images / "river is under the bridge" / 400
 new_files / "A cup on the table" / 404
 images / "The house has windows and doors" / 444
 images / "the boat sails a big river " / 500
 images / "The celebrity posed for the picture" / 555
-new_files / "TOTOTOTOTOTOTOTOTOTOTOTO" / 567
 images / "there are lots of ariplane" / 600
 images / "The woman is looking at the man " / 666
 images / "lena is famous person" / 700
@@ -55,7 +56,7 @@ images / "there are cars and people" / 800
 images / "airplane fly on the mountain" / 888
 images / "there are numbers and chinese characters" / 900
 images / "fence is near trees" / 999
-new_files / "OROROROROROROROROROROROR" / 1000
+new_files / "The 100 year old man who climbed out the window" / 1009
 =========================
 
 =========SEARCH==========

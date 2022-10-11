@@ -6,30 +6,31 @@
 #include "TreeNode.h"
 #include "Manager.h"
 
-TreeNode *visit_inputdata(TreeNode *t, ofstream *fout, int index);
-TreeNode *traversal_preorder(TreeNode *t, ofstream *fout, int index);
-TreeNode *visit_inputdata(TreeNode *t, ofstream *fout, int index);
-void traversal_inorder(TreeNode *t, ofstream *fout);
+Database_BST_Node *visit_inputdata(Database_BST_Node *t, ofstream *fout, int index);
+Database_BST_Node *traversal_preorder(Database_BST_Node *t, ofstream *fout, int index);
+Database_BST_Node *visit_inputdata(Database_BST_Node *t, ofstream *fout, int index);
+void traversal_inorder(Database_BST_Node *t, ofstream *fout);
 
 
 class Database_BST
 {
-	friend class TreeManager;
-
 public:
-	TreeNode *tree_root;
+	Database_BST_Node *tree_root;
 
 	Database_BST()
 	{
-		tree_root = NULL;
+		tree_root = NULL;	
 	};
 
-	~Database_BST() {};
+	~Database_BST()
+	{
+		// delete[] tree_root;
+	};
 
-	void insert(Node *node)
+	void insert(Loaded_LIST_Node *node)
 	{
 		int idx = stoi(node->index);
-		TreeNode *p = tree_root, *pp = NULL;
+		Database_BST_Node *p = tree_root, *pp = NULL;
 
 		while (p)
 		{
@@ -41,7 +42,7 @@ public:
 		}
 
 		ImageNode *img_node = new ImageNode(node->file_name, node->dir_name, idx);
-		p = new TreeNode(img_node, NULL, NULL);
+		p = new Database_BST_Node(img_node, NULL, NULL);
 	
 		if (tree_root != NULL)
 		{
@@ -56,8 +57,8 @@ public:
 
 	void deletion(int index)
 	{
-		TreeNode *p = tree_root;
-		TreeNode *pp = NULL;
+		Database_BST_Node *p = tree_root;
+		Database_BST_Node *pp = NULL;
 		while (p && index != p->tree_data->index)
 		{
 			pp = p;
@@ -100,9 +101,9 @@ public:
 		}
 		else
 		{
-			TreeNode *pp = p;
-			TreeNode *prev = p->tree_left;
-			TreeNode *curr = p->tree_left->tree_right;
+			Database_BST_Node *pp = p;
+			Database_BST_Node *prev = p->tree_left;
+			Database_BST_Node *curr = p->tree_left->tree_right;
 
 			while (curr)
 			{

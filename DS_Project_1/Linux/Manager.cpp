@@ -2,6 +2,7 @@
 #include <fstream>
 #include <string>
 #include <cstring>
+#include <cmath>
 
 #include "Manager.h"
 #include "Queue.h"
@@ -10,6 +11,8 @@
 #include "BinarySearchTree.h"
 
 #define BUFF_SIZE 128
+#define HEIGHT 6000
+#define WIDTH 16
 
 using namespace std;
 
@@ -32,10 +35,12 @@ void Manager::Run(const char *filepath)
 
     string img_path;
 
-    int list_size = 0, bst_size = 0;
+    int list_size = 0, bst_size = 0, file_size = 0;
     char cmd[BUFF_SIZE] = {};
-    unsigned char input_data[IMG_SIZE][IMG_SIZE];
-    unsigned char output_data[IMG_SIZE][IMG_SIZE];
+
+    unsigned char input_data[HEIGHT][WIDTH];
+    unsigned char output_data[HEIGHT][WIDTH];
+
     while (!f_cmd.eof())
     {
         // Read the command
@@ -128,8 +133,8 @@ void Manager::Run(const char *filepath)
         else if (strcmp(tmp, "MODIFY") == 0)
         {
             string d_name, f_name, index;
-            Node *cur_node = LIST->top_list->edge_left;
-            Node *tmp_node;
+            Loaded_LIST_Node *cur_node = LIST->top_list->edge_left;
+            Loaded_LIST_Node *tmp_node;
             ROW_LIST *CUR_LIST = LIST->top_list;
 
             d_name = strtok(NULL, " ");
@@ -196,12 +201,12 @@ void Manager::Run(const char *filepath)
             ROW_LIST *START_LIST = LIST->bottom_list;
             while (START_LIST != NULL)
             {
-                Node *start_node = START_LIST->edge_right;
+                Loaded_LIST_Node *start_node = START_LIST->edge_right;
                 while (start_node != NULL)
                 {
                     if (bst_size > 300)
                     {
-                        TreeNode *cur_tree_node = BST->tree_root;
+                        Database_BST_Node *cur_tree_node = BST->tree_root;
 
                         while (cur_tree_node->tree_left) //왼쪽 끝 노드로 이동
                             cur_tree_node = cur_tree_node->tree_left;
@@ -209,7 +214,7 @@ void Manager::Run(const char *filepath)
                         BST->deletion(low_index);                // 삭제
                         bst_size--;
                     }
-                    Node *tmp_node = new Node("", "", "", NULL, NULL);
+                    Loaded_LIST_Node *tmp_node = new Loaded_LIST_Node("", "", "", NULL, NULL);
 
                     BST->insert(start_node);
                     bst_size++;
@@ -242,15 +247,15 @@ void Manager::Run(const char *filepath)
             }
             f_log << "=========SEARCH==========\n";
 
-            TREE_STACK *S = new TREE_STACK();
-            TREE_STACK *temp = new TREE_STACK();
-            TREE_QUEUE *Q = new TREE_QUEUE();
+            STACK<Database_BST_Node> *S = new STACK<Database_BST_Node>();
+            STACK<Database_BST_Node> *temp = new STACK<Database_BST_Node>();
+            QUEUE<Database_BST_Node> *Q = new QUEUE<Database_BST_Node>();
 
             temp->push(*BST->tree_root);
 
             while (!temp->empty())
             {
-                TreeNode curr = temp->top();
+                Database_BST_Node curr = temp->top();
                 temp->pop();
 
                 S->push(curr);
@@ -278,9 +283,9 @@ void Manager::Run(const char *filepath)
             }
             int index = stoi(temp);
 
-            TreeNode *inputdata = traversal_preorder(BST->tree_root, &f_log, index);
+            Database_BST_Node *bst_node = traversal_preorder(BST->tree_root, &f_log, index);
             img_path = "img_files/";
-            img_path = img_path.append(inputdata->tree_data->file_name);
+            img_path = img_path.append(bst_node->tree_data->file_name);
             img_path.append(".RAW");
 
             input_file = fopen(img_path.c_str(), "rb");
@@ -289,7 +294,13 @@ void Manager::Run(const char *filepath)
                 f_log << "==========ERROR==========\n700\n=========================\n";
                 continue;
             }
-            fread(input_data, sizeof(unsigned char), IMG_SIZE * IMG_SIZE, input_file);
+            // fseek(input_file, 0, SEEK_END);
+            // file_size = ftell(input_file);
+            // rewind(input_file);
+            // for (int i=0;i<1;i++)
+            //     cout << file_size << '\n';
+
+            fread(input_data, sizeof(unsigned char), HEIGHT * WIDTH, input_file);
             f_log << "==========SELECT==========\nSUCCESS\n==========================\n\n";
         }
         else if (strcmp(tmp, "EDIT") == 0)
@@ -297,26 +308,20 @@ void Manager::Run(const char *filepath)
             char *opt = strtok(NULL, " ");
             string img_path_origin = img_path;
 
-            memset(output_data, 0, IMG_SIZE*IMG_SIZE);
+            memset(output_data, 0, HEIGHT*WIDTH);
             if (opt[2] != '\0')
                 opt[2] = 0;
             if (strcmp(opt, "-f") == 0)
             {
-                // Stack<int> *S;
-                INT_STACK *S = new INT_STACK();
-                for (int i = 0; i < IMG_SIZE; i++)
+                STACK<int> *S = new STACK<int>();
+                for (int i = 0; i < HEIGHT; i++)
                 { 
-                    for (int j = 0; j < IMG_SIZE; j++)
-                    {
+                    for (int j = 0; j < WIDTH; j++)
                         S->push(input_data[i][j]);
-                        // while (1)
-                        //     cout << "2";
-
-                    }
                 }
-                for (int i = 0; i < IMG_SIZE; i++)
+                for (int i = 0; i < HEIGHT; i++)
                 {
-                    for (int j = 0; j < IMG_SIZE; j++)
+                    for (int j = 0; j < WIDTH; j++)
                     {
                         output_data[i][j] = S->top();
                         S->pop();
@@ -326,7 +331,7 @@ void Manager::Run(const char *filepath)
                 img_path_origin.append("_flipped.RAW");
 
                 output_file = fopen(img_path_origin.c_str(), "wb+");
-                fwrite(output_data, sizeof(unsigned char), IMG_SIZE * IMG_SIZE, output_file);
+                fwrite(output_data, sizeof(unsigned char), HEIGHT * WIDTH, output_file);
             }
             else if (strcmp(opt, "-l") == 0)
             {
@@ -337,16 +342,15 @@ void Manager::Run(const char *filepath)
                     continue;
                 }
                 int val = stoi(temp.erase(temp.find(13))); // value
-
-                CHAR_QUEUE *Q = new CHAR_QUEUE();
-                for (int i = 0; i < IMG_SIZE; i++)
+                QUEUE<char> *Q = new QUEUE<char>();
+                for (int i = 0; i < HEIGHT; i++)
                 {
-                    for (int j = 0; j < IMG_SIZE; j++)
+                    for (int j = 0; j < WIDTH; j++)
                         Q->push(input_data[i][j]);
                 }
-                for (int i = 0; i < IMG_SIZE; i++)
+                for (int i = 0; i < HEIGHT; i++)
                 {
-                    for (int j = 0; j < IMG_SIZE; j++)
+                    for (int j = 0; j < WIDTH; j++)
                     {
                         int pix = Q->top() + val;
                         if (pix >= 255)
@@ -361,13 +365,13 @@ void Manager::Run(const char *filepath)
                 img_path_origin.append("_adjusted.RAW");
 
                 output_file = fopen(img_path_origin.c_str(), "wb+");
-                fwrite(output_data, sizeof(unsigned char), IMG_SIZE * IMG_SIZE, output_file);
+                fwrite(output_data, sizeof(unsigned char), HEIGHT * WIDTH, output_file);
             }
             else if (strcmp(opt, "-r") == 0)
             {
-                for (int i = 0; i < IMG_SIZE; i += 2)
+                for (int i = 0; i < HEIGHT; i += 2)
                 {
-                    for (int j = 0; j < IMG_SIZE; j += 2)
+                    for (int j = 0; j < WIDTH; j += 2)
                         output_data[i / 2][j / 2] = (input_data[i][j] + input_data[i][j + 1] + input_data[i + 1][j] + input_data[i + 1][j + 1]) / 4;
                 }
 
@@ -375,7 +379,7 @@ void Manager::Run(const char *filepath)
                 img_path_origin.append("_resized.RAW");
 
                 output_file = fopen(img_path_origin.c_str(), "wb+");
-                fwrite(output_data, sizeof(unsigned char), (IMG_SIZE / 2) * (IMG_SIZE / 2), output_file);
+                fwrite(output_data, sizeof(unsigned char), (HEIGHT / 2) * (WIDTH / 2), output_file);
             }
             f_log << "===========EDIT===========\nSUCCESS\n==========================\n\n";
         }

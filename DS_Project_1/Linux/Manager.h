@@ -11,25 +11,25 @@
 
 using namespace std;
 
-class Node
+class Loaded_LIST_Node
 {
 public:
     string file_name;
     string dir_name;
     string index;
 
-    Node *prev;
-    Node *next;
+    Loaded_LIST_Node *prev;
+    Loaded_LIST_Node *next;
 
-    Node(string file_name, string dir_name, string index, Node *prev, Node *next) :
+    Loaded_LIST_Node(string file_name, string dir_name, string index, Loaded_LIST_Node *prev, Loaded_LIST_Node *next) :
     file_name(file_name), dir_name(dir_name), index(index), prev(prev), next(next) {}
 };
 
 class ROW_LIST
 {
 public:
-    Node *edge_right;
-    Node *edge_left;
+    Loaded_LIST_Node *edge_right;
+    Loaded_LIST_Node *edge_left;
 
     ROW_LIST *go_up;
     ROW_LIST *go_down;
@@ -47,10 +47,10 @@ public:
     void PushNode(string file_name, string dir_name, string index)
     {
         if (edge_left == NULL)
-            edge_right = edge_left = new Node(file_name, dir_name, index, NULL, NULL);
+            edge_right = edge_left = new Loaded_LIST_Node(file_name, dir_name, index, NULL, NULL);
         else
         {
-            Node *next = new Node(file_name, dir_name, index, NULL, NULL);
+            Loaded_LIST_Node *next = new Loaded_LIST_Node(file_name, dir_name, index, NULL, NULL);
             edge_right->next = next;
             next->prev = edge_right;
             edge_right = next;
@@ -61,7 +61,7 @@ public:
     {
         if (!(edge_left == NULL))
         {
-            Node *tmp = edge_left;
+            Loaded_LIST_Node *tmp = edge_left;
 
             edge_left = tmp->next;
             delete tmp;

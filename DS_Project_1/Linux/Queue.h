@@ -7,91 +7,48 @@
 
 #define IMG_SIZE 512
 
-class TREE_QUEUE
+template <class T>
+class QUEUE
 {
 public:
     int head;
     int tail;
+    T *tree_element;
 
-    TreeNode *tree_element;
-
-    TREE_QUEUE()
+    QUEUE()
     {
         head = 0;
         tail = 0;
-        tree_element = new TreeNode[1000];
+        tree_element = new T[IMG_SIZE * IMG_SIZE];
     };
 
-    ~TREE_QUEUE()
+    ~QUEUE()
     {
         delete[] tree_element;
     };
 
-    void push(TreeNode tmp)
+    void push(T tmp)
     {
         tree_element[tail++] = tmp;
     }
 
-    void pop()
+    void pop(void)
     {
         head++;
     }
 
-    TreeNode top()
+    T top(void)
     {
         return (tree_element[head]);
     }
 
-    bool empty()
+    bool empty(void)
     {
         return (tail == head);
     }
 };
 
-class CHAR_QUEUE
-{
-public:
-    int head;
-    int tail;
-    char *char_element;
-
-    CHAR_QUEUE()
-    {
-        head = 0;
-        tail = 0;
-        char_element = new char[IMG_SIZE * IMG_SIZE];
-    };
-
-    ~CHAR_QUEUE()
-    {
-        delete[] char_element;
-    };
-
-    void push(char tmp)
-    {
-
-        char_element[tail++] = tmp;
-    }
-
-    void pop()
-    {
-        head++;
-    }
-
-    char top()
-    {
-        return (char_element[head]);
-    }
-
-    bool empty()
-    {
-        return (tail == head);
-    }
-};
-
-#endif
-
-void boyer_moore(TREE_QUEUE *Q, ofstream *f_log, string file_name)
+void boyer_moore(QUEUE<Database_BST_Node> *Q, ofstream *f_log, string file_name)
 {
     while (!Q->empty())
     {
@@ -106,7 +63,8 @@ void boyer_moore(TREE_QUEUE *Q, ofstream *f_log, string file_name)
             if (j == file_name.length())
                 *f_log << "\"" << Q->top().tree_data->file_name << "\" / " << Q->top().tree_data->index << "\n";
         }
-
         Q->pop();
     }
 };
+
+#endif

@@ -3,20 +3,20 @@
 #include "ImageNode.h"
 #include <iostream>
 
-class TreeNode
+class Database_BST_Node
 {
 public:
 	ImageNode *tree_data; // parameter must be added
-	TreeNode *tree_left;
-	TreeNode *tree_right;
+	Database_BST_Node *tree_left;
+	Database_BST_Node *tree_right;
 
-	TreeNode() {};
+	Database_BST_Node() {};
 
-	TreeNode(ImageNode *data, TreeNode *left, TreeNode *right) :
+	Database_BST_Node(ImageNode *data, Database_BST_Node *left, Database_BST_Node *right) :
 	tree_data(data), tree_left(left), tree_right(right) {};
 
-	~TreeNode() {}
+	~Database_BST_Node() {}
 
-	TreeNode *getLeftNode() const { return tree_left; }
-	TreeNode *getRightNode() const { return tree_right; }
+	Database_BST_Node *getLeftNode() const { return tree_left; }
+	Database_BST_Node *getRightNode() const { return tree_right; }
 };
