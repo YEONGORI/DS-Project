@@ -3,47 +3,67 @@
 
 #include "Manager.h"
 #include "TreeNode.h"
+#include "BinarySearchTree.h"
 
-class MINI_QUEUE
+#define IMG_SIZE 512
+
+template <class T>
+class QUEUE
 {
 public:
     int head;
     int tail;
-    int size;
+    T *tree_element;
 
-    TreeNode *dat[100];
-
-    MINI_QUEUE()
+    QUEUE()
     {
         head = 0;
         tail = 0;
+        tree_element = new T[IMG_SIZE * IMG_SIZE];
     };
 
-    ~MINI_QUEUE();
-
-    void push(TreeNode *tmp)
+    ~QUEUE()
     {
-        dat[tail++] = tmp;
+        delete[] tree_element;
+    };
+
+    void push(T tmp)
+    {
+        tree_element[tail++] = tmp;
     }
 
-    void pop()
+    void pop(void)
     {
         head++;
     }
 
-    TreeNode *top()
+    T top(void)
     {
-        return (dat[head]);
+        return (tree_element[head]);
     }
 
-    bool empty()
+    bool empty(void)
     {
         return (tail == head);
     }
+};
 
-    bool isFull()
+void boyer_moore(QUEUE<Database_BST_Node> *Q, ofstream *f_log, string file_name)
+{
+    while (!Q->empty())
     {
-        return (tail == 1001);
+        for (unsigned int i = 0; i < Q->top().tree_data->file_name.length(); i++)
+        {
+            unsigned int j;
+            for (j = 0; j < file_name.length(); j++)
+            {
+                if (Q->top().tree_data->file_name[i + j] != file_name[j])
+                    break;
+            }
+            if (j == file_name.length())
+                *f_log << "\"" << Q->top().tree_data->file_name << "\" / " << Q->top().tree_data->index << "\n";
+        }
+        Q->pop();
     }
 };
 

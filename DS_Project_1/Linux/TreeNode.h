@@ -3,32 +3,20 @@
 #include "ImageNode.h"
 #include <iostream>
 
-class TreeNode
+class Database_BST_Node
 {
-	friend class BinarySearchTree;
-	friend class TreeManager;
-
 public:
-	ImageNode m_data; // parameter must be added
-	TreeNode *m_left;
-	TreeNode *m_right;
-	TreeNode() : m_left(NULL), m_right(NULL) {}
-	~TreeNode() {}
-	TreeNode(ImageNode &data, TreeNode *left = NULL, TreeNode *right = NULL)
-	{
-		this->m_data = data;
-		this->m_left = left;
-		this->m_right = right;
-	}
+	ImageNode *tree_data; // parameter must be added
+	Database_BST_Node *tree_left;
+	Database_BST_Node *tree_right;
 
-	TreeNode *getLeftNode() const { return m_left; }
-	TreeNode *getRightNode() const { return m_right; }
-	// ImageNode* getData() const { return m_data; }
+	Database_BST_Node() {};
 
-	friend std::ostream &operator<<(std::ostream &os, const TreeNode *node)
-	{
-		if (node != NULL)
-			os << node->m_data;
-		return os;
-	}
+	Database_BST_Node(ImageNode *data, Database_BST_Node *left, Database_BST_Node *right) :
+	tree_data(data), tree_left(left), tree_right(right) {};
+
+	~Database_BST_Node() {}
+
+	Database_BST_Node *getLeftNode() const { return tree_left; }
+	Database_BST_Node *getRightNode() const { return tree_right; }
 };
