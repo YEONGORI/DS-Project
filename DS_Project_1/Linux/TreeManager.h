@@ -1,30 +1,31 @@
-#pragma once
+// #pragma once
 
-#include "BinarySearchTree.h"
+// #include "Manager.h"
+// #include "BinarySearchTree.h"
 
-#include <iostream>
-#include <string>
-#include "Manager.h"
+// #include <iostream>
+// #include <string>
 
-class TreeManager
-{
-private:
-	int unique_number;
+// class TreeManager
+// {
+// private:
+// 	int unique_number;
 
-	BinarySearchTree imageBST;
+// 	Database_BST imageBST;
 
-public:
-	struct ImageControl
-	{
-		ImageNode node_f;
+// public:
+// 	struct ImageControl
+// 	{
+// 		ImageNode node_f;
 
-		ImageControl();
-		ImageControl(TreeManager node_f);
-	};
+// 		ImageControl();
+// 		ImageControl(TreeManager node_f);
+// 	};
 
-	TreeManager(std::string file_dir);
+// 	TreeManager(std::string file_dir);
 
-	friend std::ostream &operator<<(std::ostream &os, const TreeManager &manager);
+// 	friend std::ostream &operator<<(std::ostream &os, const TreeManager &manager);
 
-	ImageControl deletion();
-};
+// 	ImageControl deletion();
+// };
+

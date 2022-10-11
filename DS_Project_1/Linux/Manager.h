@@ -11,83 +11,66 @@
 
 using namespace std;
 
-class Node
+class Loaded_LIST_Node
 {
 public:
     string file_name;
     string dir_name;
     string index;
 
-    Node *prev;
-    Node *next;
+    Loaded_LIST_Node *prev;
+    Loaded_LIST_Node *next;
 
-    Node(string file_name, string dir_name, string index, Node *prev, Node *next) :
+    Loaded_LIST_Node(string file_name, string dir_name, string index, Loaded_LIST_Node *prev, Loaded_LIST_Node *next) :
     file_name(file_name), dir_name(dir_name), index(index), prev(prev), next(next) {}
 };
 
 class ROW_LIST
 {
 public:
-    int size;
-
-    Node *edge_right;
-    Node *edge_left;
+    Loaded_LIST_Node *edge_right;
+    Loaded_LIST_Node *edge_left;
 
     ROW_LIST *go_up;
     ROW_LIST *go_down;
 
     ROW_LIST(void)
     {
-        size = 0;
         edge_right = NULL;
         edge_left = NULL;
         go_up = NULL;
         go_down = NULL;
     };
 
-    ~ROW_LIST()
-    {
-        Node *next = NULL;
-
-        while (edge_left != NULL)
-        {
-            next = edge_left->next;
-            delete edge_left;
-            edge_left = next;
-        }
-    }
+    ~ROW_LIST() {};
 
     void PushNode(string file_name, string dir_name, string index)
     {
-        if (IsEmpty())
-            edge_right = edge_left = new Node(file_name, dir_name, index, NULL, NULL);
+        if (edge_left == NULL)
+            edge_right = edge_left = new Loaded_LIST_Node(file_name, dir_name, index, NULL, NULL);
         else
         {
-            Node *next = new Node(file_name, dir_name, index, NULL, NULL);
+            Loaded_LIST_Node *next = new Loaded_LIST_Node(file_name, dir_name, index, NULL, NULL);
             edge_right->next = next;
             next->prev = edge_right;
             edge_right = next;
         }
-        size++;
     };
 
     void PopNode(void)
     {
-        Node *tmp = edge_left;
-
-        if (IsEmpty())
-            cout << "EMPTY\n";
-        else
+        if (!(edge_left == NULL))
         {
+            Loaded_LIST_Node *tmp = edge_left;
+
             edge_left = tmp->next;
             delete tmp;
-            size--;
         }
     };
 
     bool IsEmpty(void)
     {
-        return (edge_right == NULL && edge_left == NULL);
+        return (edge_left == NULL);
     }
 };
 
@@ -103,21 +86,11 @@ public:
         bottom_list = NULL;
     };
 
-    ~Loaded_LIST()
-    {
-        ROW_LIST *next = NULL;
-
-        while (top_list != NULL)
-        {
-            next = top_list->go_down;
-            delete top_list;
-            top_list = next;
-        }
-    }
+    ~Loaded_LIST() {};
 
     void PushList(ROW_LIST *data)
     {
-        if (IsEmpty())
+        if (top_list == NULL)
             top_list = bottom_list = data;
         else
         {
@@ -125,11 +98,6 @@ public:
             data->go_up = bottom_list;
             bottom_list = data;
         }
-    }
-
-    bool IsEmpty(void)
-    {
-        return (top_list == NULL && bottom_list == NULL);
     }
 };
 
