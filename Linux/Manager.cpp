@@ -295,12 +295,6 @@ void Manager::Run(const char *filepath)
                 f_log << "==========ERROR==========\n700\n=========================\n";
                 continue;
             }
-            // fseek(input_file, 0, SEEK_END);
-            // file_size = ftell(input_file);
-            // rewind(input_file);
-            // for (int i=0;i<1;i++)
-            //     cout << file_size << '\n';
-
             fread(input_data, sizeof(unsigned char), HEIGHT * WIDTH, input_file);
             f_log << "==========SELECT==========\nSUCCESS\n==========================\n\n";
         }
