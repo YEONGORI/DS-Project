@@ -11,7 +11,6 @@ Database_BST_Node *traversal_preorder(Database_BST_Node *t, ofstream *fout, int 
 Database_BST_Node *visit_inputdata(Database_BST_Node *t, ofstream *fout, int index);
 void traversal_inorder(Database_BST_Node *t, ofstream *fout);
 
-
 class Database_BST
 {
 public:
@@ -19,11 +18,10 @@ public:
 
 	Database_BST()
 	{
-		tree_root = NULL;	
+		tree_root = NULL;
 	};
 
-	~Database_BST()
-	{
+	~Database_BST(){
 		// delete[] tree_root;
 	};
 
@@ -43,7 +41,7 @@ public:
 
 		ImageNode *img_node = new ImageNode(node->file_name, node->dir_name, idx);
 		p = new Database_BST_Node(img_node, NULL, NULL);
-	
+
 		if (tree_root != NULL)
 		{
 			if (idx < pp->tree_data->index)
@@ -89,9 +87,9 @@ public:
 				pp->tree_right = p->tree_right;
 			delete p;
 		}
-		else if (p->tree_right == 0)
+		else if (p->tree_right == NULL)
 		{
-			if (pp == 0)
+			if (pp == NULL)
 				tree_root = p->tree_left;
 			else if (pp->tree_left == p)
 				pp->tree_left = p->tree_left;

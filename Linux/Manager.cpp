@@ -79,7 +79,7 @@ void Manager::Run(const char *filepath)
                     list_size--;
                 }
 
-                NEW_LIST->PushNode(file_name, "images", index);
+                NEW_LIST->PushNode(file_name, "img_files", index);
                 list_size++;
                 f_log << file_name << "/" << index << '\n';
             }
@@ -227,6 +227,7 @@ void Manager::Run(const char *filepath)
             f_log << "==========MOVE===========\nSUCCESS\n=========================\n\n";
         }
         else if (strcmp(tmp, "PRINT") == 0)
+
         {
             if (bst_size == 0)
             {
