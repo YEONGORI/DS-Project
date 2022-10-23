@@ -2,15 +2,16 @@
 #include <algorithm>
 using namespace std;
 
-template<class K>
+template <class K>
 class ChainNode;
 
-template<class T>
+template <class T>
 class Chain
 {
 private:
 	ChainNode<T> *last;
 	ChainNode<T> *first;
+
 public:
 	Chain(void);
 	virtual ~Chain();
@@ -23,62 +24,73 @@ public:
 };
 
 template <class T>
-Chain<T>::Chain(void) {
+Chain<T>::Chain(void)
+{
 	first = NULL;
 	last = NULL;
 }
 
 template <class T>
-Chain<T>::~Chain(void) {
+Chain<T>::~Chain(void)
+{
 	ChainNode<T> *next = NULL;
 
-	while (first != NULL) {
+	while (first != NULL)
+	{
 		next = first->link;
 		cout << "Delete: " << first->data << endl;
 		delete first;
-		first = next; 
+		first = next;
 	}
 };
 
 template <class T>
-bool Chain<T>::IsEmpty(void) {
+bool Chain<T>::IsEmpty(void)
+{
 	return first == NULL;
 };
 
 template <class T>
-void Chain<T>::Print(void) {
+void Chain<T>::Print(void)
+{
 	ChainNode<T> *current = first;
 	cout << "Print: ";
 
-	while (current != NULL) {
-		cout << current->data <<' ';
+	while (current != NULL)
+	{
+		cout << current->data << ' ';
 		current = current->link;
 	}
 	cout << endl;
 };
 
 template <class T>
-void Chain<T>::StackPush(T data) {
+void Chain<T>::StackPush(T data)
+{
 	first = new ChainNode<T>(data, first);
 	cout << "StackPush: " << data << endl;
 };
 
-template<class T>
-void Chain<T>::StackPop(void) {
+template <class T>
+void Chain<T>::StackPop(void)
+{
 	ChainNode<T> *top = first;
 
-	if (IsEmpty()) {
+	if (IsEmpty())
+	{
 		cout << "StackPop: empty!" << endl;
 	}
-	else {
+	else
+	{
 		cout << "StackPop: " << top->data << endl;
 		first = top->link;
 		delete top;
 	}
 }
 
-template<class T>
-void Chain<T>::QueuePush(T data) {
+template <class T>
+void Chain<T>::QueuePush(T data)
+{
 	if (IsEmpty())
 		first = last = new ChainNode<T>(data, NULL);
 	else
@@ -86,40 +98,46 @@ void Chain<T>::QueuePush(T data) {
 	cout << "QueuePush: " << data << endl;
 }
 
-template<class T>
-void Chain<T>::QueuePop(void) {
+template <class T>
+void Chain<T>::QueuePop(void)
+{
 	ChainNode<T> *front = first;
 
-	if (IsEmpty()) {
+	if (IsEmpty())
+	{
 		cout << "QueuePop: empty!" << endl;
 	}
-	else {
+	else
+	{
 		cout << "QueuePop: " << front->data << endl;
 		first = front->link;
 		delete front;
 	}
 };
 
-template<class K>
+template <class K>
 class ChainNode
 {
-template <class T> friend class Chain;
+	template <class T>
+	friend class Chain;
 
 public:
 	ChainNode(const K data, ChainNode<K> *link = NULL);
+
 private:
 	K data;
 	ChainNode<K> *link;
 };
 
-template<class K>
-ChainNode<K>::ChainNode(const K data, ChainNode<K>* link) {
+template <class K>
+ChainNode<K>::ChainNode(const K data, ChainNode<K> *link)
+{
 	this->data = data;
 	this->link = link;
 };
 
 int main(void)
-{	
+{
 	Chain<int> chain;
 
 	chain.StackPush(1);
@@ -132,7 +150,7 @@ int main(void)
 	chain.StackPop();
 	chain.StackPop();
 	chain.StackPop();
-	
+
 	chain.QueuePush(1);
 	chain.QueuePush(2);
 	chain.QueuePush(3);
@@ -141,7 +159,7 @@ int main(void)
 
 	chain.QueuePop();
 	chain.QueuePop();
-	chain.QueuePop();	
+	chain.QueuePop();
 	chain.QueuePop();
 
 	return 0;
