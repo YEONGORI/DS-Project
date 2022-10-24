@@ -18,10 +18,11 @@ Winner::Winner(Element *R, int szTreeSize = sz) // run 배열과 k 값
 	k = sz;
 	winner = new int[k];
 	for (int i = 1; i < k; i++)
-		winner[i] = -1;
-	int j = k;
-	for (int i = k - 1; i >= k / 2 && j != 1; i++)
-	{
+		winner[i] = -1; // internal node를 저장하고 있는 배열
+						// run의 index를 담고있다.
+	int j = k;			// run에 대해서 루프를 돈다.
+	for (int i = k - 1; i >= k / 2 && j != 1; i--)
+	{ // leaf노드에서 토너먼트를돈다.
 		if (R[j].key > R[j - 1].key)
 			winner[i] = j - 1;
 		else

@@ -1,18 +1,5 @@
 #include <iostream>
 
-<<<<<<< HEAD
-using namespace std;
-
-template<class T>
-class TreeNode {
-	T data;
-	TreeNode<T> *leftChild, *rightChild;
-
-	TreeNode() {
-		leftChild = rightChild = NULL;
-	};
-};
-=======
 template <class T>
 class TreeNode
 {
@@ -87,4 +74,3 @@ int main(void)
 
 	return 0;
 }
->>>>>>> 44e83976ce347a0322c23b3329fdd2e590356ba5

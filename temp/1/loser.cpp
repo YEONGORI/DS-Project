@@ -19,7 +19,7 @@ Loser::Loser(Element *R, int sz = TreeSize)
 
 	loser = new int[k];
 	for (int i = 0; i < k; i++)
-		loser[i] = -1;
+		loser[i] = -1; // loser[0]는 최종 winner저장을 위해 사용
 	int j = k;
 	for (int i = k - 1; i >= k / 2 && j != 1; i--)
 	{
