@@ -4,13 +4,13 @@ using namespace std;
 
 class Winner {
 public:
-	Winner(element *, int);
+	Winner(Element *, int);
 private:
 	int *winner;
 	int k;
 };
 
-Winner::Winner(element *R, int sz = TreeSize) {
+Winner::Winner(Element *R, int sz = TreeSize) {
 	k = sz;
 	winner = new int[k];
 	for (int i=1; i<k; i++)
@@ -38,11 +38,21 @@ Winner::Winner(element *R, int sz = TreeSize) {
 		else
 			winner[i] = winner[j];
 	}
-}
+};
+
+
+/*
+
+
+
+
+
+
+*/
 
 class Loser {
 public:
-	Loser(element *, int);
+	Loser(element *R, int sz);
 private:
 	int *loser;
 	int k;
@@ -66,5 +76,31 @@ Loser::Loser(element *R, int sz = treesize) {
 			winner = j;
 		}
 		j -= 2;
+
+		l = i/2;
+		while (loser[l] != -1) {
+			if (R[loser[l]].key < R[winner].key) {
+				int temp = winner;
+				winner = loser[l];
+				loser[l] = temp;
+			}
+			l /= 2;
+		}
+		loser[l] = winner;
+	}
+
+	if (j == 1) {
+		winner = 1;
+		l = k/2;
+
+		while (loser[l] != -1) {
+			if (R[loser[l]].key < R[winner].key) {
+				int temp = winner;
+				winner = loser[l];
+				loser[l] = temp;
+			}
+			l /= 2;
+		}
+		loser[l] = winner;
 	}
 }
