@@ -13,7 +13,6 @@ public:
 	int frequency;
 	FPNode* parent;
 	FPNode* next;
-	// FPNode* children;
 	map<string, FPNode*> children;
 	FPNode();
 	~FPNode();

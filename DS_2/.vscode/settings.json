@@ -7,6 +7,12 @@
 		"string": "cpp",
 		"map": "cpp",
 		"set": "cpp",
-		"unordered_map": "cpp"
+		"unordered_map": "cpp",
+		"__tree": "cpp",
+		"algorithm": "cpp",
+		"iostream": "cpp",
+		"deque": "cpp",
+		"functional": "cpp",
+		"list": "cpp"
 	}
 }

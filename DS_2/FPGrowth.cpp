@@ -1,4 +1,5 @@
 #include "FPGrowth.h"
+#include "HeaderTable.h"
 #include <map>
 #include <string>
 #include <cstring>
@@ -8,35 +9,40 @@ FPGrowth::~FPGrowth() {
 
 void FPGrowth::createFPtree(FPNode* root, HeaderTable* table, vector<vector<string> > item_array, vector<pair<int, string> > freq){
 	
-	for(int i=0;i<2;i++){
+	for(int i=0;i<item_array.size();i++){
 		FPNode* p = root;
-		map<string, FPNode*> curNode = root->children;
-
+		map<string, FPNode*> cur_node = root->children;
 		for(int j=0;j<item_array[i].size();j++){
-
-			auto tmp = curNode.find(item_array[i][j]);
-
-			if(curNode.empty()){ 
+			auto tmp = cur_node.find(item_array[i][j]);
+			if(cur_node.empty()){ 
 				FPNode* new_node = new FPNode;
 				new_node->frequency = 1;
-				new_node->parent=p;
-				// curNode.insert(item_a)
-				// curNode[item_array[i][j]] = new_node;
-				curNode.insert(make_pair(item_array[i][j], new_node));
+				new_node->parent = p;
+				cur_node.insert(make_pair(item_array[i][j], new_node));
+
+				p->children = cur_node;
+				p = new_node;
+				cur_node = new_node->children;
 			}
-			else{				
-				if(tmp != curNode.end()){
-					tmp->second->frequency++;
+			else{			
+					
+				if(tmp != cur_node.end()){
+					// tmp->second->frequency++;
+					p->children[item_array[i][j]]->frequency++;
+
+					p = p->children[item_array[i][j]];
+					cur_node = tmp->second->children;
 				}
 				else{
 					FPNode* new_node = new FPNode;
 					new_node->frequency = 1;
 					new_node->parent = p;
-					curNode.insert(make_pair(item_array[i][j], new_node));
+					cur_node.insert(make_pair(item_array[i][j], new_node));
+					p->children = cur_node;
+					p = new_node;
+					cur_node = new_node->children;
 				}
 			}
-			p = tmp->second;
-			curNode = tmp->second->children;
 		}
 	}
 }

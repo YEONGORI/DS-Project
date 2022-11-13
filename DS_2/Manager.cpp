@@ -1,4 +1,5 @@
 #include "Manager.h"
+#include "HeaderTable.h"
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -104,8 +105,10 @@ void Manager::run(const char* command)
 					}
 				}
 			}
+			HeaderTable *header_table = new HeaderTable;
 			fpgrowth->createFPtree(fpgrowth->fpTree, fpgrowth->table, total_list, fre_list);
-			
+			for (int i=0;i<fre_list.size(); i++)
+				header_table->insertTable(fre_list[i].second, fre_list[i].first);
 		}
 	}
 	fin.close();
