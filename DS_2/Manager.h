@@ -2,7 +2,7 @@
 #include <iostream>
 #include <fstream>
 #include <ostream>
-// #include "FPGrowth.h"
+#include "FPGrowth.h"
 // #include "BpTree.h"
 
 using namespace std;
@@ -11,11 +11,15 @@ class Manager
 {
 private:
 	char* cmd;
-	// FPGrowth* fpgrowth;
+	int threshold;
+	int bpOrder;
+	FPGrowth* fpgrowth;
 	// BpTree* bptree;
 public:
 	Manager(int threshold, int bpOrder)	//constructor
 	{
+		this->threshold = threshold;
+		this->bpOrder = bpOrder;
 		/* You must fill here */
 	}
 

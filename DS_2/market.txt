@@ -1,4 +1,4 @@
-almonds	burgers	almonds	burgers	eggs
+almonds	burgers
 almonds	burgers	eggs	soup
 almonds	burgers	soup
 almonds	eggs

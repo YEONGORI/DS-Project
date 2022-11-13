@@ -1,14 +1,14 @@
-#include "HeaderTable.h"
+// #include "HeaderTable.h"
 
-HeaderTable::~HeaderTable() {
+// HeaderTable::~HeaderTable() {
 
-}
+// }
 
 
-void HeaderTable::insertTable(char* item, int frequency) {
+// void HeaderTable::insertTable(char* item, int frequency) {
 	
-}
-int HeaderTable::find_frequency(string item){
-	int frequency = 0;
-	return frequency;
-}
+// }
+// int HeaderTable::find_frequency(string item){
+// 	int frequency = 0;
+// 	return frequency;
+// }

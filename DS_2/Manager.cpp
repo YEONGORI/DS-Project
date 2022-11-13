@@ -8,8 +8,12 @@
 #include <algorithm>
 
 #define BUFF_SIZE 128
+#define freq first
+#define food second 
 
 using namespace std;
+
+
 
 void Manager::run(const char* command)
 {
@@ -29,55 +33,82 @@ void Manager::run(const char* command)
         char *ch_cr = strrchr(tmp, 13);
         if (ch_cr)
             *ch_cr = 0;
-		vector<pair<string, int> > V;
         if (strcmp(tmp, "LOAD") == 0)
         {
+			vector<vector<string> > total_list;
+			vector<pair<int, string> > fre_list;
             while (!fmarket.eof())
             {
                 char buff[BUFF_SIZE];
+				vector<string> tmp_line;
                 string index, file_name;
 
-				vector<vector<string> > v2;
-				vector<string> v1;
                 if (!fmarket.getline(buff, sizeof(buff)))
                     break;
-				string tmp;
-				while (strtok(buff, "\t")){
-					v1.push_back(buff);
+				char *tok = strtok(buff, "\t");
+				tmp_line.push_back(buff);
+
+
+				while ((tok = strtok(NULL, "\t"))){
+					tmp_line.push_back(tok);
 				}
-				v2.push_back(v1);
+				total_list.push_back(tmp_line);
+
+				for (int i=0; i<tmp_line.size(); i++) 
+				{
+					if (fre_list.empty())
+						fre_list.push_back(make_pair(0, tmp_line[i]));
+					int j;
+					for (j=0; j<fre_list.size(); j++) {
+						// tmp_line[i].erase(find(tmp_line.begin(), tmp_line.end(), 13));
+						// fre_list[j].food.erase(find(fre_list[j].food.begin(), fre_list[j].food.end(), 13))
+						// 여기 카운트제대로안됨
+						if (tmp_line[i] == fre_list[j].food) {
+							fre_list[j].freq++;
+							break;
+						}
+					}
+					if (j == fre_list.size()) {
+						fre_list.push_back(make_pair(1, tmp_line[i]));
+						break;
+					}
+				}
+			}
+			for (int i=0; i<total_list.size(); i++) {
+				for (int j=0; j<total_list[i].size(); j++) {
+					for (int k=0; k<fre_list.size(); k++) {
+						if (total_list[i][j] == fre_list[k].food && fre_list[k].freq < threshold)
+							total_list[i].erase(total_list[i].begin() + j);
+					}
+				}
+			}
+			for (int i=0; i<total_list.size(); i++) {
+				for (int j=total_list[i].size() - 1; j>0; j--) {
+					if (i == 10)
+						cout << "Q";
+					for (int k=0; k<j; k++) {
+						int m1, m2;
+						for (m1=0; m1<fre_list.size(); m1++) {
+							if (total_list[i][k] == fre_list[m1].food)
+								break;
+						}
+						for (m2=0; m2<fre_list.size(); m2++) {
+							if (total_list[i][k+1] == fre_list[m2].food)
+								break;
+						}
+						if (fre_list[m1].freq < fre_list[m2].freq) {
+							string tmp = total_list[i][k+1];
+							total_list[i][k+1] = total_list[i][k];
+							total_list[i][k] = tmp;
+						}
+					}
+				}
 			}
 
-			while(1);
-
-
-                // index = strtok(buff, "\t");
-
-                // if (NEW_LIST->edge_left == NULL)
-                //     index = index.substr(3, index.size());
-                // if (list_size > 100)
-                // {
-                //     NEW_LIST->PopNode();
-                //     list_size--;
-                // }
-
-                // NEW_LIST->PushNode(file_name, "img_files", index);
-                // list_size++;
-                // f_log << file_name << "/" << index << '\n';
-            // }
-
-
-
-			// string tmp;
-			// fin >> tmp;
-
-			// vector<pair<string, int> >::iterator it = find(V.begin(), V.end(), tmp);
-			// if (it == V.end()) // 해당원소없음
-			// 	V.push_back(make_pair(tmp, 0));
-			// else // 해당원소존재
-			// 	it->second++;
+			fpgrowth->createFPtree(fpgrowth->getTree(), fpgrowth->getHeaderTable(), total_list, fre_list);
+			
 		}
-
+		cout << " Q";
 	}
 	fin.close();
 	return;
@@ -105,7 +136,7 @@ bool Manager::LOAD()
 	
 // }
 
-// bool Manager::PRINT_BPTREE(char* item, int min_frequency) {
+// bool Manager::PRINT_BPTREE(char* item, int min_fre_listquency) {
 	
 // }
 

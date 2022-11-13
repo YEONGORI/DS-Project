@@ -6,13 +6,18 @@
 using namespace std;
 class FPNode
 {
-private:
+
+public:
 	int frequency;
 	FPNode* parent;
 	FPNode* next;
+	// FPNode* children;
 	map<string, FPNode*> children;
-public:
-	FPNode();
+	FPNode(){
+		frequency = 1;
+		parent = NULL;
+		next = NULL;
+	}
 	~FPNode();
 	void setParent(FPNode* node) { this->parent = node; }
 	void setNext(FPNode* node) { next = node; }
