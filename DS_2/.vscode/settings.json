@@ -5,6 +5,8 @@
 		"utility": "cpp",
 		"iosfwd": "cpp",
 		"string": "cpp",
-		"map": "cpp"
+		"map": "cpp",
+		"set": "cpp",
+		"unordered_map": "cpp"
 	}
 }

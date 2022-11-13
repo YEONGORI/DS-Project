@@ -104,8 +104,7 @@ void Manager::run(const char* command)
 					}
 				}
 			}
-
-			fpgrowth->createFPtree(fpgrowth->getTree(), fpgrowth->getHeaderTable(), total_list, fre_list);
+			fpgrowth->createFPtree(fpgrowth->fpTree, fpgrowth->table, total_list, fre_list);
 			
 		}
 		cout << " Q";

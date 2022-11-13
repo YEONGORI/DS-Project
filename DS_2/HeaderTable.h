@@ -1,6 +1,7 @@
 #pragma once
 #include "FPNode.h"
 #include <list>
+#include <string>
 
 class HeaderTable
 {

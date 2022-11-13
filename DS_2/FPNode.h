@@ -3,6 +3,8 @@
 #include <cstring>
 #include <map>
 #include <cmath>
+#include <string>
+#include <cstring>
 using namespace std;
 class FPNode
 {
@@ -13,11 +15,7 @@ public:
 	FPNode* next;
 	// FPNode* children;
 	map<string, FPNode*> children;
-	FPNode(){
-		frequency = 1;
-		parent = NULL;
-		next = NULL;
-	}
+	FPNode();
 	~FPNode();
 	void setParent(FPNode* node) { this->parent = node; }
 	void setNext(FPNode* node) { next = node; }

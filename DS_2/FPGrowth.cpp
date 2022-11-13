@@ -1,8 +1,9 @@
 #include "FPGrowth.h"
-
+#include <map>
+#include <string>
+#include <cstring>
 
 FPGrowth::~FPGrowth() {
-
 }
 
 void FPGrowth::createFPtree(FPNode* root, HeaderTable* table, vector<vector<string> > item_array, vector<pair<int, string> > freq){
@@ -21,7 +22,7 @@ void FPGrowth::createFPtree(FPNode* root, HeaderTable* table, vector<vector<stri
 				new_node->parent=p;
 				// curNode.insert(item_a)
 				// curNode[item_array[i][j]] = new_node;
-				curNode.insert({item_array[i][j], NULL});
+				curNode.insert(make_pair(item_array[i][j], new_node));
 			}
 			else{				
 				if(tmp != curNode.end()){
@@ -31,7 +32,7 @@ void FPGrowth::createFPtree(FPNode* root, HeaderTable* table, vector<vector<stri
 					FPNode* new_node = new FPNode;
 					new_node->frequency = 1;
 					new_node->parent = p;
-					curNode.insert({item_array[i][j], new_node});
+					curNode.insert(make_pair(item_array[i][j], new_node));
 				}
 			}
 			p = tmp->second;
@@ -61,10 +62,10 @@ bool FPGrowth::contains_single_path(FPNode* pNode) {
 	return contains_single_path(pNode->getChildren().begin()->second);
 }
 
-map<set<string>, int> FPGrowth::getFrequentPatterns(HeaderTable* pTable, FPNode* pTree) {
+// map<set<string>, int> FPGrowth::getFrequentPatterns(HeaderTable* pTable, FPNode* pTree) {
 
-	return {};
-}
+// 	return;
+// }
 
 
 

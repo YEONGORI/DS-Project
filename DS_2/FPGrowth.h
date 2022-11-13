@@ -6,15 +6,18 @@
 #include <set>
 
 class FPGrowth
-{
-private:
+{	
+public:
 	int threshold;
 	FPNode* fpTree;
 	HeaderTable* table;
 	map<set<string>, int> frequenctPatterns;
 	ofstream* fout;
 	ofstream flog;
-public:
+	FPGrowth() {
+		fpTree = NULL;
+		table = NULL;
+	}
 	FPGrowth(ofstream *fout, int threshold = 3) {
 		this->threshold = threshold;
 		flog.open("result.txt", ios::app);
