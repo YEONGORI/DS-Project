@@ -15,8 +15,8 @@ public:
 	ofstream* fout;
 	ofstream flog;
 	FPGrowth() {
-		fpTree = NULL;
-		table = NULL;
+		fpTree = new FPNode;
+		table = new HeaderTable;
 	}
 	FPGrowth(ofstream *fout, int threshold = 3) {
 		this->threshold = threshold;

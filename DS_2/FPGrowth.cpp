@@ -8,7 +8,7 @@ FPGrowth::~FPGrowth() {
 
 void FPGrowth::createFPtree(FPNode* root, HeaderTable* table, vector<vector<string> > item_array, vector<pair<int, string> > freq){
 	
-	for(int i=0;i<item_array.size();i++){
+	for(int i=0;i<2;i++){
 		FPNode* p = root;
 		map<string, FPNode*> curNode = root->children;
 

@@ -18,6 +18,7 @@ private:
 public:
 	Manager(int threshold, int bpOrder)	//constructor
 	{
+		this->fpgrowth = new FPGrowth;
 		this->threshold = threshold;
 		this->bpOrder = bpOrder;
 		/* You must fill here */

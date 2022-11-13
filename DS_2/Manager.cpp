@@ -107,7 +107,6 @@ void Manager::run(const char* command)
 			fpgrowth->createFPtree(fpgrowth->fpTree, fpgrowth->table, total_list, fre_list);
 			
 		}
-		cout << " Q";
 	}
 	fin.close();
 	return;
