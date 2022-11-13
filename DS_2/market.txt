@@ -1,0 +1,38 @@
+almonds	burgers	almonds	burgers	eggs
+almonds	burgers	eggs	soup
+almonds	burgers	soup
+almonds	eggs
+almonds	eggs	soup
+almonds	soup
+avocado	soup
+black tea	mineral water
+black tea	mineral water	salmon
+black tea	mineral water	salmon	spaghetti
+black tea	mineral water	spaghetti
+black tea	salmon
+black tea	salmon	spaghetti
+black tea	spaghetti
+body spray	green tea
+body spray	green tea	pancakes
+body spray	green tea	soup
+body spray	pancakes
+body spray	soup
+brownies	green tea
+burgers	eggs
+burgers	eggs	soup
+burgers	french fries
+burgers	french fries	green tea
+burgers	french fries	green tea	soup
+burgers	french fries	soup
+burgers	green tea
+burgers	green tea	soup
+burgers	soup
+chicken	eggs
+chicken	eggs	mineral water
+chicken	mineral water
+chicken	soup
+chocolate	eggs
+chocolate	eggs	soup
+chocolate	green tea
+chocolate	green tea	spaghetti
+chocolate	ground beef

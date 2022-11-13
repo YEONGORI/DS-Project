@@ -1,13 +1,18 @@
 #pragma once
-#include "FPGrowth.h"
-#include "BpTree.h"
+#include <iostream>
+#include <fstream>
+#include <ostream>
+// #include "FPGrowth.h"
+// #include "BpTree.h"
+
+using namespace std;
 
 class Manager
 {
 private:
 	char* cmd;
-	FPGrowth* fpgrowth;
-	BpTree* bptree;
+	// FPGrowth* fpgrowth;
+	// BpTree* bptree;
 public:
 	Manager(int threshold, int bpOrder)	//constructor
 	{
@@ -21,6 +26,7 @@ public:
 	}
 
 	ifstream fin;
+	ifstream fmarket;
 	ofstream flog;
 	
 
