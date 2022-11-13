@@ -5,40 +5,51 @@ FPGrowth::~FPGrowth() {
 
 }
 
-void FPGrowth::createFPtree(FPNode* root, HeaderTable* table, vector<vector<string> > item_array, vector<int, string> freq){
-	
-	map<string, FPNode*> curNode = root->children;
+void FPGrowth::createFPtree(FPNode* root, HeaderTable* table, vector<vector<string> > item_array, vector<pair<int, string> > freq){
 	
 	for(int i=0;i<item_array.size();i++){
-		
+		FPNode* p = root;
+		map<string, FPNode*> curNode = root->children;
+
 		for(int j=0;j<item_array[i].size();j++){
+
 			auto tmp = curNode.find(item_array[i][j]);
-			if(tmp != curNode.end()){
-				tmp->second->frequency++;
-			}
-			else{
+
+			if(curNode.empty()){ 
 				FPNode* new_node = new FPNode;
 				new_node->frequency = 1;
-				new_node->parent = root;
-				 
+				new_node->parent=p;
+				// curNode.insert(item_a)
+				// curNode[item_array[i][j]] = new_node;
 				curNode.insert({item_array[i][j], NULL});
 			}
-
+			else{				
+				if(tmp != curNode.end()){
+					tmp->second->frequency++;
+				}
+				else{
+					FPNode* new_node = new FPNode;
+					new_node->frequency = 1;
+					new_node->parent = p;
+					curNode.insert({item_array[i][j], new_node});
+				}
+			}
+			p = tmp->second;
 			curNode = tmp->second->children;
 		}
 	}
 }
 
-void FPGrowth::createFPtree(FPNode* root, HeaderTable* table, vector<vector<string> > item_array, vector<int, string> freq){
-	for(int i=0;i<item_array.size();i++){
-		if (root != NULL) {
+// void FPGrowth::createFPtree(FPNode* root, HeaderTable* table, vector<vector<string> > item_array, vector<int, string> freq){
+// 	for(int i=0;i<item_array.size();i++){
+// 		if (root != NULL) {
 
-		}
-		else {
-			root->children
-		}
-	}
-}
+// 		}
+// 		else {
+// 			root->children
+// 		}
+// 	}
+// }
 
 void FPGrowth::connectNode(HeaderTable* table, string item, FPNode* node) {
 
