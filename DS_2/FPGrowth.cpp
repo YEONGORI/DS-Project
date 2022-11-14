@@ -1,85 +1,84 @@
 #include "FPGrowth.h"
-#include "HeaderTable.h"
-#include <map>
-#include <string>
-#include <cstring>
 
-FPGrowth::~FPGrowth() {
+FPGrowth::~FPGrowth()
+{
 }
 
-void FPGrowth::createFPtree(FPNode* root, HeaderTable* table, vector<vector<string> > item_array, vector<pair<int, string> > freq){
-	
-	for(int i=0;i<item_array.size();i++){
-		FPNode* p = root;
-		map<string, FPNode*> cur_node = root->children;
-		for(int j=0;j<item_array[i].size();j++){
-			auto tmp = cur_node.find(item_array[i][j]);
-			if(cur_node.empty()){ 
-				FPNode* new_node = new FPNode;
+void FPGrowth::createFPtree(FPNode *root, HeaderTable *table, vector<vector<string>> item_array, vector<int, string> freq)
+{
+
+	map<string, FPNode *> curNode = root->children;
+
+	for (int i = 0; i < item_array.size(); i++)
+	{
+
+		for (int j = 0; j < item_array[i].size(); j++)
+		{
+			auto tmp = curNode.find(item_array[i][j]);
+			if (tmp != curNode.end())
+			{
+				tmp->second->frequency++;
+			}
+			else
+			{
+				FPNode *new_node = new FPNode;
 				new_node->frequency = 1;
-				new_node->parent = p;
-				cur_node.insert(make_pair(item_array[i][j], new_node));
+				new_node->parent = root;
 
-				p->children = cur_node;
-				p = new_node;
-				cur_node = new_node->children;
+				curNode.insert({item_array[i][j], NULL});
 			}
-			else{			
-					
-				if(tmp != cur_node.end()){
-					// tmp->second->frequency++;
-					p->children[item_array[i][j]]->frequency++;
 
-					p = p->children[item_array[i][j]];
-					cur_node = tmp->second->children;
-				}
-				else{
-					FPNode* new_node = new FPNode;
-					new_node->frequency = 1;
-					new_node->parent = p;
-					cur_node.insert(make_pair(item_array[i][j], new_node));
-					p->children = cur_node;
-					p = new_node;
-					cur_node = new_node->children;
-				}
-			}
+			curNode = tmp->second->children;
 		}
 	}
 }
 
-// void FPGrowth::createFPtree(FPNode* root, HeaderTable* table, vector<vector<string> > item_array, vector<int, string> freq){
-// 	for(int i=0;i<item_array.size();i++){
-// 		if (root != NULL) {
-
-// 		}
-// 		else {
-// 			root->children
-// 		}
-// 	}
-// }
-
-void FPGrowth::connectNode(HeaderTable* table, string item, FPNode* node) {
-
+void FPGrowth::createFPtree(FPNode *root, HeaderTable *table, vector<vector<string>> item_array, vector<int, string> freq)
+{
+	for (int i = 0; i < item_array.size(); i++)
+	{
+		if (root != NULL)
+		{
+		}
+		else
+		{
+			root->children
+		}
+	}
 }
 
-bool FPGrowth::contains_single_path(FPNode* pNode) {
-	if (pNode->getChildren().size() == 0) return true;
-	else if (pNode->getChildren().size() > 1) return false;
+void FPGrowth::connectNode(HeaderTable *table, string item, FPNode *node)
+{
+}
+
+bool FPGrowth::contains_single_path(FPNode *pNode)
+{
+	if (pNode->getChildren().size() == 0)
+		return true;
+	else if (pNode->getChildren().size() > 1)
+		return false;
 	return contains_single_path(pNode->getChildren().begin()->second);
 }
 
-// map<set<string>, int> FPGrowth::getFrequentPatterns(HeaderTable* pTable, FPNode* pTree) {
+map<set<string>, int> FPGrowth::getFrequentPatterns(HeaderTable *pTable, FPNode *pTree)
+{
 
-// 	return;
-// }
+	return {};
+}
 
-
-
-void FPGrowth::powerSet(map<set<string>, int>* FrequentPattern, vector<string> data, string item, int frequency, int* ptr, int depth) {
-	if (data.size() == depth) {
-		set<string> set; set.insert(item);
-		for (int i = 0; i < data.size(); i++) { if (ptr[i] == 1) set.insert(data[i]); }
-		FrequentPattern->insert(make_pair(set, frequency)); return;
+void FPGrowth::powerSet(map<set<string>, int> *FrequentPattern, vector<string> data, string item, int frequency, int *ptr, int depth)
+{
+	if (data.size() == depth)
+	{
+		set<string> set;
+		set.insert(item);
+		for (int i = 0; i < data.size(); i++)
+		{
+			if (ptr[i] == 1)
+				set.insert(data[i]);
+		}
+		FrequentPattern->insert(make_pair(set, frequency));
+		return;
 	}
 	ptr[depth] = 1;
 	powerSet(FrequentPattern, data, item, frequency, ptr, depth + 1);
@@ -87,13 +86,15 @@ void FPGrowth::powerSet(map<set<string>, int>* FrequentPattern, vector<string> d
 	powerSet(FrequentPattern, data, item, frequency, ptr, depth + 1);
 }
 
-bool FPGrowth::printList() {
+bool FPGrowth::printList()
+{
 
 	return true;
 }
-bool FPGrowth::printTree() {
+bool FPGrowth::printTree()
+{
 	return true;
 }
-void FPGrowth::saveFrequentPatterns(){
-
+void FPGrowth::saveFrequentPatterns()
+{
 }
