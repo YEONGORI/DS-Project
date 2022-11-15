@@ -123,9 +123,6 @@ bool Manager::LOAD()
 			int j;
 			for (j = 0; j < fre_list.size(); j++)
 			{
-				// tmp_line[i].erase(find(tmp_line.begin(), tmp_line.end(), 13));
-				// fre_list[j].food.erase(find(fre_list[j].food.begin(), fre_list[j].food.end(), 13))
-				// 여기 카운트제대로안됨
 				if (tmp_line[i] == fre_list[j].food)
 				{
 					fre_list[j].freq++;
@@ -135,7 +132,6 @@ bool Manager::LOAD()
 			if (j == fre_list.size())
 			{
 				fre_list.push_back(make_pair(1, tmp_line[i]));
-				break;
 			}
 		}
 	}
