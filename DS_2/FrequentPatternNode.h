@@ -18,5 +18,3 @@
 // 	int getFrequency() { return frequency; }
 // 	multimap<int, set<string> > getList() { return FrequentPatternList; }
 // };
-
-

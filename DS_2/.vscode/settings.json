@@ -13,6 +13,9 @@
 		"iostream": "cpp",
 		"deque": "cpp",
 		"functional": "cpp",
-		"list": "cpp"
+		"list": "cpp",
+		"*.tcc": "cpp",
+		"fstream": "cpp",
+		"istream": "cpp"
 	}
 }
