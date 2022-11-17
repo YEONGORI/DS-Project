@@ -197,7 +197,7 @@ bool Manager::LOAD()
 bool Manager::BTLOAD()
 {
 	fresult.open("result1");
-	if (!fresult || !total_list.empty()) //안에 이미 데이터 있으면 에러처리 수정해야함
+	if (!fresult || bptree->root) //안에 이미 데이터 있으면 에러처리 수정해야함
 	{
 		return false;
 	}

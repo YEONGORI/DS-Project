@@ -14,13 +14,16 @@ private:
 	int threshold;
 	int bpOrder;
 	FPGrowth *fpgrowth;
-	BpTree* bptree;
+	BpTree *bptree;
+
 public:
 	Manager(int threshold, int bpOrder) // constructor
 	{
 		this->fpgrowth = new FPGrowth;
+		this->bptree = new BpTree;
 		this->threshold = threshold;
 		this->bpOrder = bpOrder;
+		bptree->root = NULL;
 		/* You must fill here */
 	}
 

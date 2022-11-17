@@ -167,6 +167,7 @@ void BpTree::splitDataNode(BpTreeNode *pDataNode)
 		// delete [1][2]
 		pDataNode->deleteMap(i->first);
 	}
+
 	if (pDataNode->getNext() != NULL)
 	{
 		pDataNode->getNext()->setPrev(newdatanode);

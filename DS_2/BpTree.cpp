@@ -154,8 +154,7 @@ void BpTree::splitIndexNode(BpTreeNode *pIndexNode)
 
 		// newindexnode->setParent(newparentnode);
 		// pIndexNode->setParent(newparentnode);
-
-		pIndexNode->pParent->getIndexMap()->Insert(newparentnode->getIndexMap()->begin()->first, newindexnode);
+		pIndexNode->pParent->insertIndexMap(newparentnode->getIndexMap()->begin()->first, newindexnode);
 
 		// if parent is be fulled then split again
 		// if (pIndexNode->getParent()->getIndexMap()->size() == order)
