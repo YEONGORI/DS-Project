@@ -1,6 +1,10 @@
 #include "Manager.h"
 #include "HeaderTable.h"
 #include "FPGrowth.h"
+#include "BpTree.h"
+#include "BpTreeNode.h"
+#include "BpTreeDataNode.h"
+#include "BpTreeIndexNode.h"
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -193,28 +197,41 @@ bool Manager::LOAD()
 bool Manager::BTLOAD()
 {
 	fresult.open("result1");
-	if (!fresult || !total_list.empty())//안에 이미 데이터 있으면 에러처리 수정해야함
+	if (!fresult || !total_list.empty()) //안에 이미 데이터 있으면 에러처리 수정해야함
 	{
 		return false;
 	}
 	while (!fresult.eof())
 	{
 		char line[BUFF_SIZE];
-		int freq;
-		vector<string> food_list;
+		int key;
+		set<string> food_list;
 		if (!fresult.getline(line, sizeof(line)))
 			break;
 		char *tok = strtok(line, "\t");
-		freq = stoi(tok);
-	
+		key = stoi(tok);
+
 		while ((tok = strtok(NULL, "\t")))
 		{
-			food_list.push_back(tok);
+			food_list.insert(tok);
 		}
-		
-		//bptree 삽입
-		bptree->Insert
 
+		// bptree 삽입
+		bptree->Insert(key, food_list);
+		//데이터노드 초과
+		BpTreeNode *cur = bptree->root;
+		while (cur->getMostLeftChild())
+			cur = cur->getMostLeftChild();
+
+		while (cur)
+		{
+			if (bptree->excessDataNode(cur))
+			{
+				bptree->splitDataNode(cur);
+			}
+			cur = cur->getNext();
+		}
+		return cur;
 	}
 	return true;
 }
