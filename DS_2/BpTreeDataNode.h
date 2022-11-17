@@ -4,12 +4,10 @@
 #include "BpTreeNode.h"
 class BpTreeDataNode : public BpTreeNode
 {
-private:
+public:
 	map<int, FrequentPatternNode *> mapData;
 	BpTreeNode *pNext;
 	BpTreeNode *pPrev;
-
-public:
 	BpTreeDataNode()
 	{
 		pNext = NULL;

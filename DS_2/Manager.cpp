@@ -192,7 +192,30 @@ bool Manager::LOAD()
 
 bool Manager::BTLOAD()
 {
+	fresult.open("result1");
+	if (!fresult || !total_list.empty())//안에 이미 데이터 있으면 에러처리 수정해야함
+	{
+		return false;
+	}
+	while (!fresult.eof())
+	{
+		char line[BUFF_SIZE];
+		int freq;
+		vector<string> food_list;
+		if (!fresult.getline(line, sizeof(line)))
+			break;
+		char *tok = strtok(line, "\t");
+		freq = stoi(tok);
+	
+		while ((tok = strtok(NULL, "\t")))
+		{
+			food_list.push_back(tok);
+		}
+		
+		//bptree 삽입
+		bptree->Insert
 
+	}
 	return true;
 }
 

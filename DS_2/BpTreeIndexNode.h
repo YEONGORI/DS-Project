@@ -5,10 +5,8 @@
 // template <class T>
 class BpTreeIndexNode : public BpTreeNode
 {
-private:
-	map<int, BpTreeNode *> mapIndex;
-
 public:
+	map<int, BpTreeNode *> mapIndex;
 	BpTreeIndexNode() {}
 
 	void insertIndexMap(int n, BpTreeNode *pN)

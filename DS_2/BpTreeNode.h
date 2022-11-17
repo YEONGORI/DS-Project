@@ -3,11 +3,9 @@
 #include "FPNode.h"
 class BpTreeNode
 {
-private:
+public:
     BpTreeNode *pParent;
     BpTreeNode *pMostLeftChild;
-
-public:
     BpTreeNode()
     {
         pParent = NULL;

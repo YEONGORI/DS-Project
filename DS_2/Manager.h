@@ -3,7 +3,7 @@
 #include <fstream>
 #include <ostream>
 #include "FPGrowth.h"
-// #include "BpTree.h"
+#include "BpTree.h"
 
 using namespace std;
 
@@ -14,7 +14,7 @@ private:
 	int threshold;
 	int bpOrder;
 	FPGrowth *fpgrowth;
-	// BpTree* bptree;
+	BpTree* bptree;
 public:
 	Manager(int threshold, int bpOrder) // constructor
 	{
@@ -31,6 +31,7 @@ public:
 
 	ifstream fin;
 	ifstream fmarket;
+	ifstream fresult;
 
 	ofstream fout;
 	ofstream flog;
