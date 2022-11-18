@@ -8,8 +8,8 @@ public:
     BpTreeNode *pMostLeftChild;
     BpTreeNode()
     {
-        pParent = NULL;
-        pMostLeftChild = NULL;
+        pParent = nullptr;
+        pMostLeftChild = nullptr;
     }
     ~BpTreeNode()
     {
@@ -30,14 +30,14 @@ public:
     virtual void insertIndexMap(int n, BpTreeNode *pN) {}
     virtual void deleteMap(int n) {}
 
-    virtual map<int, BpTreeNode *> *getIndexMap()
+    virtual multimap<int, BpTreeNode *> *getIndexMap()
     {
-        map<int, BpTreeNode *> m;
+        multimap<int, BpTreeNode *> m;
         return &m;
     }
-    virtual map<int, FrequentPatternNode *> *getDataMap()
+    virtual multimap<int, FrequentPatternNode *> *getDataMap()
     {
-        map<int, FrequentPatternNode *> m;
+        multimap<int, FrequentPatternNode *> m;
         return &m;
     }
 };

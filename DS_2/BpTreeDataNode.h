@@ -5,13 +5,13 @@
 class BpTreeDataNode : public BpTreeNode
 {
 public:
-	map<int, FrequentPatternNode *> mapData;
+	multimap<int, FrequentPatternNode *> mapData;
 	BpTreeNode *pNext;
 	BpTreeNode *pPrev;
 	BpTreeDataNode()
 	{
-		pNext = NULL;
-		pPrev = NULL;
+		pNext = nullptr;
+		pPrev = nullptr;
 	}
 
 	void setNext(BpTreeNode *pN) { pNext = pN; }
@@ -28,7 +28,7 @@ public:
 	{
 		mapData.erase(n);
 	}
-	map<int, FrequentPatternNode *> *getDataMap() { return &mapData; }
+	multimap<int, FrequentPatternNode *> *getDataMap() { return &mapData; }
 };
 
 #endif

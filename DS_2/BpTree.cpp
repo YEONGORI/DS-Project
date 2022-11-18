@@ -3,6 +3,7 @@
 #include "BpTreeDataNode.h"
 #include "BpTreeIndexNode.h"
 #include <map>
+#include <typeindex>
 
 bool BpTree::Insert(int key, set<string> set)
 {
@@ -10,12 +11,63 @@ bool BpTree::Insert(int key, set<string> set)
 	int s = set.size();
 	fpn->setFrequency(s);
 	fpn->InsertList(set);
-	// BpTreeDataNode *btd = new BpTreeDataNode();
-	// btd->insertDataMap(key, fpn);
+	if (root == nullptr)
+	{
+		BpTreeDataNode *newdatanode = new BpTreeDataNode();
+		newdatanode->insertDataMap(key, fpn);
+		root = newdatanode;
+		return true;
+	}
+	// else
+	// {
+	// 	BpTreeNode *cur = root;
+	// 	while (1)
+	// 	{
+	// 		if (root->getDataMap()->size() <= order)
+	// 		{
+	// 			cur->insertDataMap(key, fpn);
+	// 			break;
+	// 		}
+	// 		else
+	// 		{
+	// 			multimap<int, BpTreeNode *>::iterator it2 = cur->getIndexMap()->begin();
+	// 			if (key <= it2->first)
+	// 			{
+	// 				cur = cur->getMostLeftChild();
+	// 				continue;
+	// 			}
+	// 			else
+	// 			{
+	// 				if (key > it2->first)
+	// 				{
+	// 					it2++;
+	// 					cur = it2->second;
+	// 					continue;
+	// 				}
+	// 				cur = it2->second;
+	// 			}
+	// 		}
+	// 	}
+	// }
 
-	BpTreeNode *cur = new BpTreeNode;
-	cur = searchDataNode(key);
-	cur->getDataMap()->insert({key, fpn});
+	BpTreeNode *cur = root;
+	if (root->getDataMap()->size() <= order)
+	{
+		root->insertDataMap(key, fpn);
+		return true;
+	}
+	else
+	{
+		while (cur->getMostLeftChild())
+			cur = cur->getMostLeftChild();
+
+		while (cur->getNext() && cur->getDataMap()->end()->first < key)
+		{
+			cur = cur->getNext();
+		}
+
+		cur->insertDataMap(key, fpn);
+	}
 }
 
 BpTreeNode *BpTree::searchDataNode(int n)
@@ -25,10 +77,10 @@ BpTreeNode *BpTree::searchDataNode(int n)
 	while (cur->getMostLeftChild())
 		cur = cur->getMostLeftChild();
 	// cur->insertDataMap(2147483647, NULL);
-	if (cur->getDataMap()->begin()->first > n)
+	if (cur->getDataMap() == NULL || cur->getDataMap()->begin()->first > n)
 		return cur;
 
-	while (cur)
+	while (cur->getNext())
 	{
 		for (auto it = cur->getDataMap()->begin(); it != cur->getDataMap()->end(); it++)
 		{
@@ -47,7 +99,7 @@ void BpTree::splitDataNode(BpTreeNode *pDataNode)
 {
 	BpTreeDataNode *new_btd = new BpTreeDataNode;
 	auto it = pDataNode->getDataMap()->begin();
-	for (it; pDataNode->getDataMap()->size() / 2; it++)
+	for (it; pDataNode->getDataMap()->size() / 2 + pDataNode->getDataMap()->begin; it++)
 		;
 	for (it; it != pDataNode->getDataMap()->end(); it++)
 	{
@@ -127,14 +179,16 @@ void BpTree::splitIndexNode(BpTreeNode *pIndexNode)
 	else
 	{
 		auto it = pIndexNode->getIndexMap()->begin();
-		BpTreeNode *newindexnode = new BpTreeIndexNode;
-		BpTreeNode *newparentnode = new BpTreeIndexNode;
+		BpTreeIndexNode *newindexnode = new BpTreeIndexNode;
+		BpTreeIndexNode *newparentnode = new BpTreeIndexNode;
 		root = newparentnode;
-
-		for (it; pIndexNode->getIndexMap()->size() / 2; it++)
-			;
-		it++;
+		//부모 노드에 값 채움
+		for (int i = 0; i < pIndexNode->getIndexMap()->size() / 2; i++)
+		{
+			it++;
+		}
 		newparentnode->insertIndexMap(it->first, it->second);
+		//자식 노드에 값 채움
 		it++;
 		for (it; it != pIndexNode->getIndexMap()->end(); it++)
 		{
@@ -157,15 +211,16 @@ void BpTree::splitIndexNode(BpTreeNode *pIndexNode)
 		pIndexNode->pParent->insertIndexMap(newparentnode->getIndexMap()->begin()->first, newindexnode);
 
 		// if parent is be fulled then split again
-		// if (pIndexNode->getParent()->getIndexMap()->size() == order)
-		// {
-		// 	splitIndexNode(pIndexNode->getParent());
-		// }
+		if (pIndexNode->getParent()->getIndexMap()->size() == order)
+		{
+			splitIndexNode(pIndexNode->getParent());
+		}
 	}
 }
 
 bool BpTree::excessDataNode(BpTreeNode *pDataNode)
 {
+	cout << pDataNode->getDataMap()->size() << '\n';
 	if (pDataNode->getDataMap()->size() > order - 1)
 		return true; // order is equal to the number of elements
 	else

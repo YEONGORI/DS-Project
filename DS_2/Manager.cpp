@@ -197,7 +197,7 @@ bool Manager::LOAD()
 bool Manager::BTLOAD()
 {
 	fresult.open("result1");
-	if (!fresult || bptree->root) //안에 이미 데이터 있으면 에러처리 수정해야함
+	if (!fresult) //안에 이미 데이터 있으면 에러처리 수정해야함
 	{
 		return false;
 	}
@@ -218,7 +218,7 @@ bool Manager::BTLOAD()
 
 		// bptree 삽입
 		bptree->Insert(key, food_list);
-		//데이터노드 초과
+
 		BpTreeNode *cur = bptree->root;
 		while (cur->getMostLeftChild())
 			cur = cur->getMostLeftChild();
@@ -231,7 +231,6 @@ bool Manager::BTLOAD()
 			}
 			cur = cur->getNext();
 		}
-		return cur;
 	}
 	return true;
 }

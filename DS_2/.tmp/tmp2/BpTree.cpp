@@ -32,7 +32,6 @@ bool BpTree::Insert(VaccinationData *newData, AVLTree *avl)
 		cur = root;
 		while (1)
 		{
-			// if leafnode break;
 			if (cur->isdatanode() == true)
 			{
 				map<string, VaccinationData *>::iterator j;
@@ -46,15 +45,13 @@ bool BpTree::Insert(VaccinationData *newData, AVLTree *avl)
 						{
 							if (j->second->GetTimes() >= 1)
 							{
-								// send to AVL
 								avl->Insert(j->second);
 							}
 						}
-						else // other vaccines
+						else
 						{
 							if (j->second->GetTimes() >= 2)
 							{
-								// send to AVL
 								avl->Insert(j->second);
 							}
 						}
@@ -64,26 +61,25 @@ bool BpTree::Insert(VaccinationData *newData, AVLTree *avl)
 				cur->insertDataMap(newData->GetUserName(), newData);
 				if (cur->getDataMap()->size() == 3)
 				{
-					splitDataNode(cur); // split
+					splitDataNode(cur);
 				}
 				break;
 			}
-			// map's first
 			i = cur->getIndexMap()->begin();
-			if (IsLeftFirst(newData->GetUserName(), i->first) == 1) // if have to go leftside
+			if (IsLeftFirst(newData->GetUserName(), i->first) == 1)
 			{
 				cur = cur->getMostLeftChild();
 				continue;
 			}
 			else
 			{
-				if (cur->getIndexMap()->size() == 1) // only one map
+				if (cur->getIndexMap()->size() == 1)
 				{
 					cur = i->second;
 				}
-				else // if map size is two
+				else
 				{
-					i++; // map's second
+					i++;
 					if (IsLeftFirst(newData->GetUserName(), i->first) == 1)
 					{
 						i--;
