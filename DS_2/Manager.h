@@ -23,7 +23,6 @@ public:
 		this->bptree = new BpTree;
 		this->threshold = threshold;
 		this->bpOrder = bpOrder;
-		bptree->root = nullptr;
 		// bptree->root = NULL;
 		/* You must fill here */
 	}

@@ -12,20 +12,19 @@ public:
 	BpTreeNode *root;
 	int order; // m children
 	ofstream *fout;
+	int cnt;
 	BpTree()
 	{
-		root = NULL;
+		root = new BpTreeDataNode;
 		order = 3;
+		cnt = 0;
 	}
 	BpTree(ofstream *fout, int order = 3)
 	{
 		this->order = order;
 		this->fout = fout;
 	}
-	~BpTree(){
-
-	};
-
+	~BpTree();
 	/* essential */
 	bool Insert(int key, set<string> set);
 	bool excessDataNode(BpTreeNode *pDataNode);
@@ -39,35 +38,6 @@ public:
 	bool printFrequency(string item, int min_frequency);
 	bool printConfidence(string item, double item_frequency, double min_confidence);
 	bool printRange(string item, int min, int max);
-
-	BpTreeNode *Find_Root(BpTreeNode *bpNode, int name) // find place that input the dat
-	{
-		if (!bpNode->getMostLeftChild())
-		{
-			return bpNode;
-		}
-		else
-		{
-			int target = bpNode->getIndexMap()->begin()->first;
-			auto end = bpNode->getIndexMap()->end();
-			end--;
-			if (name > target || target == name) // if name is same or bigger than targer
-			{
-				BpTreeNode *sec;
-				if (name > end->first || name == end->first) // if name is smae or bigger than end
-				{
-					sec = end->second;
-				}
-				else
-					sec = bpNode->getIndexMap()->begin()->second;
-				return Find_Root(sec, name);
-			}
-			else // else go MLC
-			{
-				return Find_Root(bpNode->getMostLeftChild(), name);
-			}
-		}
-	}
 };
 
 #endif

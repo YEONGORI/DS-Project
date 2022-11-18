@@ -2,15 +2,14 @@
 
 #include <set>
 #include <map>
+#include <string>
 using namespace std;
 
 class FrequentPatternNode
 {
-private:
+public:
 	int frequency;		// FrequentPattern frequency
 	multimap<int, set<string> > FrequentPatternList;	//first is FrequentPattern size, second is FrequentPattern data
-
-public:
 	FrequentPatternNode() { frequency = 0; }
 	~FrequentPatternNode() { FrequentPatternList.clear(); }
 	void setFrequency(int frequency) { this->frequency = frequency; }

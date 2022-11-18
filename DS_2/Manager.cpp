@@ -5,6 +5,7 @@
 #include "BpTreeNode.h"
 #include "BpTreeDataNode.h"
 #include "BpTreeIndexNode.h"
+#include "FrequentPatternNode.h"
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -12,6 +13,9 @@
 #include <cmath>
 #include <vector>
 #include <algorithm>
+#include <map>
+
+#pragma warning(disable : 4996)
 
 #define BUFF_SIZE 128
 #define freq first
@@ -37,10 +41,10 @@ void Manager::run(const char *command)
 	while (!fin.eof())
 	{
 		fin.getline(cmd, BUFF_SIZE);
-		char *tmp = strtok(cmd, "\n");
+		char *tmp = strtok(cmd, " ");
 		// char *ch_cr = strrchr(tmp, 13);
 		// if (ch_cr)
-		// 	*ch_cr = 0;
+		//    *ch_cr = 0;
 
 		if (strcmp(tmp, "LOAD") == 0)
 		{
@@ -89,6 +93,34 @@ void Manager::run(const char *command)
 			else
 			{
 				fout << "==========BTLOAD==========\nERROR 100\n========================\n\n";
+			}
+		}
+		else if (strcmp(tmp, "PRINT_BPTREE") == 0)
+		{
+			char *food_name = strtok(NULL, " ");
+			char *frequ = strtok(NULL, " ");
+
+			if (PRINT_BPTREE(food_name, stoi(frequ)))
+			{
+				fout << "==========PRINT_BPTREE==========\nSUCCESS\n========================\n\n";
+			}
+			else
+			{
+				fout << "==========PRINT_BPTREE==========\nERROR 500\n========================\n\n";
+			}
+		}
+		else if (strcmp(tmp, "PRINT_CONFIDENCE") == 0)
+		{
+			char *food_name = strtok(NULL, " ");
+			char *frequ = strtok(NULL, " ");
+
+			if (PRINT_CONFIDENCE(food_name, stod(frequ)))
+			{
+				fout << "==========PRINT_CONFIDENCE==========\nSUCCESS\n========================\n\n";
+			}
+			else
+			{
+				fout << "==========PRINT_CONFIDENCE==========\nERROR 600\n========================\n\n";
 			}
 		}
 	}
@@ -145,11 +177,14 @@ bool Manager::LOAD()
 		{
 			for (int k = 0; k < fre_list.size(); k++)
 			{
+				if (j >= total_list[i].size())
+					break;
 				if (total_list[i][j] == fre_list[k].food && fre_list[k].freq < threshold)
 					total_list[i].erase(total_list[i].begin() + j);
 			}
 		}
 	}
+
 	for (int i = 0; i < fre_list.size(); i++)
 		fpgrowth->createTable(fre_list[i].second, fre_list[i].first);
 	fpgrowth->table->descendingIndexTable();
@@ -177,15 +212,15 @@ bool Manager::LOAD()
 					total_list[i][k + 1] = total_list[i][k];
 					total_list[i][k] = tmp;
 				}
-				else if (fre_list[m1].freq == fre_list[m2].freq)
+				/*else if (fre_list[m1].freq == fre_list[m2].freq)
 				{
-					if (fpgrowth->table->indexTable.begin()->first == max(fpgrowth->table->indexTable.begin()->first, fpgrowth->table->indexTable.end()->first))
-					{
-						string tmp = total_list[i][k + 1];
-						total_list[i][k + 1] = total_list[i][k];
-						total_list[i][k] = tmp;
-					}
-				}
+				   if (fpgrowth->table->indexTable.begin()->first == max(fpgrowth->table->indexTable.begin()->first, fpgrowth->table->indexTable.end()->first))
+				   {
+					  string tmp = total_list[i][k + 1];
+					  total_list[i][k + 1] = total_list[i][k];
+					  total_list[i][k] = tmp;
+				   }
+				}*/
 			}
 		}
 	}
@@ -197,10 +232,10 @@ bool Manager::LOAD()
 bool Manager::BTLOAD()
 {
 	fresult.open("result1");
-	if (!fresult) //안에 이미 데이터 있으면 에러처리 수정해야함
-	{
-		return false;
-	}
+	// if (!fresult) //안에 이미 데이터 있으면 에러처리 수정해야함
+	//{
+	//    return false;
+	// }
 	while (!fresult.eof())
 	{
 		char line[BUFF_SIZE];
@@ -218,7 +253,7 @@ bool Manager::BTLOAD()
 
 		// bptree 삽입
 		bptree->Insert(key, food_list);
-
+		//데이터노드 초과
 		BpTreeNode *cur = bptree->root;
 		while (cur->getMostLeftChild())
 			cur = cur->getMostLeftChild();
@@ -277,24 +312,86 @@ bool Manager::PRINT_FPTREE()
 	return true;
 }
 
-// bool Manager::PRINT_BPTREE(char* item, int min_fre_listquency) {
+bool Manager::PRINT_BPTREE(char *item, int min_fre_listquency)
+{
 
-// }
+	fout << "========PRINT_BPTREE========\nFrequentPattern Frequency\n";
+	string str_item = item;
+	BpTreeNode *insertposition = bptree->searchDataNode(min_fre_listquency);
+	multimap<int, FrequentPatternNode *> *tmp_datanode;
+	multimap<int, set<string>> tmp_multimap;
+	set<string> tmp_set;
+	string tmp_str;
+	while (insertposition->getNext())
+	{
+		tmp_datanode = insertposition->getDataMap();
+		for (auto datalist = tmp_datanode->begin(); datalist != tmp_datanode->end(); datalist++)
+		{
+			if (datalist->first >= min_fre_listquency)
+			{ //최소 빈도수 이상인 경우만
+				tmp_multimap = datalist->second->getList();
+				for (auto iter = tmp_multimap.begin(); iter != tmp_multimap.end(); iter++)
+				{
+					tmp_set = iter->second;
+					auto it = tmp_set.find(str_item);
+					if (it != tmp_set.end())
+					{
 
-// bool Manager::PRINT_CONFIDENCE(char* item, double rate) {
+						fout << "{";
+						for (set<string>::iterator qq = tmp_set.begin(); qq != tmp_set.end(); qq++)
+						{
+							fout << *qq;
+							if (++qq != tmp_set.end())
+							{
+								fout << ", ";
+								--qq;
+							}
+							else
+								--qq;
+						}
+						fout << "} " << datalist->first << "\n";
+						// tmp_str = *it->begin();
+						// for (auto i = tmp_str.begin(); i != tmp_str.end(); i++)
+						// {
+						// 	fout << *i;
+						// }
+					}
+				}
+			}
+		}
+		insertposition = insertposition->getNext();
+	}
+	return true;
+}
 
-// }
+bool Manager::PRINT_CONFIDENCE(char *item, double rate)
+{
+	fout << "========PRINT_BPTREE========\nFrequentPattern Frequency Confidence\n";
+	string str_item = item;
+	BpTreeNode *cur = new BpTreeDataNode;
+	cur = bptree->root;
+	while (cur->getMostLeftChild())
+		cur = cur->getMostLeftChild();
+
+	while (cur->getNext())
+	{
+		for (auto it1 = cur->getDataMap()->begin(); it1 != cur->getDataMap()->end(); it1++)
+		{
+		}
+		cur = cur->getNext();
+	}
+}
 
 // bool Manager::PRINT_RANGE(char* item, int start, int end) {
 
 // }
 
-// void Manager::printErrorCode(int n) {				//ERROR CODE PRINT
-// 	// fout << ERROR " << n << " << endl;
-// 	fout << "=======================" << endl << endl;
+// void Manager::printErrorCode(int n) {            //ERROR CODE PRINT
+//    // fout << ERROR " << n << " << endl;
+//    fout << "=======================" << endl << endl;
 // }
 
 // void Manager::printSuccessCode() {//SUCCESS CODE PRINT
-// 	fout << "Success" << endl;
-// 	fout << "=======================" << endl << endl;
+//    fout << "Success" << endl;
+//    fout << "=======================" << endl << endl;
 // }

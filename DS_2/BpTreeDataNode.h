@@ -10,6 +10,7 @@ public:
 	BpTreeNode *pPrev;
 	BpTreeDataNode()
 	{
+
 		pNext = nullptr;
 		pPrev = nullptr;
 	}

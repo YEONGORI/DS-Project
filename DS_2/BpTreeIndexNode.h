@@ -11,7 +11,7 @@ public:
 
 	void insertIndexMap(int n, BpTreeNode *pN)
 	{
-		mapIndex.insert(multimap<int, BpTreeNode *>::value_type(n, pN));
+		mapIndex.insert(map<int, BpTreeNode *>::value_type(n, pN));
 	}
 
 	void deleteMap(int n)
