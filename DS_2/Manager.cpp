@@ -123,20 +123,20 @@ void Manager::run(const char *command)
 				fout << "==========PRINT_CONFIDENCE==========\nERROR 600\n========================\n\n";
 			}
 		}
-		else if (strcmp(tmp, "PRINT_RANGE") == 0)
-		{
-			char *food_name = strtok(NULL, " ");
-			char *min = strtok(NULL, " ");
-			char *max = strtok(NULL, " ");
-			if (PRINT_RANGE(food_name, stoi(min), stoi(max)))
-			{
-				fout << "==========PRINT_RANGE==========\nSUCCESS\n========================\n\n";
-			}
-			else
-			{
-				fout << "==========PRINT_RANGE==========\nERROR 600\n========================\n\n";
-			}
-		}
+		// else if (strcmp(tmp, "PRINT_RANGE") == 0)
+		// {
+		// 	char *food_name = strtok(NULL, " ");
+		// 	char *min = strtok(NULL, " ");
+		// 	char *max = strtok(NULL, " ");
+		// 	if (PRINT_RANGE(food_name, stoi(min), stoi(max)))
+		// 	{
+		// 		fout << "==========PRINT_RANGE==========\nSUCCESS\n========================\n\n";
+		// 	}
+		// 	else
+		// 	{
+		// 		fout << "==========PRINT_RANGE==========\nERROR 600\n========================\n\n";
+		// 	}
+		// }
 	}
 	fin.close();
 	return;
@@ -398,14 +398,16 @@ bool Manager::PRINT_CONFIDENCE(char *item, double rate)
 		{
 			if(it1->first / (double)item_fre > rate){
 				for(auto it2 = it1->second->getList().begin();it2 != it1->second->getList().end();it2++){
-					fout<<"{";
-					for(auto it3 = it2->second.begin();it3 != it2->second.end();it3++){
-						fout<<*it3;
-						if(it3!=it2->second.end()){
-							fout<<", ";
+					if(it2->second.find(str_item) != it2->second.end()){
+						fout<<"{";
+						for(auto it3 = it2->second.begin();it3 != it2->second.end();it3++){						
+							fout<<*it3;
+							if(it3!=it2->second.end()){
+								fout<<", ";
 						}
-					}
-					fout<<"} "<<it1->first<<" "<<(it1->first/(double)item_fre)<<"\n";
+						fout<<"} "<<it1->first<<" "<<(it1->first/(double)item_fre)<<"\n";
+						}
+					}	
 				}
 			}
 		}
@@ -413,25 +415,25 @@ bool Manager::PRINT_CONFIDENCE(char *item, double rate)
 	}
 }
 
-bool Manager::PRINT_RANGE(char* item, int start, int end) {
-	fout << "========PRINT_RANGE========\nFrequentPattern Frequency Confidence\n";
+// bool Manager::PRINT_RANGE(char* item, int start, int end) {
+// 	fout << "========PRINT_RANGE========\nFrequentPattern Frequency Confidence\n";
 
-	string str_item = item;
-	BpTreeNode *cur = new BpTreeDataNode;
-	cur = bptree->root;
+// 	string str_item = item;
+// 	BpTreeNode *cur = new BpTreeDataNode;
+// 	cur = bptree->root;
 
-	while (cur->getMostLeftChild())
-		cur = cur->getMostLeftChild();
+// 	while (cur->getMostLeftChild())
+// 		cur = cur->getMostLeftChild();
 
-	BpTreeNode *start_position = bptree->searchDataNode(start);
-	while (start_position->getNext())
-	{
-		BpTreeDataNode *tmp_datanode = insertposition->getDataMap();
-		for (auto datalist = tmp_datanode->begin(); datalist != tmp_datanode->end(); datalist++)
-		{
-		start_position = start_position->getNext();
-	}
-}
+// 	BpTreeNode *start_position = bptree->searchDataNode(start);
+// 	while (start_position->getNext())
+// 	{
+// 		BpTreeDataNode *tmp_datanode = insertposition->getDataMap();
+// 		for (auto datalist = tmp_datanode->begin(); datalist != tmp_datanode->end(); datalist++)
+// 		{
+// 		start_position = start_position->getNext();
+// 	}
+// }
 
 // void Manager::printErrorCode(int n) {            //ERROR CODE PRINT
 //    // fout << ERROR " << n << " << endl;
