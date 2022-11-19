@@ -10,16 +10,15 @@ bool BpTree::Insert(int key, set<string> set)
 
 	if (cnt < order)
 	{
-		fpn = root->getDataMap()->find(key)->second;
-		cout<<root->getDataMap()->find(key)->second->frequency<<"\n";
-		if(fpn == NULL){
-			root->insertDataMap(key, fpn);
-		}
-		else{
+		if(cnt == 0){
 			fpn->InsertList(set);
 			root->insertDataMap(key, fpn);
 		}
-		
+		else{
+			fpn = root->getDataMap()->find(key)->second;
+			fpn->InsertList(set);
+			root->insertDataMap(key, fpn);
+		}
 		cnt++;
 	}
 	else
@@ -36,9 +35,15 @@ bool BpTree::Insert(int key, set<string> set)
 			cur = cur->getNext();
 		}
 		// insert
-		fpn = cur->getDataMap()->find(key)->second;
-		fpn->InsertList(set);
-		cur->insertDataMap(key, fpn);
+		if(cur->getDataMap()->find(key)==cur->getDataMap()->end()){
+			fpn->InsertList(set);
+			cur->insertDataMap(key, fpn);
+		}
+		else{
+			fpn = cur->getDataMap()->find(key)->second;
+			fpn->InsertList(set);
+			cur->insertDataMap(key, fpn);
+		}
 	}
 
 	return true;
