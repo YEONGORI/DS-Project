@@ -123,20 +123,20 @@ void Manager::run(const char *command)
 				fout << "==========PRINT_CONFIDENCE==========\nERROR 600\n========================\n\n";
 			}
 		}
-		// else if (strcmp(tmp, "PRINT_RANGE") == 0)
-		// {
-		// 	char *food_name = strtok(NULL, " ");
-		// 	char *min = strtok(NULL, " ");
-		// 	char *max = strtok(NULL, " ");
-		// 	if (PRINT_RANGE(food_name, stoi(min), stoi(max)))
-		// 	{
-		// 		fout << "==========PRINT_RANGE==========\nSUCCESS\n========================\n\n";
-		// 	}
-		// 	else
-		// 	{
-		// 		fout << "==========PRINT_RANGE==========\nERROR 600\n========================\n\n";
-		// 	}
-		// }
+		else if (strcmp(tmp, "PRINT_RANGE") == 0)
+		{
+			char *food_name = strtok(NULL, " ");
+			char *min = strtok(NULL, " ");
+			char *max = strtok(NULL, " ");
+			if (PRINT_RANGE(food_name, stoi(min), stoi(max)))
+			{
+				fout << "==========PRINT_RANGE==========\nSUCCESS\n========================\n\n";
+			}
+			else
+			{
+				fout << "==========PRINT_RANGE==========\nERROR 600\n========================\n\n";
+			}
+		}
 	}
 	fin.close();
 	return;
@@ -392,28 +392,34 @@ bool Manager::PRINT_CONFIDENCE(char *item, double rate)
 	while (cur->getMostLeftChild())
 		cur = cur->getMostLeftChild();
 	//데이터 노드들의 (빈도수/item빈도수)가 rate보다 높은지 전부 확인해서 출력  
+	map<int, FrequentPatternNode *> *tmp_datanode;
+	multimap<int, set<string>> tmp_multimap;
+	set<string> tmp_set;
+
 	while (cur->getNext())
 	{
-		for (auto it1 = cur->getDataMap()->begin(); it1 != cur->getDataMap()->end(); it1++)
+		tmp_datanode = cur->getDataMap();
+		for (auto it1 = tmp_datanode->begin(); it1 != tmp_datanode->end(); it1++)
 		{
 			if(it1->first / (double)item_fre > rate){
-				
-				for(auto it2 = it1->second->getList().begin();it2 != it1->second->getList().end();it2++){
+				tmp_multimap = it1->second->getList();				
+				for(auto it2 = tmp_multimap.begin();it2 != tmp_multimap.end();it2++){
 					if(it2->second.find(str_item)!=it2->second.end())
 					{
-						fout<<"{";
-						for(auto it3 = it2->second.begin();it3 != it2->second.end();it3++){						
-							fout<<*it3++;
-							if(it3!=it2->second.end()){
-								fout<<", ";
-								it3--;
-								cout<<*it3<<"\n";
+						tmp_set = it2->second;
+						fout << "{";
+						for (set<string>::iterator qq = tmp_set.begin(); qq != tmp_set.end(); qq++)
+						{
+							fout << *qq;
+							if (++qq != tmp_set.end())
+							{
+								fout << ", ";
+								--qq;
 							}
-							else{
-								it3--;
-							}
+							else
+								--qq;
 						}
-						fout<<"} "<<it1->first<<" "<<(it1->first/(double)item_fre)<<"\n";
+						fout << "} " << it1->first<<" "<<(it1->first/(double)item_fre)<<"\n";
 					}	
 				}
 			}
@@ -422,25 +428,50 @@ bool Manager::PRINT_CONFIDENCE(char *item, double rate)
 	}
 }
 
-// bool Manager::PRINT_RANGE(char* item, int start, int end) {
-// 	fout << "========PRINT_RANGE========\nFrequentPattern Frequency Confidence\n";
+bool Manager::PRINT_RANGE(char* item, int start, int end) {
+	fout << "========PRINT_RANGE========\nFrequentPattern Frequency Confidence\n";
 
-// 	string str_item = item;
-// 	BpTreeNode *cur = new BpTreeDataNode;
-// 	cur = bptree->root;
-
-// 	while (cur->getMostLeftChild())
-// 		cur = cur->getMostLeftChild();
-
-// 	BpTreeNode *start_position = bptree->searchDataNode(start);
-// 	while (start_position->getNext())
-// 	{
-// 		BpTreeDataNode *tmp_datanode = insertposition->getDataMap();
-// 		for (auto datalist = tmp_datanode->begin(); datalist != tmp_datanode->end(); datalist++)
-// 		{
-// 		start_position = start_position->getNext();
-// 	}
-// }
+	string str_item = item;
+	
+	BpTreeNode *start_position = bptree->searchDataNode(start);
+	map<int, FrequentPatternNode *> *tmp_datanode;
+	multimap<int, set<string>> tmp_multimap;
+	set<string> tmp_set;
+	string tmp_str;
+	while (start_position->getNext())
+	{
+		tmp_datanode = start_position->getDataMap();
+		for (auto it1 = tmp_datanode->begin(); it1 != tmp_datanode->end(); it1++)
+		{
+			if (it1->first >= start && it1->first < end)//최소 빈도수 이상인 경우만
+			{ 
+				tmp_multimap = it1->second->getList();
+				for (auto iter = tmp_multimap.begin(); iter != tmp_multimap.end(); iter++)
+				{
+					tmp_set = iter->second;
+					auto it = tmp_set.find(str_item);
+					if (it != tmp_set.end())
+					{
+						fout << "{";
+						for (set<string>::iterator qq = tmp_set.begin(); qq != tmp_set.end(); qq++)
+						{
+							fout << *qq;
+							if (++qq != tmp_set.end())
+							{
+								fout << ", ";
+								--qq;
+							}
+							else
+								--qq;
+						}
+						fout << "} " << it1->first << "\n";
+					}
+				}
+			}
+		}
+		start_position = start_position->getNext();
+	}
+}
 
 // void Manager::printErrorCode(int n) {            //ERROR CODE PRINT
 //    // fout << ERROR " << n << " << endl;
