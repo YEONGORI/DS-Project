@@ -4,7 +4,7 @@ FPGrowth::~FPGrowth()
 {
 }
 
-void FPGrowth::createFPtree(FPNode *root, HeaderTable *table, vector<vector<string>> item_array)
+void FPGrowth::createFPtree(FPNode *root, HeaderTable *table, vector<vector<string> > item_array)
 {
 	for (int i = 0; i < item_array.size(); i++)
 	{

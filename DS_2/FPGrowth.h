@@ -28,7 +28,7 @@ public:
 	}
 	~FPGrowth();
 
-	void createFPtree(FPNode *root, HeaderTable *table, vector<vector<string>> item_array);
+	void createFPtree(FPNode *root, HeaderTable *table, vector<vector<string> > item_array);
 	void createTable(string item, int frequency)
 	{
 		table->insertTable(item, frequency);
