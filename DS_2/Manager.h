@@ -29,6 +29,7 @@ public:
 
 	~Manager() // destructor
 	{
+		
 		/* You must fill here */
 	}
 

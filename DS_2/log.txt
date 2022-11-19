@@ -1,6 +1,6 @@
 ==========LOAD==========
-SUCCESS
-========================
+Success
+=======================
 
 ===========PRINT_ITEMLIST===========
 Item	Frequency
@@ -140,8 +140,8 @@ bug spray	1
 (soup, 12) 
 ================================
 ==========BTLOAD==========
-SUCCESS
-========================
+Success
+=======================
 
 ========PRINT_BPTREE========
 FrequentPattern Frequency
@@ -160,17 +160,9 @@ FrequentPattern Frequency
 {chocolate, eggs} 3
 {chocolate, eggs, soup} 3
 {eggs, soup} 4
-==========PRINT_BPTREE==========
-SUCCESS
-========================
-
 ========PRINT_CONFIDENCE========
 FrequentPattern Frequency Confidence
 {milk, mineral water} 4 0.8
-==========PRINT_CONFIDENCE==========
-SUCCESS
-========================
-
 ========PRINT_RANGE========
 FrequentPattern Frequency Confidence
 {milk, spaghetti} 3
@@ -178,4 +170,8 @@ FrequentPattern Frequency Confidence
 ==========PRINT_RANGE==========
 SUCCESS
 ========================
+
+=======EXIT========
+Success
+=======================
 

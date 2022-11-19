@@ -48,20 +48,22 @@ void Manager::run(const char *command)
 
 		if (strcmp(tmp, "LOAD") == 0)
 		{
+			fout << "==========LOAD==========\n";
 			if (LOAD())
 			{
-				fout << "==========LOAD==========\nSUCCESS\n========================\n\n";
+				printSuccessCode();				
 			}
 			else
 			{
-				fout << "==========LOAD==========\nERROR 100\n========================\n\n";
+				printErrorCode(100);
 			}
 		}
 		else if (strcmp(tmp, "PRINT_ITEMLIST") == 0)
 		{
+			fout << "===========PRINT_ITEMLIST===========\n";
 			if (PRINT_ITEMLIST())
 			{
-				fout << "===========PRINT_ITEMLIST===========\nItem\tFrequency\n";
+				fout<<"Item\tFrequency\n";
 				for (auto i : fpgrowth->table->indexTable)
 				{
 					fout << i.second << '\t' << i.first << '\n';
@@ -70,7 +72,7 @@ void Manager::run(const char *command)
 			}
 			else
 			{
-				fout << "==========PRINT_ITEMLIST==========\nERROR 300\n========================\n\n";
+				fout << "ERROR 300\n========================\n\n";
 			}
 		}
 		else if (strcmp(tmp, "PRINT_FPTREE") == 0)
@@ -86,24 +88,25 @@ void Manager::run(const char *command)
 		}
 		else if (strcmp(tmp, "BTLOAD") == 0)
 		{
+			fout << "==========BTLOAD==========\n";
 			if (BTLOAD())
 			{
-				fout << "==========BTLOAD==========\nSUCCESS\n========================\n\n";
+				printSuccessCode();
 			}
 			else
 			{
-				fout << "==========BTLOAD==========\nERROR 100\n========================\n\n";
+				printErrorCode(200);
 			}
 		}
 		else if (strcmp(tmp, "PRINT_BPTREE") == 0)
 		{
 			char *food_name = strtok(NULL, " ");
 			char *frequ = strtok(NULL, " ");
-
-			if (PRINT_BPTREE(food_name, stoi(frequ)))
-			{
-				fout << "==========PRINT_BPTREE==========\nSUCCESS\n========================\n\n";
+			if(frequ == NULL){
+				fout << "==========PRINT_BPTREE==========\nERROR 500\n========================\n\n";
+				continue;
 			}
+			if (PRINT_BPTREE(food_name, stoi(frequ)));
 			else
 			{
 				fout << "==========PRINT_BPTREE==========\nERROR 500\n========================\n\n";
@@ -113,11 +116,15 @@ void Manager::run(const char *command)
 		{
 			char *food_name = strtok(NULL, " ");
 			char *frequ = strtok(NULL, " ");
-
-			if (PRINT_CONFIDENCE(food_name, stod(frequ)))
-			{
-				fout << "==========PRINT_CONFIDENCE==========\nSUCCESS\n========================\n\n";
+			if(!strchr(frequ,'.')){
+				fout << "==========PRINT_CONFIDENCE==========\nERROR 600\n========================\n\n";
+				continue;
 			}
+			if(frequ == NULL){
+				fout << "==========PRINT_CONFIDENCE==========\nERROR 600\n========================\n\n";
+				continue;
+			}
+			if (PRINT_CONFIDENCE(food_name, stod(frequ)));
 			else
 			{
 				fout << "==========PRINT_CONFIDENCE==========\nERROR 600\n========================\n\n";
@@ -128,6 +135,14 @@ void Manager::run(const char *command)
 			char *food_name = strtok(NULL, " ");
 			char *min = strtok(NULL, " ");
 			char *max = strtok(NULL, " ");
+			if(strchr(min,'.') || strchr(max, ',')){
+				fout << "==========PRINT_RANGE==========\nERROR 600\n========================\n\n";
+				continue;
+			}
+			if(food_name == NULL || min == NULL || max == NULL){
+				fout << "==========PRINT_RANGE==========\nERROR 600\n========================\n\n";
+				continue;
+			}
 			if (PRINT_RANGE(food_name, stoi(min), stoi(max)))
 			{
 				fout << "==========PRINT_RANGE==========\nSUCCESS\n========================\n\n";
@@ -137,6 +152,14 @@ void Manager::run(const char *command)
 				fout << "==========PRINT_RANGE==========\nERROR 600\n========================\n\n";
 			}
 		}
+		else if (strcmp(tmp, "EXIT") == 0)
+		{		
+			// delete fpgrowth;
+			// delete bptree;	
+			fout<<"=======EXIT========\n";
+			printSuccessCode();
+			return;
+		}
 	}
 	fin.close();
 	return;
@@ -145,6 +168,7 @@ void Manager::run(const char *command)
 bool Manager::LOAD()
 {
 	fmarket.open("testcase1");
+	//예외처리
 	if (!fmarket || !total_list.empty())
 	{
 		return false;
@@ -198,7 +222,6 @@ bool Manager::LOAD()
 			}
 		}
 	}
-
 	for (int i = 0; i < fre_list.size(); i++)
 		fpgrowth->createTable(fre_list[i].second, fre_list[i].first);
 	fpgrowth->table->descendingIndexTable();
@@ -246,10 +269,10 @@ bool Manager::LOAD()
 bool Manager::BTLOAD()
 {
 	fresult.open("result1");
-	// if (!fresult) //안에 이미 데이터 있으면 에러처리 수정해야함
-	//{
-	//    return false;
-	// }
+	if (!fresult && bptree->cnt>0) //안에 이미 데이터 있으면 에러처리 수정해야함
+	{
+	   return false;
+	}
 	while (!fresult.eof())
 	{
 		char line[BUFF_SIZE];
@@ -286,14 +309,14 @@ bool Manager::BTLOAD()
 
 bool Manager::PRINT_ITEMLIST()
 {
-	if (!fpgrowth->table)
+	if (fpgrowth->getHeaderTable()->getindexTable().empty())
 		return false;
 	return true;
 }
 
 bool Manager::PRINT_FPTREE()
 {
-	if (!fpgrowth->fpTree)
+	if (fpgrowth->getTree()->getChildren().empty())
 		return false;
 	fout << "===========PRINT_FPTREE===========\n{StandardItem.Frequency} (Path_Item.Frequency)\n";
 
@@ -328,7 +351,10 @@ bool Manager::PRINT_FPTREE()
 
 bool Manager::PRINT_BPTREE(char *item, int min_fre_listquency)
 {
-
+	if(item == NULL || bptree->cnt==0){
+		return false;
+	}
+	int flag=0;
 	fout << "========PRINT_BPTREE========\nFrequentPattern Frequency\n";
 	string str_item = item;
 	BpTreeNode *insertposition = bptree->searchDataNode(min_fre_listquency);
@@ -350,7 +376,7 @@ bool Manager::PRINT_BPTREE(char *item, int min_fre_listquency)
 					auto it = tmp_set.find(str_item);
 					if (it != tmp_set.end())
 					{
-
+						flag=1;
 						fout << "{";
 						for (set<string>::iterator qq = tmp_set.begin(); qq != tmp_set.end(); qq++)
 						{
@@ -370,16 +396,23 @@ bool Manager::PRINT_BPTREE(char *item, int min_fre_listquency)
 		}
 		insertposition = insertposition->getNext();
 	}
+	if(flag==0){
+		return false;
+	}
 	return true;
 }
 
 bool Manager::PRINT_CONFIDENCE(char *item, double rate)
 {
 	fout << "========PRINT_CONFIDENCE========\nFrequentPattern Frequency Confidence\n";
+	if(item == NULL || bptree->cnt==0){
+		return false;
+	}	
+
 	//헤더 인덱스 테이블에서 item의 빈도수를 가져옴
 	int item_fre;
 	string str_item = item;
-	for(auto it=fpgrowth->getHeaderTable()->getindexTable().begin();it != fpgrowth->getHeaderTable()->getindexTable().end();it++){
+	for(auto it=fpgrowth->getHeaderTable()->indexTable.begin();it != fpgrowth->getHeaderTable()->indexTable.end();it++){
 		if(it->second == item){
 			item_fre = it->first;
 			break;
@@ -395,7 +428,7 @@ bool Manager::PRINT_CONFIDENCE(char *item, double rate)
 	map<int, FrequentPatternNode *> *tmp_datanode;
 	multimap<int, set<string>> tmp_multimap;
 	set<string> tmp_set;
-
+	int flag=0;
 	while (cur->getNext())
 	{
 		tmp_datanode = cur->getDataMap();
@@ -406,6 +439,7 @@ bool Manager::PRINT_CONFIDENCE(char *item, double rate)
 				for(auto it2 = tmp_multimap.begin();it2 != tmp_multimap.end();it2++){
 					if(it2->second.find(str_item)!=it2->second.end())
 					{
+						flag =1;
 						tmp_set = it2->second;
 						fout << "{";
 						for (set<string>::iterator qq = tmp_set.begin(); qq != tmp_set.end(); qq++)
@@ -426,13 +460,19 @@ bool Manager::PRINT_CONFIDENCE(char *item, double rate)
 		}
 		cur = cur->getNext();
 	}
+	if(flag==0)
+		return false;
+	return true;
 }
 
 bool Manager::PRINT_RANGE(char* item, int start, int end) {
+	if(item == NULL || bptree->cnt==0){
+		return false;
+	}	
 	fout << "========PRINT_RANGE========\nFrequentPattern Frequency Confidence\n";
 
 	string str_item = item;
-	
+	int flag=0;
 	BpTreeNode *start_position = bptree->searchDataNode(start);
 	map<int, FrequentPatternNode *> *tmp_datanode;
 	multimap<int, set<string>> tmp_multimap;
@@ -452,6 +492,7 @@ bool Manager::PRINT_RANGE(char* item, int start, int end) {
 					auto it = tmp_set.find(str_item);
 					if (it != tmp_set.end())
 					{
+						flag=1;
 						fout << "{";
 						for (set<string>::iterator qq = tmp_set.begin(); qq != tmp_set.end(); qq++)
 						{
@@ -471,14 +512,17 @@ bool Manager::PRINT_RANGE(char* item, int start, int end) {
 		}
 		start_position = start_position->getNext();
 	}
+	if(flag==0)
+		return false;
+	return true;
 }
 
-// void Manager::printErrorCode(int n) {            //ERROR CODE PRINT
-//    // fout << ERROR " << n << " << endl;
-//    fout << "=======================" << endl << endl;
-// }
+void Manager::printErrorCode(int n) { //ERROR CODE PRINT
+   fout << "ERROR "  << n << endl;
+   fout << "=======================" << endl << endl;
+}
 
-// void Manager::printSuccessCode() {//SUCCESS CODE PRINT
-//    fout << "Success" << endl;
-//    fout << "=======================" << endl << endl;
-// }
+void Manager::printSuccessCode() {//SUCCESS CODE PRINT
+   fout << "Success" << endl;
+   fout << "=======================" << endl << endl;
+}
