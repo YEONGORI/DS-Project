@@ -367,16 +367,38 @@ bool Manager::PRINT_BPTREE(char *item, int min_fre_listquency)
 bool Manager::PRINT_CONFIDENCE(char *item, double rate)
 {
 	fout << "========PRINT_BPTREE========\nFrequentPattern Frequency Confidence\n";
+	//헤더 인덱스 테이블에서 item의 빈도수를 가져옴
+	int item_fre;
 	string str_item = item;
+	for(auto it=fpgrowth->getHeaderTable()->getindexTable().begin();it != fpgrowth->getHeaderTable()->getindexTable().end();it++){
+		if(it->second == item){
+			item_fre = it->first;
+			break;
+		}
+	}
+	
 	BpTreeNode *cur = new BpTreeDataNode;
 	cur = bptree->root;
+	//제일 왼쪽 데이터노드로
 	while (cur->getMostLeftChild())
 		cur = cur->getMostLeftChild();
-
+	//데이터 노드들의 (빈도수/item빈도수)가 rate보다 높은지 전부 확인해서 출력  
 	while (cur->getNext())
 	{
 		for (auto it1 = cur->getDataMap()->begin(); it1 != cur->getDataMap()->end(); it1++)
 		{
+			if(it1->first / (double)item_fre > rate){
+				for(auto it2 = it1->second->getList().begin();it2 != it1->second->getList().end();it2++){
+					fout<<"{";
+					for(auto it3 = it2->second.begin();it3 != it2->second.end();it3++){
+						fout<<*it3;
+						if(it3!=it2->second.end()){
+							fout<<", ";
+						}
+					}
+					fout<<"} "<<it1->first<<" "<<(it1->first/(double)item_fre)<<"\n";
+				}
+			}
 		}
 		cur = cur->getNext();
 	}
