@@ -30,14 +30,14 @@ public:
     virtual void insertIndexMap(int n, BpTreeNode *pN) {}
     virtual void deleteMap(int n) {}
 
-    virtual multimap<int, BpTreeNode *> *getIndexMap()
+    virtual map<int, BpTreeNode *> *getIndexMap()
     {
-        multimap<int, BpTreeNode *> m;
+        map<int, BpTreeNode *> m;
         return &m;
     }
-    virtual multimap<int, FrequentPatternNode *> *getDataMap()
+    virtual map<int, FrequentPatternNode *> *getDataMap()
     {
-        multimap<int, FrequentPatternNode *> m;
+        map<int, FrequentPatternNode *> m;
         return &m;
     }
 };

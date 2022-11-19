@@ -7,20 +7,19 @@
 bool BpTree::Insert(int key, set<string> set)
 {
 	FrequentPatternNode *fpn = new FrequentPatternNode;
-	int s = set.size();
-	fpn->setFrequency(s);
-	fpn->InsertList(set);
-	/*if (root == nullptr)
-	{
-		BpTreeDataNode *newdatanode = new BpTreeDataNode();
-		newdatanode->insertDataMap(key, fpn);
-		root = newdatanode;
-		return true;
-	}*/
 
 	if (cnt < order)
 	{
-		root->insertDataMap(key, fpn);
+		fpn = root->getDataMap()->find(key)->second;
+		cout<<root->getDataMap()->find(key)->second->frequency<<"\n";
+		if(fpn == NULL){
+			root->insertDataMap(key, fpn);
+		}
+		else{
+			fpn->InsertList(set);
+			root->insertDataMap(key, fpn);
+		}
+		
 		cnt++;
 	}
 	else
@@ -37,6 +36,8 @@ bool BpTree::Insert(int key, set<string> set)
 			cur = cur->getNext();
 		}
 		// insert
+		fpn = cur->getDataMap()->find(key)->second;
+		fpn->InsertList(set);
 		cur->insertDataMap(key, fpn);
 	}
 

@@ -5,7 +5,7 @@
 class BpTreeDataNode : public BpTreeNode
 {
 public:
-	multimap<int, FrequentPatternNode *> mapData;
+	map<int, FrequentPatternNode *> mapData;
 	BpTreeNode *pNext;
 	BpTreeNode *pPrev;
 	BpTreeDataNode()
@@ -29,7 +29,7 @@ public:
 	{
 		mapData.erase(n);
 	}
-	multimap<int, FrequentPatternNode *> *getDataMap() { return &mapData; }
+	map<int, FrequentPatternNode *> *getDataMap() { return &mapData; }
 };
 
 #endif

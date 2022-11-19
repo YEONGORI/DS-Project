@@ -6,7 +6,7 @@
 class BpTreeIndexNode : public BpTreeNode
 {
 public:
-	multimap<int, BpTreeNode *> mapIndex;
+	map<int, BpTreeNode *> mapIndex;
 	BpTreeIndexNode() {}
 
 	void insertIndexMap(int n, BpTreeNode *pN)
@@ -19,7 +19,7 @@ public:
 		mapIndex.erase(n);
 	}
 
-	multimap<int, BpTreeNode *> *getIndexMap() { return &mapIndex; }
+	map<int, BpTreeNode *> *getIndexMap() { return &mapIndex; }
 };
 
 #endif

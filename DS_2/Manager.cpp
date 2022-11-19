@@ -332,7 +332,7 @@ bool Manager::PRINT_BPTREE(char *item, int min_fre_listquency)
 	fout << "========PRINT_BPTREE========\nFrequentPattern Frequency\n";
 	string str_item = item;
 	BpTreeNode *insertposition = bptree->searchDataNode(min_fre_listquency);
-	multimap<int, FrequentPatternNode *> *tmp_datanode;
+	map<int, FrequentPatternNode *> *tmp_datanode;
 	multimap<int, set<string>> tmp_multimap;
 	set<string> tmp_set;
 	string tmp_str;
@@ -397,17 +397,21 @@ bool Manager::PRINT_CONFIDENCE(char *item, double rate)
 		for (auto it1 = cur->getDataMap()->begin(); it1 != cur->getDataMap()->end(); it1++)
 		{
 			if(it1->first / (double)item_fre > rate){
+				// if(it1->second->getList().find(str_item)!= it1->second->getList().end()){
+				// 	fout<<"{";
+				// 	for(auto it3 = it2->second.begin();it3 != it2->second.end();it3++){						
+				// 		fout<<*it3;
+				// 		if(it3!=it2->second.end()){
+				// 			fout<<", ";
+				// 	}
+				// 	fout<<"} "<<it1->first<<" "<<(it1->first/(double)item_fre)<<"\n";
+				// 	}
+				// } 
+					
+					
+
 				for(auto it2 = it1->second->getList().begin();it2 != it1->second->getList().end();it2++){
-					if(it2->second.find(str_item) != it2->second.end()){
-						fout<<"{";
-						for(auto it3 = it2->second.begin();it3 != it2->second.end();it3++){						
-							fout<<*it3;
-							if(it3!=it2->second.end()){
-								fout<<", ";
-						}
-						fout<<"} "<<it1->first<<" "<<(it1->first/(double)item_fre)<<"\n";
-						}
-					}	
+					
 				}
 			}
 		}
