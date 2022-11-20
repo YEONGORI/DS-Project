@@ -1,23 +1,28 @@
 #pragma once
-#include "HeaderTable.h"
+#include <set>
+#include <vector>
 #include <fstream>
 #include <iostream>
-#include <vector>
-#include <set>
+
+#include "HeaderTable.h"
 
 class FPGrowth
 {
 public:
 	int threshold;
+
 	FPNode *fpTree;
 	HeaderTable *table;
 	map<set<string>, int> frequenctPatterns;
+
 	ofstream flog;
+
 	FPGrowth()
 	{
 		fpTree = new FPNode;
 		table = new HeaderTable;
 	}
+
 	FPGrowth(ofstream *fout, int threshold = 3)
 	{
 		this->threshold = threshold;
@@ -28,7 +33,7 @@ public:
 	}
 	~FPGrowth();
 
-	void createFPtree(FPNode *root, HeaderTable *table, vector<vector<string> > item_array);
+	void createFPtree(FPNode *root, HeaderTable *table, vector<vector<string>> total_item);
 	void createTable(string item, int frequency)
 	{
 		table->insertTable(item, frequency);

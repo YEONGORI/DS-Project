@@ -4,82 +4,82 @@ FPGrowth::~FPGrowth()
 {
 }
 
-void FPGrowth::createFPtree(FPNode *root, HeaderTable *table, vector<vector<string> > item_array)
+void FPGrowth::createFPtree(FPNode *root, HeaderTable *table, vector<vector<string>> total_item)
 {
-	for (int i = 0; i < item_array.size(); i++)
+	FPNode *fp_node, *par_node, *temp_node;
+	map<string, FPNode *> cur_fp_node;
+	for (int i = 0; i < total_item.size(); i++) // Travelling total Item that provided from testcase
 	{
-		FPNode *p = root;
-		map<string, FPNode *> cur_node = root->children;
-		for (int j = 0; j < item_array[i].size(); j++)
+		fp_node = root;
+		cur_fp_node = root->children;
+		for (int j = 0; j < total_item[i].size(); j++) // Travelling all fp node
 		{
-			auto tmp = cur_node.find(item_array[i][j]);
-			if (cur_node.empty())
+			auto tmp = cur_fp_node.find(total_item[i][j]);
+			if (cur_fp_node.empty()) // Check FP Tree has Node
 			{
-				FPNode *new_node = new FPNode;
-				new_node->frequency = 1;
-				new_node->parent = p;
-				auto exist = table->dataTable.find(item_array[i][j]);
-				if (exist == table->dataTable.end())
-				{
-					table->dataTable.insert({item_array[i][j], new_node});
-				}
+				FPNode *new_fp_node = new FPNode;
+				new_fp_node->frequency = 1;
+				new_fp_node->parent = fp_node;
+				auto cur_item = table->dataTable.find(total_item[i][j]);
+				if (cur_item == table->dataTable.end()) // Check cur item already exist in FP Tree
+					table->dataTable.insert({total_item[i][j], new_fp_node});
 				else
 				{
-					FPNode *parent_node = exist->second;
-					FPNode *tmp_node = exist->second->next;
-
-					while (tmp_node)
+					par_node = cur_item->second;
+					temp_node = cur_item->second->next;
+					while (temp_node)
 					{
-						parent_node = tmp_node;
-						tmp_node = tmp_node->next;
+						par_node = temp_node;
+						temp_node = temp_node->next;
 					}
-
-					parent_node->next = new_node;
+					par_node->next = new_fp_node;
 				}
-				cur_node.insert(make_pair(item_array[i][j], new_node));
-				p->children = cur_node;
-				p = new_node;
-				cur_node = new_node->children;
+				cur_fp_node.insert(make_pair(total_item[i][j], new_fp_node));
+				fpTree->fp_count++;
+				fp_node->children = cur_fp_node;
+				fp_node = new_fp_node;
+				cur_fp_node = new_fp_node->children;
+				new_fp_node = NULL;
+				delete new_fp_node;
 			}
 			else
 			{
-				if (tmp != cur_node.end())
+				if (tmp != cur_fp_node.end()) // Check current fp node already exist
 				{
-					// tmp->second->frequency++;
-					p->children[item_array[i][j]]->frequency++;
-
-					p = p->children[item_array[i][j]];
-					cur_node = tmp->second->children;
+					fp_node->children[total_item[i][j]]->frequency++;
+					fp_node = fp_node->children[total_item[i][j]];
+					cur_fp_node = tmp->second->children;
 				}
 				else
 				{
-					FPNode *new_node = new FPNode;
-					new_node->frequency = 1;
-					new_node->parent = p;
+					FPNode *new_fp_node = new FPNode;
+					new_fp_node->frequency = 1;
+					new_fp_node->parent = fp_node;
 
-					auto exist = table->dataTable.find(item_array[i][j]);
-					if (exist == table->dataTable.end())
+					auto cur_item = table->dataTable.find(total_item[i][j]);
+					if (cur_item == table->dataTable.end()) // Check current item already exist
 					{
-						table->dataTable.insert({item_array[i][j], new_node});
+						table->dataTable.insert({total_item[i][j], new_fp_node});
+						fpTree->fp_count++;
 					}
 					else
 					{
-						FPNode *parent_node = exist->second;
-						FPNode *tmp_node = exist->second->next;
-
-						while (tmp_node)
+						par_node = cur_item->second;
+						temp_node = cur_item->second->next;
+						while (temp_node)
 						{
-							parent_node = tmp_node;
-							tmp_node = tmp_node->next;
+							par_node = temp_node;
+							temp_node = temp_node->next;
 						}
-
-						parent_node->next = new_node;
+						par_node->next = new_fp_node;
 					}
-
-					cur_node.insert(make_pair(item_array[i][j], new_node));
-					p->children = cur_node;
-					p = new_node;
-					cur_node = new_node->children;
+					cur_fp_node.insert(make_pair(total_item[i][j], new_fp_node));
+					fpTree->fp_count++;
+					fp_node->children = cur_fp_node;
+					fp_node = new_fp_node;
+					cur_fp_node = new_fp_node->children;
+					new_fp_node = NULL;
+					delete new_fp_node;
 				}
 			}
 		}
@@ -88,46 +88,25 @@ void FPGrowth::createFPtree(FPNode *root, HeaderTable *table, vector<vector<stri
 
 void FPGrowth::connectNode(HeaderTable *table, string item, FPNode *node)
 {
+	return;
 }
 
 bool FPGrowth::contains_single_path(FPNode *pNode)
 {
-	if (pNode->getChildren().size() == 0)
-		return true;
-	else if (pNode->getChildren().size() > 1)
-		return false;
-	return contains_single_path(pNode->getChildren().begin()->second);
 }
 
 map<set<string>, int> FPGrowth::getFrequentPatterns(HeaderTable *pTable, FPNode *pTree)
 {
-
 	return {};
 }
 
 void FPGrowth::powerSet(map<set<string>, int> *FrequentPattern, vector<string> data, string item, int frequency, int *ptr, int depth)
 {
-	if (data.size() == depth)
-	{
-		set<string> set;
-		set.insert(item);
-		for (int i = 0; i < data.size(); i++)
-		{
-			if (ptr[i] == 1)
-				set.insert(data[i]);
-		}
-		FrequentPattern->insert(make_pair(set, frequency));
-		return;
-	}
-	ptr[depth] = 1;
-	powerSet(FrequentPattern, data, item, frequency, ptr, depth + 1);
-	ptr[depth] = 0;
-	powerSet(FrequentPattern, data, item, frequency, ptr, depth + 1);
+	return;
 }
 
 bool FPGrowth::printList()
 {
-
 	return true;
 }
 bool FPGrowth::printTree()

@@ -2,204 +2,176 @@
 #include "BpTreeNode.h"
 #include "BpTreeDataNode.h"
 #include "BpTreeIndexNode.h"
-#include <map>
 
 bool BpTree::Insert(int key, set<string> set)
 {
-	FrequentPatternNode *fpn = new FrequentPatternNode;
+	FrequentPatternNode *cur_fpn = new FrequentPatternNode;
 
-	if (cnt < order)
+	if (node_count < order) // Check root is index node
 	{
-		if(cnt == 0){
-			fpn->InsertList(set);
-			root->insertDataMap(key, fpn);
-		}
-		else{
-			fpn = root->getDataMap()->find(key)->second;
-			fpn->InsertList(set);
-			root->insertDataMap(key, fpn);
-		}
-		cnt++;
-	}
-	else
-	{
-		BpTreeNode *cur = root;
-		while (cur->getMostLeftChild())
-			cur = cur->getMostLeftChild();
-		auto it = cur->getDataMap()->end();
-		it--;
-		while (cur->getNext() && it->first < key)
+		if (node_count == 0) // Check root is NULL
 		{
-			it = cur->getDataMap()->end();
-			it--;
-			cur = cur->getNext();
+			cur_fpn->InsertList(set);
+			root->insertDataMap(key, cur_fpn);
 		}
-		// insert
-		if(cur->getDataMap()->find(key)==cur->getDataMap()->end()){
-			fpn->InsertList(set);
-			cur->insertDataMap(key, fpn);
+		else
+		{
+			cur_fpn = root->getDataMap()->find(key)->second;
+			cur_fpn->InsertList(set);
+			root->insertDataMap(key, cur_fpn);
 		}
-		else{
-			fpn = cur->getDataMap()->find(key)->second;
-			fpn->InsertList(set);
-			cur->insertDataMap(key, fpn);
+		node_count++;
+	}
+	else // root is data node
+	{
+		BpTreeNode *cur_btn = root;
+		while (cur_btn->getMostLeftChild()) // Find Data Node
+			cur_btn = cur_btn->getMostLeftChild();
+
+		auto item = cur_btn->getDataMap()->end();
+		item--;
+
+		while (cur_btn->getNext() && item->first < key) // Find Insert Position
+		{
+			item = cur_btn->getDataMap()->end();
+			item--;
+			cur_btn = cur_btn->getNext();
+		}
+
+		if (cur_btn->getDataMap()->find(key) == cur_btn->getDataMap()->end()) // Check Position is Tree's end
+		{
+			cur_fpn->InsertList(set);
+			cur_btn->insertDataMap(key, cur_fpn);
+		}
+		else
+		{
+			cur_fpn = cur_btn->getDataMap()->find(key)->second;
+			cur_fpn->InsertList(set);
+			cur_btn->insertDataMap(key, cur_fpn);
 		}
 	}
-
 	return true;
 }
 
 BpTreeNode *BpTree::searchDataNode(int n)
 {
-	BpTreeNode *cur = root;
+	BpTreeNode *cur_btn = root;
 
-	while (cur->getMostLeftChild())
-		cur = cur->getMostLeftChild();
+	while (cur_btn->getMostLeftChild()) // Find Data Node
+		cur_btn = cur_btn->getMostLeftChild();
 
-	while (cur->getNext())
+	while (cur_btn->getNext()) // Travelling all data nodes
 	{
-		for (auto it = cur->getDataMap()->begin(); it != cur->getDataMap()->end(); it++)
+		for (auto item = cur_btn->getDataMap()->begin(); item != cur_btn->getDataMap()->end(); item++)
 		{
-			if (it->first >= n)
-			{
-				return cur;
-			}
-			--it;
+			if (item->first >= n) // Return node that meets the condition for the first time
+				return cur_btn;
+			item--;
 		}
-		cur = cur->getNext();
+		cur_btn = cur_btn->getNext();
 	}
-	return cur;
+	return cur_btn;
 }
 
 void BpTree::splitDataNode(BpTreeNode *pDataNode)
 {
-	BpTreeDataNode *new_btd = new BpTreeDataNode;
-	auto it = pDataNode->getDataMap()->begin();
-	for (int i = 0; i < pDataNode->getDataMap()->size() / 2; i++)
+	int item_cnt;
+
+	BpTreeDataNode *new_dtn = new BpTreeDataNode;
+	auto item = pDataNode->getDataMap()->begin();
+	for (int i = 0; i < pDataNode->getDataMap()->size() / 2; i++) // Find dtn's middle position
+		item++;
+
+	for (item; item != pDataNode->getDataMap()->end(); item++) // Make New Data Node
+		new_dtn->insertDataMap(item->first, item->second);
+
+	item_cnt = pDataNode->getDataMap()->size();
+	for (int i = 0; i <= item_cnt / 2; i++) // Erase Data that used to make data node
 	{
-		it++;
+		item = pDataNode->getDataMap()->end();
+		item--;
+		pDataNode->getDataMap()->erase(item);
 	}
 
-	for (it; it != pDataNode->getDataMap()->end(); it++)
+	if (pDataNode->getNext() != NULL) // Set Prev & Next
 	{
-		new_btd->insertDataMap(it->first, it->second);
-	}
-	int data_size = pDataNode->getDataMap()->size();
-	for (int i = 0; i <= data_size / 2; i++)
-	{
-		it = pDataNode->getDataMap()->end();
-		it--;
-		pDataNode->getDataMap()->erase(it);
-	}
-	if (pDataNode->getNext() != NULL)
-	{
-		pDataNode->getNext()->setPrev(new_btd);
-		new_btd->setNext(pDataNode->getNext());
+		pDataNode->getNext()->setPrev(new_dtn);
+		new_dtn->setNext(pDataNode->getNext());
 	}
 
-	pDataNode->setNext(new_btd);
-	new_btd->setPrev(pDataNode);
-	if (pDataNode->getParent() == NULL)
+	pDataNode->setNext(new_dtn);
+	new_dtn->setPrev(pDataNode);
+	if (pDataNode->getParent() == NULL) // Parent Node doesn't exist
 	{
 		BpTreeIndexNode *new_idn = new BpTreeIndexNode;
-		new_idn->insertIndexMap(new_btd->getDataMap()->begin()->first, new_btd);
+		new_idn->insertIndexMap(new_dtn->getDataMap()->begin()->first, new_dtn);
 		new_idn->setMostLeftChild(pDataNode);
 
 		pDataNode->setParent(new_idn);
-		new_btd->setParent(new_idn);
+		new_dtn->setParent(new_idn);
 		root = new_idn;
 	}
 	else
 	{
-		pDataNode->getParent()->insertIndexMap(new_btd->getDataMap()->begin()->first, new_btd);
-		new_btd->setParent(pDataNode->getParent());
-		if (excessIndexNode(new_btd->getParent()))
-		{
+		pDataNode->getParent()->insertIndexMap(new_dtn->getDataMap()->begin()->first, new_dtn);
+		new_dtn->setParent(pDataNode->getParent());
+		if (excessIndexNode(new_dtn->getParent()))
 			splitIndexNode(pDataNode->getParent());
-		}
 	}
+	new_dtn = NULL;
+	delete new_dtn;
 }
 
 void BpTree::splitIndexNode(BpTreeNode *pIndexNode)
 {
-	// if no parent
-	if (pIndexNode->getParent() == NULL)
+	int item_cnt;
+	BpTreeIndexNode *new_idn = new BpTreeIndexNode;
+	BpTreeIndexNode *new_par_idn = new BpTreeIndexNode;
+	auto item = pIndexNode->getIndexMap()->begin();
+	for (int i = 0; i < pIndexNode->getIndexMap()->size() / 2; i++) // Find dtn's middle position
+		item++;
+	new_par_idn->insertIndexMap(item->first, item->second);
+	item++;
+	for (item; item != pIndexNode->getIndexMap()->end(); item++) // Make New index node
+		new_idn->insertIndexMap(item->first, item->second);
+	if (pIndexNode->getParent() == NULL) // Parent Node doesn't exist
 	{
-		auto it = pIndexNode->getIndexMap()->begin();
-		BpTreeIndexNode *newindexnode = new BpTreeIndexNode;
-		BpTreeIndexNode *newparentnode = new BpTreeIndexNode;
+		new_idn->setMostLeftChild(new_par_idn->getIndexMap()->begin()->second);
+		new_par_idn->getIndexMap()->begin()->second = new_idn;
+		item_cnt = pIndexNode->getIndexMap()->size();
 
-		//�θ� ��忡 �� ä��
-		for (int i = 0; i < pIndexNode->getIndexMap()->size() / 2; i++)
+		for (int i = 0; i <= item_cnt / 2; i++) // // Erase Data that used to make index node
 		{
-			it++;
-		}
-		newparentnode->insertIndexMap(it->first, it->second);
-		//�ڽ� ��忡 �� ä��
-		it++;
-		for (it; it != pIndexNode->getIndexMap()->end(); it++)
-		{
-			newindexnode->insertIndexMap(it->first, it->second);
+			item = pIndexNode->getIndexMap()->end();
+			item--;
+			pIndexNode->getIndexMap()->erase(item);
 		}
 
-		newindexnode->setMostLeftChild(newparentnode->getIndexMap()->begin()->second);
-		newparentnode->getIndexMap()->begin()->second = newindexnode;
-
-		//���� ��� new��� �κ� ����
-		int index_size = pIndexNode->getIndexMap()->size();
-		for (int i = 0; i <= index_size / 2; i++)
-		{
-			it = pIndexNode->getIndexMap()->end();
-			it--;
-			pIndexNode->getIndexMap()->erase(it);
-		}
-
-		newparentnode->setMostLeftChild(pIndexNode);
-		pIndexNode->setParent(newparentnode);
-		newindexnode->setParent(newparentnode);
-		root = newparentnode;
+		new_par_idn->setMostLeftChild(pIndexNode);
+		pIndexNode->setParent(new_par_idn);
+		new_idn->setParent(new_par_idn);
+		root = new_par_idn;
 	}
 	else
 	{
-		auto it = pIndexNode->getIndexMap()->begin();
-		BpTreeIndexNode *newindexnode = new BpTreeIndexNode;
-		BpTreeIndexNode *newparentnode = new BpTreeIndexNode;
+		new_idn->setMostLeftChild(new_par_idn->getIndexMap()->begin()->second);
+		item_cnt = pIndexNode->getIndexMap()->size();
 
-		//�θ� ��忡 �� ä��
-		for (int i = 0; i < pIndexNode->getIndexMap()->size() / 2; i++)
+		for (int i = 0; i <= item_cnt / 2; i++)
 		{
-			it++;
-		}
-		newparentnode->insertIndexMap(it->first, it->second);
-		//�ڽ� ��忡 �� ä��
-		it++;
-		for (it; it != pIndexNode->getIndexMap()->end(); it++)
-		{
-			newindexnode->insertIndexMap(it->first, it->second);
+			item = pIndexNode->getIndexMap()->end();
+			item--;
+			pIndexNode->getIndexMap()->erase(item);
 		}
 
-		newindexnode->setMostLeftChild(newparentnode->getIndexMap()->begin()->second);
-		// newparentnode->getIndexMap()->begin()->second = newindexnode;
-
-		//���� ��� new��� �κ� ����
-		int index_size = pIndexNode->getIndexMap()->size();
-		for (int i = 0; i <= index_size / 2; i++)
-		{
-			it = pIndexNode->getIndexMap()->end();
-			it--;
-			pIndexNode->getIndexMap()->erase(it);
-		}
-
-		// newindexnode->setParent(newparentnode);
-		// pIndexNode->setParent(newparentnode);
-		pIndexNode->pParent->insertIndexMap(newparentnode->getIndexMap()->begin()->first, newindexnode);
-
-		// if parent is be fulled then split again
-		if (pIndexNode->getParent()->getIndexMap()->size() == order)
-		{
+		pIndexNode->pParent->insertIndexMap(new_par_idn->getIndexMap()->begin()->first, new_idn);
+		if (pIndexNode->getParent()->getIndexMap()->size() == order) // Check if the newly added parent node exceeded the order
 			splitIndexNode(pIndexNode->getParent());
-		}
 	}
+	new_idn = NULL;
+	new_par_idn = NULL;
+	delete new_idn;
+	delete new_par_idn;
 }
 
 bool BpTree::excessDataNode(BpTreeNode *pDataNode)
@@ -220,34 +192,17 @@ bool BpTree::excessIndexNode(BpTreeNode *pIndexNode)
 
 bool BpTree::printConfidence(string item, double item_frequency, double min_confidence)
 {
-
 	return true;
 }
 bool BpTree::printFrequency(string item, int min_frequency) // print winratio in ascending order
 {
-
 	return true;
 }
 bool BpTree::printRange(string item, int min, int max)
 {
-
 	return true;
 }
 void BpTree::printFrequentPatterns(set<string> pFrequentPattern, string item)
 {
-	*fout << "{";
-	set<string> curPattern = pFrequentPattern;
-	curPattern.erase(item);
-	for (set<string>::iterator it = curPattern.begin(); it != curPattern.end();)
-	{
-		string temp = *it++;
-		if (temp != item)
-			*fout << temp;
-		if (it == curPattern.end())
-		{
-			*fout << "} ";
-			break;
-		}
-		*fout << ", ";
-	}
+	return;
 }

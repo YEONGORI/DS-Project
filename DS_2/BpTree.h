@@ -1,23 +1,27 @@
 #ifndef _BpTree_H_
 #define _BpTree_H_
 
-#include "BpTreeDataNode.h"
-#include "BpTreeIndexNode.h"
+#include <map>
 #include <fstream>
 #include <iostream>
+
+#include "BpTreeDataNode.h"
+#include "BpTreeIndexNode.h"
 
 class BpTree
 {
 public:
 	BpTreeNode *root;
-	int order; // m children
 	ofstream *fout;
-	int cnt;
+
+	int order; // m children
+	int node_count;
+
 	BpTree()
 	{
 		root = new BpTreeDataNode;
 		order = 3;
-		cnt = 0;
+		node_count = 0;
 	}
 	BpTree(ofstream *fout, int order = 3)
 	{

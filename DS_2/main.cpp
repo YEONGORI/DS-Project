@@ -1,6 +1,8 @@
 #include "Manager.h"
 
 using namespace std;
+#define THRESHOLD 3;
+#define ORDER 3;
 
 int main(void)
 {

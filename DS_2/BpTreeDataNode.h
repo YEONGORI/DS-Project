@@ -8,9 +8,9 @@ public:
 	map<int, FrequentPatternNode *> mapData;
 	BpTreeNode *pNext;
 	BpTreeNode *pPrev;
+
 	BpTreeDataNode()
 	{
-
 		pNext = nullptr;
 		pPrev = nullptr;
 	}
@@ -29,6 +29,7 @@ public:
 	{
 		mapData.erase(n);
 	}
+
 	map<int, FrequentPatternNode *> *getDataMap() { return &mapData; }
 };
 

@@ -1,164 +1,123 @@
-#include "Manager.h"
-#include "HeaderTable.h"
-#include "FPGrowth.h"
+#include <map>
+#include <cmath>
+#include <string>
+#include <vector>
+#include <fstream>
+#include <cstring>
+#include <iostream>
+#include <algorithm>
+
 #include "BpTree.h"
+#include "Manager.h"
+#include "FPGrowth.h"
 #include "BpTreeNode.h"
+#include "HeaderTable.h"
 #include "BpTreeDataNode.h"
 #include "BpTreeIndexNode.h"
 #include "FrequentPatternNode.h"
-#include <iostream>
-#include <fstream>
-#include <string>
-#include <cstring>
-#include <cmath>
-#include <vector>
-#include <algorithm>
-#include <map>
-
-#pragma warning(disable : 4996)
-
-#define BUFF_SIZE 128
-#define freq first
-#define food second
 
 using namespace std;
-
-vector<vector<string>> total_list;
-vector<pair<int, string>> fre_list;
 
 void Manager::run(const char *command)
 {
 	fin.open(command);
 	fout.open("log.txt");
 
+	char cmd[100] = {};
 	if (!fin)
 	{
 		fout << "File Open Error" << endl;
 		return;
 	}
-	char cmd[BUFF_SIZE] = {};
 
 	while (!fin.eof())
 	{
-		fin.getline(cmd, BUFF_SIZE);
+		fin.getline(cmd, 100);
 		char *tmp = strtok(cmd, " ");
-		// char *ch_cr = strrchr(tmp, 13);
-		// if (ch_cr)
-		//    *ch_cr = 0;
 
-		if (strcmp(tmp, "LOAD") == 0)
+		if (strcmp(tmp, "LOAD") == 0) // Execute LOAD
 		{
-			fout << "==========LOAD==========\n";
+			fout << "=============LOAD============\n";
 			if (LOAD())
-			{
-				printSuccessCode();				
-			}
-			else
-			{
-				printErrorCode(100);
-			}
-		}
-		else if (strcmp(tmp, "PRINT_ITEMLIST") == 0)
-		{
-			fout << "===========PRINT_ITEMLIST===========\n";
-			if (PRINT_ITEMLIST())
-			{
-				fout<<"Item\tFrequency\n";
-				for (auto i : fpgrowth->table->indexTable)
-				{
-					fout << i.second << '\t' << i.first << '\n';
-				}
-				fout << "================================\n\n";
-			}
-			else
-			{
-				fout << "ERROR 300\n========================\n\n";
-			}
-		}
-		else if (strcmp(tmp, "PRINT_FPTREE") == 0)
-		{
-			if (PRINT_FPTREE())
-			{
-				fout << "================================\n";
-			}
-			else
-			{
-				fout << "==========PRINT_FPTREE==========\nERROR 400\n========================\n\n";
-			}
-		}
-		else if (strcmp(tmp, "BTLOAD") == 0)
-		{
-			fout << "==========BTLOAD==========\n";
-			if (BTLOAD())
-			{
 				printSuccessCode();
-			}
 			else
-			{
+				printErrorCode(100);
+		}
+		else if (strcmp(tmp, "BTLOAD") == 0) // Execute BTROAD
+		{
+			fout << "============BTLOAD============\n";
+			if (BTLOAD())
+				printSuccessCode();
+			else
 				printErrorCode(200);
-			}
 		}
-		else if (strcmp(tmp, "PRINT_BPTREE") == 0)
+		else if (strcmp(tmp, "PRINT_ITEMLIST") == 0) // Execute PRINT_ITEMLIST
 		{
-			char *food_name = strtok(NULL, " ");
-			char *frequ = strtok(NULL, " ");
-			if(frequ == NULL){
-				fout << "==========PRINT_BPTREE==========\nERROR 500\n========================\n\n";
-				continue;
-			}
-			if (PRINT_BPTREE(food_name, stoi(frequ)));
+			fout << "=========PRINT_ITEMLIST========\n";
+			if (PRINT_ITEMLIST())
+				fout << "=================================\n\n";
 			else
-			{
-				fout << "==========PRINT_BPTREE==========\nERROR 500\n========================\n\n";
-			}
+				printErrorCode(300);
 		}
-		else if (strcmp(tmp, "PRINT_CONFIDENCE") == 0)
+		else if (strcmp(tmp, "PRINT_FPTREE") == 0) // Execute PRINT_FPTREE
 		{
-			char *food_name = strtok(NULL, " ");
-			char *frequ = strtok(NULL, " ");
-			if(!strchr(frequ,'.')){
-				fout << "==========PRINT_CONFIDENCE==========\nERROR 600\n========================\n\n";
-				continue;
-			}
-			if(frequ == NULL){
-				fout << "==========PRINT_CONFIDENCE==========\nERROR 600\n========================\n\n";
-				continue;
-			}
-			if (PRINT_CONFIDENCE(food_name, stod(frequ)));
+			fout << "==========PRINT_FPTREE==========\n";
+			if (PRINT_FPTREE())
+				fout << "=================================\n\n";
 			else
-			{
-				fout << "==========PRINT_CONFIDENCE==========\nERROR 600\n========================\n\n";
-			}
+				printErrorCode(400);
 		}
-		else if (strcmp(tmp, "PRINT_RANGE") == 0)
+		else if (strcmp(tmp, "PRINT_BPTREE") == 0) // Execute PRINT_BRTREE
 		{
-			char *food_name = strtok(NULL, " ");
-			char *min = strtok(NULL, " ");
-			char *max = strtok(NULL, " ");
-			if(strchr(min,'.') || strchr(max, ',')){
-				fout << "==========PRINT_RANGE==========\nERROR 600\n========================\n\n";
-				continue;
-			}
-			if(food_name == NULL || min == NULL || max == NULL){
-				fout << "==========PRINT_RANGE==========\nERROR 600\n========================\n\n";
-				continue;
-			}
-			if (PRINT_RANGE(food_name, stoi(min), stoi(max)))
+			char *item_name = strtok(NULL, " ");
+			char *item_freq = strtok(NULL, " ");
+			fout << "==========PRINT_BPTREE==========\n";
+			if (!item_name || !item_freq)
 			{
-				fout << "==========PRINT_RANGE==========\nSUCCESS\n========================\n\n";
+				printErrorCode(500);
+				continue;
 			}
+			if (PRINT_BPTREE(item_name, stoi(item_freq)))
+				fout << "=================================\n\n";
 			else
+				printErrorCode(500);
+		}
+		else if (strcmp(tmp, "PRINT_CONFIDENCE") == 0) // Execute PRINT_CONFIDENCE
+		{
+			char *item_name = strtok(NULL, " ");
+			char *item_freq = strtok(NULL, " ");
+			fout << "=========PRINT_CONFIDENCE=========\n";
+			if (!item_freq || !strchr(item_freq, '.'))
 			{
-				fout << "==========PRINT_RANGE==========\nERROR 600\n========================\n\n";
+				printErrorCode(600);
+				continue;
 			}
+			if (PRINT_CONFIDENCE(item_name, stod(item_freq)))
+				fout << "=================================\n\n";
+			else
+				printErrorCode(600);
+		}
+		else if (strcmp(tmp, "PRINT_RANGE") == 0) // Execute PRINT_RANGE
+		{
+			char *item_name = strtok(NULL, " ");
+			char *start = strtok(NULL, " ");
+			char *end = strtok(NULL, " ");
+
+			fout << "==========PRINT_RANGE==========\n";
+			if (item_name == NULL || start == NULL || end == NULL || strchr(start, '.') || strchr(end, '.'))
+			{
+				printErrorCode(700);
+				continue;
+			}
+			if (PRINT_RANGE(item_name, stoi(start), stoi(end)))
+				fout << "=================================\n\n";
+			else
+				printErrorCode(700);
 		}
 		else if (strcmp(tmp, "EXIT") == 0)
-		{		
-			// delete fpgrowth;
-			// delete bptree;	
-			fout<<"=======EXIT========\n";
+		{
+			fout << "=============EXIT==============\n";
 			printSuccessCode();
-			return;
 		}
 	}
 	fin.close();
@@ -167,101 +126,91 @@ void Manager::run(const char *command)
 
 bool Manager::LOAD()
 {
+	int item_prev, item_next;
+	string temp;
+
+	vector<pair<int, string>> freq_item;
+	vector<vector<string>> freq_item_total;
 	fmarket.open("testcase1");
-	//예외처리
-	if (!fmarket || !total_list.empty())
-	{
+	if (!fmarket || fpgrowth->fpTree->fp_count > 0)
 		return false;
-	}
+
 	while (!fmarket.eof())
 	{
-		char buff[BUFF_SIZE];
-		vector<string> tmp_line;
-		string index, file_name;
+		int flag;
+		char buf_temp[128];
+		char *item_tok;
+		vector<string> item_temp;
 
-		if (!fmarket.getline(buff, sizeof(buff)))
+		if (!fmarket.getline(buf_temp, sizeof(buf_temp)))
 			break;
-		char *tok = strtok(buff, "\t");
-		tmp_line.push_back(buff);
+		item_tok = strtok(buf_temp, "\t");
+		item_temp.push_back(buf_temp);
 
-		while ((tok = strtok(NULL, "\t")))
-		{
-			tmp_line.push_back(tok);
-		}
-		total_list.push_back(tmp_line);
+		while ((item_tok = strtok(NULL, "\t"))) // Get item
+			item_temp.push_back(item_tok);
+		freq_item_total.push_back(item_temp);
 
-		for (int i = 0; i < tmp_line.size(); i++)
+		for (int i = 0; i < item_temp.size(); i++) // Calculate the item and frequency.
 		{
-			if (fre_list.empty())
-				fre_list.push_back(make_pair(0, tmp_line[i]));
-			int j;
-			for (j = 0; j < fre_list.size(); j++)
+			if (freq_item.empty())
+				freq_item.push_back(make_pair(0, item_temp[i]));
+			flag = 0;
+			for (int j = 0; j < freq_item.size(); j++)
 			{
-				if (tmp_line[i] == fre_list[j].food)
+				if (item_temp[i] == freq_item[j].second)
 				{
-					fre_list[j].freq++;
+					freq_item[j].first++;
+					flag = 1;
 					break;
 				}
 			}
-			if (j == fre_list.size())
-			{
-				fre_list.push_back(make_pair(1, tmp_line[i]));
-			}
+			if (flag == 0)
+				freq_item.push_back(make_pair(1, item_temp[i]));
 		}
 	}
-	for (int i = 0; i < total_list.size(); i++)
+	for (int i = 0; i < freq_item_total.size(); i++) // Remove items with frequency less than threshold
 	{
-		for (int j = 0; j < total_list[i].size(); j++)
+		for (int j = 0; j < freq_item_total[i].size(); j++)
 		{
-			for (int k = 0; k < fre_list.size(); k++)
+			for (int k = 0; k < freq_item.size(); k++)
 			{
-				if (j >= total_list[i].size())
+				if (j >= freq_item_total[i].size())
 					break;
-				if (total_list[i][j] == fre_list[k].food && fre_list[k].freq < threshold)
-					total_list[i].erase(total_list[i].begin() + j);
+				if (freq_item_total[i][j] == freq_item[k].second && freq_item[k].first < threshold)
+					freq_item_total[i].erase(freq_item_total[i].begin() + j);
 			}
 		}
 	}
-	for (int i = 0; i < fre_list.size(); i++)
-		fpgrowth->createTable(fre_list[i].second, fre_list[i].first);
+	for (int i = 0; i < freq_item.size(); i++) // Create ftree Node with created frequency and item list
+		fpgrowth->createTable(freq_item[i].second, freq_item[i].first);
 	fpgrowth->table->descendingIndexTable();
-	for (int i = 0; i < total_list.size(); i++)
+	for (int i = 0; i < freq_item_total.size(); i++) // Sort created lists in descending order
 	{
-		for (int j = total_list[i].size() - 1; j > 0; j--)
+		for (int j = freq_item_total[i].size() - 1; j > 0; j--) // Buble sort
 		{
 			for (int k = 0; k < j; k++)
 			{
-				int m1, m2;
-				for (m1 = 0; m1 < fre_list.size(); m1++)
+				for (item_prev = 0; item_prev < freq_item.size(); item_prev++)
 				{
-
-					if (total_list[i][k] == fre_list[m1].food)
+					if (freq_item_total[i][k] == freq_item[item_prev].second)
 						break;
 				}
-				for (m2 = 0; m2 < fre_list.size(); m2++)
+				for (item_next = 0; item_next < freq_item.size(); item_next++)
 				{
-					if (total_list[i][k + 1] == fre_list[m2].food)
+					if (freq_item_total[i][k + 1] == freq_item[item_next].second)
 						break;
 				}
-				if (fre_list[m1].freq < fre_list[m2].freq)
+				if (freq_item[item_prev].first < freq_item[item_next].first)
 				{
-					string tmp = total_list[i][k + 1];
-					total_list[i][k + 1] = total_list[i][k];
-					total_list[i][k] = tmp;
+					temp = freq_item_total[i][k + 1];
+					freq_item_total[i][k + 1] = freq_item_total[i][k];
+					freq_item_total[i][k] = temp;
 				}
-				/*else if (fre_list[m1].freq == fre_list[m2].freq)
-				{
-				   if (fpgrowth->table->indexTable.begin()->first == max(fpgrowth->table->indexTable.begin()->first, fpgrowth->table->indexTable.end()->first))
-				   {
-					  string tmp = total_list[i][k + 1];
-					  total_list[i][k + 1] = total_list[i][k];
-					  total_list[i][k] = tmp;
-				   }
-				}*/
 			}
 		}
 	}
-	fpgrowth->createFPtree(fpgrowth->fpTree, fpgrowth->table, total_list);
+	fpgrowth->createFPtree(fpgrowth->fpTree, fpgrowth->table, freq_item_total); // Create FP Tree
 
 	return true;
 }
@@ -269,39 +218,34 @@ bool Manager::LOAD()
 bool Manager::BTLOAD()
 {
 	fresult.open("result1");
-	if (!fresult && bptree->cnt>0) //안에 이미 데이터 있으면 에러처리 수정해야함
-	{
-	   return false;
-	}
+	if (!fresult && bptree->node_count > 0)
+		return false;
+
 	while (!fresult.eof())
 	{
-		char line[BUFF_SIZE];
-		int key;
+		int frequency;
+		char item[100];
+		char *item_tmp;
 		set<string> food_list;
-		if (!fresult.getline(line, sizeof(line)))
+
+		if (!fresult.getline(item, sizeof(item)))
 			break;
-		char *tok = strtok(line, "\t");
-		key = stoi(tok);
 
-		while ((tok = strtok(NULL, "\t")))
+		item_tmp = strtok(item, "\t");
+		frequency = stoi(item_tmp);
+		while ((item_tmp = strtok(NULL, "\t"))) // Insert each frequent pattern
+			food_list.insert(item_tmp);
+
+		bptree->Insert(frequency, food_list); // Insert BP Tree
+		BpTreeNode *cur_bptree_node = bptree->root;
+		while (cur_bptree_node->getMostLeftChild()) // Find Data node
+			cur_bptree_node = cur_bptree_node->getMostLeftChild();
+
+		while (cur_bptree_node) // Verify that the number of blocks nodes exceeds the order
 		{
-			food_list.insert(tok);
-		}
-
-		// bptree 삽입
-		bptree->Insert(key, food_list);
-		//데이터노드 초과
-		BpTreeNode *cur = bptree->root;
-		while (cur->getMostLeftChild())
-			cur = cur->getMostLeftChild();
-
-		while (cur)
-		{
-			if (bptree->excessDataNode(cur))
-			{
-				bptree->splitDataNode(cur);
-			}
-			cur = cur->getNext();
+			if (bptree->excessDataNode(cur_bptree_node))
+				bptree->splitDataNode(cur_bptree_node);
+			cur_bptree_node = cur_bptree_node->getNext();
 		}
 	}
 	return true;
@@ -311,6 +255,9 @@ bool Manager::PRINT_ITEMLIST()
 {
 	if (fpgrowth->getHeaderTable()->getindexTable().empty())
 		return false;
+	fout << "Item\tFrequency\n";
+	for (auto i : fpgrowth->table->indexTable) // Print All Item
+		fout << i.second << ' ' << i.first << '\n';
 	return true;
 }
 
@@ -318,211 +265,196 @@ bool Manager::PRINT_FPTREE()
 {
 	if (fpgrowth->getTree()->getChildren().empty())
 		return false;
-	fout << "===========PRINT_FPTREE===========\n{StandardItem.Frequency} (Path_Item.Frequency)\n";
+
+	fout << "{StandardItem.Frequency} (Path_Item.Frequency)\n";
 
 	fpgrowth->table->ascendingIndexTable();
-	for (auto i : fpgrowth->table->indexTable)
+	for (auto standard_item : fpgrowth->table->indexTable) // Travelling repeat statements for each of the entire items
 	{
-		if (i.first >= threshold)
+		if (standard_item.first >= threshold) // Check item threshold
 		{
-			fout << "{" << i.second << ", " << i.first << '}' << '\n';
-			auto j = fpgrowth->table->dataTable.find(i.second);
-			FPNode *cur = j->second;
-			while (cur)
+			fout << "{" << standard_item.second << ", " << standard_item.first << "}"
+				 << "\n";
+			auto cur_item = fpgrowth->table->dataTable.find(standard_item.second);
+			FPNode *cur_fp_node = cur_item->second;
+			while (cur_fp_node) // Check all nodes including the current item
 			{
-				FPNode *par = cur;
-				while (par != fpgrowth->fpTree)
+				FPNode *par_fp_node = cur_fp_node;
+				while (par_fp_node != fpgrowth->fpTree)
 				{
-					fout << '(';
-					for (auto it : par->parent->children)
+					fout << "(";
+					for (auto path_item : par_fp_node->parent->children)
 					{
-						if (it.second == par)
-							fout << it.first << ", " << par->frequency << ") ";
+						if (path_item.second == par_fp_node)
+							fout << path_item.first << ", " << par_fp_node->frequency;
 					}
-					par = par->parent;
+					fout << ") ";
+					par_fp_node = par_fp_node->parent;
 				}
-				fout << '\n';
-				cur = cur->next;
+				fout << "\n";
+				cur_fp_node = cur_fp_node->next;
 			}
 		}
 	}
 	return true;
 }
 
-bool Manager::PRINT_BPTREE(char *item, int min_fre_listquency)
+bool Manager::PRINT_BPTREE(char *item, int item_freq)
 {
-	if(item == NULL || bptree->cnt==0){
+	if (item == NULL || bptree->node_count == 0)
 		return false;
-	}
-	int flag=0;
-	fout << "========PRINT_BPTREE========\nFrequentPattern Frequency\n";
-	string str_item = item;
-	BpTreeNode *insertposition = bptree->searchDataNode(min_fre_listquency);
-	map<int, FrequentPatternNode *> *tmp_datanode;
-	multimap<int, set<string>> tmp_multimap;
-	set<string> tmp_set;
-	string tmp_str;
-	while (insertposition->getNext())
+
+	int flag = 0;
+	string item_name = item;
+	BpTreeNode *condition_pos = bptree->searchDataNode(item_freq); // Search for data nodes that satisfy frequency
+
+	fout << "FrequentPattern Frequency\n";
+	while (condition_pos->getNext()) // Travelling all BP Tree Nodes
 	{
-		tmp_datanode = insertposition->getDataMap();
-		for (auto datalist = tmp_datanode->begin(); datalist != tmp_datanode->end(); datalist++)
+		auto data_node = condition_pos->getDataMap();
+		for (auto cur_data_node = data_node->begin(); cur_data_node != data_node->end(); cur_data_node++) // Travelling all Data Nodes
 		{
-			if (datalist->first >= min_fre_listquency)
-			{ //최소 빈도수 이상인 경우만
-				tmp_multimap = datalist->second->getList();
-				for (auto iter = tmp_multimap.begin(); iter != tmp_multimap.end(); iter++)
+			if (cur_data_node->first >= item_freq)
+			{
+				auto cur_freq_pat_node = cur_data_node->second->getList();
+				for (auto freq_pat_node = cur_freq_pat_node.begin(); freq_pat_node != cur_freq_pat_node.end(); freq_pat_node++) // Travelling all frequenct pattern nodes
 				{
-					tmp_set = iter->second;
-					auto it = tmp_set.find(str_item);
-					if (it != tmp_set.end())
+					auto item_set = freq_pat_node->second;
+					auto res = item_set.find(item_name);
+					if (res != item_set.end())
 					{
-						flag=1;
 						fout << "{";
-						for (set<string>::iterator qq = tmp_set.begin(); qq != tmp_set.end(); qq++)
+						for (auto cur_item = item_set.begin(); cur_item != item_set.end(); cur_item++) // Travelling all item set
 						{
-							fout << *qq;
-							if (++qq != tmp_set.end())
-							{
+							fout << *cur_item++;
+							if (cur_item != item_set.end())
 								fout << ", ";
-								--qq;
-							}
-							else
-								--qq;
+							cur_item--;
 						}
-						fout << "} " << datalist->first << "\n";
+						fout << "} " << cur_data_node->first << "\n";
+						flag = 1;
 					}
 				}
 			}
 		}
-		insertposition = insertposition->getNext();
+		condition_pos = condition_pos->getNext();
 	}
-	if(flag==0){
+	if (flag == 0)
 		return false;
-	}
 	return true;
 }
 
 bool Manager::PRINT_CONFIDENCE(char *item, double rate)
 {
-	fout << "========PRINT_CONFIDENCE========\nFrequentPattern Frequency Confidence\n";
-	if(item == NULL || bptree->cnt==0){
+	if (item == NULL || bptree->node_count == 0)
 		return false;
-	}	
 
-	//헤더 인덱스 테이블에서 item의 빈도수를 가져옴
-	int item_fre;
-	string str_item = item;
-	for(auto it=fpgrowth->getHeaderTable()->indexTable.begin();it != fpgrowth->getHeaderTable()->indexTable.end();it++){
-		if(it->second == item){
-			item_fre = it->first;
+	fout << "FrequentPattern Frequency Confidence\n";
+
+	int item_freq = 0, flag = 0;
+	string item_name = item;
+	BpTreeNode *data_node = bptree->root;
+
+	for (auto cur_item = fpgrowth->getHeaderTable()->indexTable.begin(); cur_item != fpgrowth->getHeaderTable()->indexTable.end(); cur_item++) // Search items frequency
+	{
+		if (cur_item->second == item_name)
+		{
+			item_freq = cur_item->first;
 			break;
 		}
 	}
-	
-	BpTreeNode *cur = new BpTreeDataNode;
-	cur = bptree->root;
-	//제일 왼쪽 데이터노드로
-	while (cur->getMostLeftChild())
-		cur = cur->getMostLeftChild();
-	//데이터 노드들의 (빈도수/item빈도수)가 rate보다 높은지 전부 확인해서 출력  
-	map<int, FrequentPatternNode *> *tmp_datanode;
-	multimap<int, set<string>> tmp_multimap;
-	set<string> tmp_set;
-	int flag=0;
-	while (cur->getNext())
-	{
-		tmp_datanode = cur->getDataMap();
-		for (auto it1 = tmp_datanode->begin(); it1 != tmp_datanode->end(); it1++)
-		{
-			if(it1->first / (double)item_fre > rate){
-				tmp_multimap = it1->second->getList();				
-				for(auto it2 = tmp_multimap.begin();it2 != tmp_multimap.end();it2++){
-					if(it2->second.find(str_item)!=it2->second.end())
-					{
-						flag =1;
-						tmp_set = it2->second;
-						fout << "{";
-						for (set<string>::iterator qq = tmp_set.begin(); qq != tmp_set.end(); qq++)
-						{
-							fout << *qq;
-							if (++qq != tmp_set.end())
-							{
-								fout << ", ";
-								--qq;
-							}
-							else
-								--qq;
-						}
-						fout << "} " << it1->first<<" "<<(it1->first/(double)item_fre)<<"\n";
-					}	
-				}
-			}
-		}
-		cur = cur->getNext();
-	}
-	if(flag==0)
-		return false;
-	return true;
-}
 
-bool Manager::PRINT_RANGE(char* item, int start, int end) {
-	if(item == NULL || bptree->cnt==0){
-		return false;
-	}	
-	fout << "========PRINT_RANGE========\nFrequentPattern Frequency Confidence\n";
+	while (data_node->getMostLeftChild()) // Find Data Node
+		data_node = data_node->getMostLeftChild();
 
-	string str_item = item;
-	int flag=0;
-	BpTreeNode *start_position = bptree->searchDataNode(start);
-	map<int, FrequentPatternNode *> *tmp_datanode;
-	multimap<int, set<string>> tmp_multimap;
-	set<string> tmp_set;
-	string tmp_str;
-	while (start_position->getNext())
+	while (data_node->getNext()) // Travelling All Bp Tree Node
 	{
-		tmp_datanode = start_position->getDataMap();
-		for (auto it1 = tmp_datanode->begin(); it1 != tmp_datanode->end(); it1++)
+		auto cur_data_node = data_node->getDataMap();
+		for (auto freq_pat_node = cur_data_node->begin(); freq_pat_node != cur_data_node->end(); freq_pat_node++)
 		{
-			if (it1->first >= start && it1->first < end)//최소 빈도수 이상인 경우만
-			{ 
-				tmp_multimap = it1->second->getList();
-				for (auto iter = tmp_multimap.begin(); iter != tmp_multimap.end(); iter++)
+			if ((double)freq_pat_node->first / item_freq > rate) // Check that the ratio meets the conditions in question
+			{
+				auto cur_freq_pat_node = freq_pat_node->second->getList();
+				for (auto item_set = cur_freq_pat_node.begin(); item_set != cur_freq_pat_node.end(); item_set++) // Travelling all item set
 				{
-					tmp_set = iter->second;
-					auto it = tmp_set.find(str_item);
-					if (it != tmp_set.end())
+					if (item_set->second.find(item_name) != item_set->second.end())
 					{
-						flag=1;
+						auto cur_item_set = item_set->second;
 						fout << "{";
-						for (set<string>::iterator qq = tmp_set.begin(); qq != tmp_set.end(); qq++)
+						for (auto cur_item = cur_item_set.begin(); cur_item != cur_item_set.end(); cur_item++) // Travelling all item
 						{
-							fout << *qq;
-							if (++qq != tmp_set.end())
-							{
+							fout << *cur_item++;
+							if (cur_item != cur_item_set.end())
 								fout << ", ";
-								--qq;
-							}
-							else
-								--qq;
+							cur_item--;
 						}
-						fout << "} " << it1->first << "\n";
+						flag = 1;
+						fout << "} " << freq_pat_node->first << " " << ((double)freq_pat_node->first / item_freq) << "\n";
 					}
 				}
 			}
 		}
-		start_position = start_position->getNext();
+		data_node = data_node->getNext();
 	}
-	if(flag==0)
+	if (flag == 0)
 		return false;
 	return true;
 }
 
-void Manager::printErrorCode(int n) { //ERROR CODE PRINT
-   fout << "ERROR "  << n << endl;
-   fout << "=======================" << endl << endl;
+bool Manager::PRINT_RANGE(char *item, int start, int end)
+{
+	if (item == NULL || bptree->node_count == 0)
+		return false;
+
+	fout << "FrequentPattern Frequency Confidence\n";
+
+	int flag = 0;
+	string item_name = item;
+	BpTreeNode *condition_pos = bptree->searchDataNode(start);
+
+	while (condition_pos->getNext()) // Travelling all data nodes
+	{
+		auto data_node = condition_pos->getDataMap();
+		for (auto cur_data_node = data_node->begin(); cur_data_node != data_node->end(); cur_data_node++) // Travelling all frequent pattern node
+		{
+			if (cur_data_node->first >= start && cur_data_node->first <= end) // Check conditions frequency
+			{
+				auto cur_freq_pat_node = cur_data_node->second->getList();
+				for (auto item_set = cur_freq_pat_node.begin(); item_set != cur_freq_pat_node.end(); item_set++) // Travelling all item set
+				{
+					auto cur_item_set = item_set->second;
+					auto ch = cur_item_set.find(item_name);
+					if (ch != cur_item_set.end())
+					{
+						flag = 1;
+						fout << "{";
+						for (auto cur_item = cur_item_set.begin(); cur_item != cur_item_set.end(); cur_item++) // Travelling all item
+						{
+							fout << *cur_item++;
+							if (cur_item != cur_item_set.end())
+								fout << ", ";
+							cur_item--;
+						}
+						fout << "} " << cur_data_node->first << "\n";
+					}
+				}
+			}
+		}
+		condition_pos = condition_pos->getNext();
+	}
+	if (flag == 0)
+		return false;
+	return true;
 }
 
-void Manager::printSuccessCode() {//SUCCESS CODE PRINT
-   fout << "Success" << endl;
-   fout << "=======================" << endl << endl;
+void Manager::printErrorCode(int n)
+{ // ERROR CODE PRINT
+	fout << "ERROR " << n << "\n";
+	fout << "===========================\n\n";
+}
+
+void Manager::printSuccessCode()
+{ // SUCCESS CODE PRINT
+	fout << "Success\n";
+	fout << "===========================\n\n";
 }
