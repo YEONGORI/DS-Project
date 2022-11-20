@@ -185,6 +185,7 @@ bool Manager::LOAD()
 	for (int i = 0; i < freq_item.size(); i++) // Create ftree Node with created frequency and item list
 		fpgrowth->createTable(freq_item[i].second, freq_item[i].first);
 	fpgrowth->table->descendingIndexTable();
+
 	for (int i = 0; i < freq_item_total.size(); i++) // Sort created lists in descending order
 	{
 		for (int j = freq_item_total[i].size() - 1; j > 0; j--) // Buble sort
@@ -411,7 +412,7 @@ bool Manager::PRINT_RANGE(char *item, int start, int end)
 	int flag = 0;
 	string item_name = item;
 	BpTreeNode *condition_pos = bptree->searchDataNode(start);
-
+	condition_pos->getDataMap()->begin()->second;
 	while (condition_pos->getNext()) // Travelling all data nodes
 	{
 		auto data_node = condition_pos->getDataMap();

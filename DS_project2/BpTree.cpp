@@ -7,7 +7,7 @@ bool BpTree::Insert(int key, set<string> set)
 {
 	FrequentPatternNode *cur_fpn = new FrequentPatternNode;
 
-	if (node_count < order) // Check root is index node
+	if (node_count < order) // Check root is data node
 	{
 		if (node_count == 0) // Check root is NULL
 		{
@@ -22,7 +22,7 @@ bool BpTree::Insert(int key, set<string> set)
 		}
 		node_count++;
 	}
-	else // root is data node
+	else // root is index node
 	{
 		BpTreeNode *cur_btn = root;
 		while (cur_btn->getMostLeftChild()) // Find Data Node
