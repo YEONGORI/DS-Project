@@ -131,7 +131,7 @@ bool Manager::LOAD()
 
 	vector<pair<int, string>> freq_item;
 	vector<vector<string>> freq_item_total;
-	fmarket.open("testcase1");
+	fmarket.open("market.txt");
 	if (!fmarket || fpgrowth->fpTree->fp_count > 0)
 		return false;
 
@@ -185,6 +185,7 @@ bool Manager::LOAD()
 	for (int i = 0; i < freq_item.size(); i++) // Create ftree Node with created frequency and item list
 		fpgrowth->createTable(freq_item[i].second, freq_item[i].first);
 	fpgrowth->table->descendingIndexTable();
+	// fpgrowth->table->ascendingIndexTable();
 
 	for (int i = 0; i < freq_item_total.size(); i++) // Sort created lists in descending order
 	{
@@ -218,7 +219,7 @@ bool Manager::LOAD()
 
 bool Manager::BTLOAD()
 {
-	fresult.open("result1");
+	fresult.open("result.txt");
 	if (!fresult && bptree->node_count > 0)
 		return false;
 

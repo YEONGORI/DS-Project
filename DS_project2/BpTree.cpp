@@ -5,6 +5,7 @@
 
 bool BpTree::Insert(int key, set<string> set)
 {
+	BpTreeNode *cur_btn;
 	FrequentPatternNode *cur_fpn = new FrequentPatternNode;
 
 	if (node_count < order) // Check root is data node
@@ -16,7 +17,9 @@ bool BpTree::Insert(int key, set<string> set)
 		}
 		else
 		{
-			cur_fpn = root->getDataMap()->find(key)->second;
+			auto it = root->getDataMap()->find(key);
+			if (it != root->getDataMap()->end())
+				cur_fpn = root->getDataMap()->find(key)->second;
 			cur_fpn->InsertList(set);
 			root->insertDataMap(key, cur_fpn);
 		}
@@ -24,7 +27,7 @@ bool BpTree::Insert(int key, set<string> set)
 	}
 	else // root is index node
 	{
-		BpTreeNode *cur_btn = root;
+		cur_btn = root;
 		while (cur_btn->getMostLeftChild()) // Find Data Node
 			cur_btn = cur_btn->getMostLeftChild();
 
@@ -76,7 +79,7 @@ BpTreeNode *BpTree::searchDataNode(int n)
 void BpTree::splitDataNode(BpTreeNode *pDataNode)
 {
 	int item_cnt;
-
+	BpTreeIndexNode *new_idn;
 	BpTreeDataNode *new_dtn = new BpTreeDataNode;
 	auto item = pDataNode->getDataMap()->begin();
 	for (int i = 0; i < pDataNode->getDataMap()->size() / 2; i++) // Find dtn's middle position
@@ -103,7 +106,7 @@ void BpTree::splitDataNode(BpTreeNode *pDataNode)
 	new_dtn->setPrev(pDataNode);
 	if (pDataNode->getParent() == NULL) // Parent Node doesn't exist
 	{
-		BpTreeIndexNode *new_idn = new BpTreeIndexNode;
+		new_idn = new BpTreeIndexNode;
 		new_idn->insertIndexMap(new_dtn->getDataMap()->begin()->first, new_dtn);
 		new_idn->setMostLeftChild(pDataNode);
 
