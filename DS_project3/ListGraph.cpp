@@ -11,30 +11,30 @@ ListGraph::~ListGraph()
 	delete[] m_List;
 }
 
-void ListGraph::getAdjacentEdges(int vertex, map<int, int>* m)
+map<int, int> ListGraph::getAdjacentEdges(int vertex)
 {
-
+	return m_List[vertex];
 }
 
 void ListGraph::insertEdge(int from, int to, int weight)
 {
-
+	m_List[from].insert({to, weight});
 }
 
 bool ListGraph::printGraph()
 {
-	cout<<"Graph is ListGraph!"<<endl;
-
-	for(int i=0; i<m_Size; i++)
+	fstream ftmp("log.txt", ios::app);
+	for (int i = 0; i < m_Size; i++)
 	{
-		cout<<"["<<i<<"]";
+		ftmp << "[" << i << "]";
 
-		for(auto it_=m_List[i].begin(); it_!=m_List[i].end() && cout<<" -> "; it_++)
+		for (auto it_ = m_List[i].begin(); it_ != m_List[i].end() && ftmp << " -> "; it_++)
 		{
-			cout<<"("<<it_->first<<","<<it_->second<<")";
+			ftmp << "(" << it_->first << "," << it_->second << ")";
 		}
-		cout<<endl;
+		ftmp << endl;
 	}
-	cout<<endl;
+	ftmp << endl;
+	ftmp.close();
 	return 1;
 }

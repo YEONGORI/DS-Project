@@ -3,9 +3,10 @@
 
 #include "GraphMethod.h"
 
-class Manager{
+class Manager
+{
 private:
-	Graph* graph;
+	Graph *graph;
 	ofstream fout;
 	int load;
 
@@ -13,11 +14,11 @@ public:
 	Manager();
 	~Manager();
 
-	void run(const char * command_txt);
-	
-	bool LOAD(char* filename);
+	void run(const char *command_txt);
+
+	bool LOAD(char *filename);
 	bool PRINT();
-	
+
 	bool mBFS(int vertex);
 	bool mDFS_R(int vertex);
 	bool mDFS(int vertex);
@@ -26,7 +27,8 @@ public:
 	bool mBELLMANFORD(int s_vertex, int e_vertex);
 	bool mFLOYD();
 
-	void printErrorCode(int n);	
+	void printSuccessCode(void);
+	void printErrorCode(int n);
 };
 
 #endif

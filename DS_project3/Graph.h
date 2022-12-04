@@ -18,9 +18,10 @@ using namespace std;
 
 #define MAX 999999
 
-class Graph{
+class Graph
+{
 protected:
-	bool m_Type;//0:List 1:Matrix
+	bool m_Type; // 0:List 1:Matrix
 	int m_Size;
 
 public:
@@ -29,10 +30,10 @@ public:
 
 	bool getType();
 	int getSize();
-	
-	virtual void getAdjacentEdges(int vertex, map<int, int>* m) = 0;
+
+	virtual map<int, int> getAdjacentEdges(int vertex) = 0;
 	virtual void insertEdge(int from, int to, int weight) = 0;
-	virtual	bool printGraph() = 0;
+	virtual bool printGraph() = 0;
 };
 
 #endif

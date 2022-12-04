@@ -1,0 +1,5 @@
+LOAD
+PRINT
+BFS 0
+DFS 0
+DFS_R 2
