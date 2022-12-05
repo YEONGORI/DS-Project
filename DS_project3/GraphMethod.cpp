@@ -85,13 +85,21 @@ bool Kruskal(Graph *graph)
 {
     int sum=0;
     int *parent = new int[graph->getSize()];
-    priority_queue<int, int, int> edges; // from, to weight
+    for(int i=0;i<graph->getSize();i++){
+        parent[i]=i;
+    }
+    priority_queue<int, int, int> edges; //weight, from, to 
     for(int i=0;i<graph->getSize();i++){
         for(auto it : graph->getAdjacentEdges(i)){
-            edges.push(make_tuple(i, it.first, it.second));
+            edges.push(make_tuple((it.second*-1), i, it.first));
         }
     }
-    while()
+    for(int i=0;i<graph->getSize()&&edges.empty();i++){
+        tuple<int, int, int> tmp = edges.top();
+        get<0>(tmp) = get<0>(tmp)*-1;
+        edges.pop();//delete
+        get<1>(tmp)
+    }
 
 
 }

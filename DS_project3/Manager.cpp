@@ -84,6 +84,14 @@ void Manager::run(const char *command_txt)
 			else
 				printErrorCode(200);
 		}
+		else if (strcmp(cmd, "KRUSKAL") == 0)
+		{
+			fout << "========KRUSKAL=======\n";
+			if (mKRUSKAL())
+				printSuccessCode();
+			else
+				printErrorCode(200);
+		}
 		memset(buf, 0, 129);
 	}
 	fin.close();
@@ -163,10 +171,14 @@ bool Manager::mDFS_R(int vertex)
 
 bool Manager::mDIJKSTRA(int vertex)
 {
+
 }
 
 bool Manager::mKRUSKAL()
 {
+	if (Kruskal(graph))
+		return true;
+	return false;
 }
 
 bool Manager::mBELLMANFORD(int s_vertex, int e_vertex)
