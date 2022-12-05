@@ -3,6 +3,7 @@
 #include <queue>
 #include <iostream>
 #include <stack>
+#include <tuple>
 
 using namespace std;
 
@@ -82,6 +83,17 @@ bool DFS_R(Graph *graph, vector<bool> *visit, int vertex)
 
 bool Kruskal(Graph *graph)
 {
+    int sum=0;
+    int *parent = new int[graph->getSize()];
+    priority_queue<int, int, int> edges; // from, to weight
+    for(int i=0;i<graph->getSize();i++){
+        for(auto it : graph->getAdjacentEdges(i)){
+            edges.push(make_tuple(i, it.first, it.second));
+        }
+    }
+    while()
+
+
 }
 
 bool Dijkstra(Graph *graph, int vertex)
