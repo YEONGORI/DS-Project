@@ -33,6 +33,7 @@
   "files.associations": {
     "iosfwd": "cpp",
     "tuple": "cpp",
-    "map": "cpp"
+    "map": "cpp",
+    "ostream": "cpp"
   }
 }

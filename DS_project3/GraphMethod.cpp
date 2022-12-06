@@ -12,7 +12,7 @@ typedef pair<int, int> iPair;
 
 bool BFS(Graph *graph, int vertex)
 {
-    fstream ftmp("log.txt", ios::app);
+    ofstream ftmp("log.txt", ios::app);
     queue<int> QU;
     int vis[graph->getSize() + 1] = {0};
     int cnt = 1;
@@ -43,7 +43,7 @@ bool BFS(Graph *graph, int vertex)
 
 bool DFS(Graph *graph, int vertex)
 {
-    fstream ftmp("log.txt", ios::app);
+    ofstream ftmp("log.txt", ios::app);
     stack<int> ST;
     int vis[graph->getSize() + 1] = {0};
     int cnt = 1;
@@ -70,12 +70,15 @@ bool DFS(Graph *graph, int vertex)
     ftmp.close();
     return true;
 }
-
+int a = 0;
 bool DFS_R(Graph *graph, vector<bool> *visit, int vertex)
 {
     visit[0][vertex] = true;
-    fstream ftmp("log.txt", ios::app);
-    ftmp << vertex << " ";
+    ofstream ftmp("log.txt", ios::app);
+    ftmp << vertex;
+    a++;
+    if (a != 6)
+        ftmp << " -> ";
     ftmp.close();
     for (auto edges : graph->getAdjacentEdges(vertex))
     {
@@ -116,7 +119,7 @@ bool Kruskal(Graph *graph)
 {
     int sum = 0;
     int *parent = new int[graph->getSize()];
-    fstream ftmp("log.txt", ios::app);
+    ofstream ftmp("log.txt", ios::app);
 
     for (int i = 0; i < graph->getSize(); i++)
     {
@@ -159,14 +162,11 @@ bool Kruskal(Graph *graph)
     ftmp << "cost: " << sum << "\n";
     ftmp.close();
 }
-// 명령어의 결과인 shortest path와 cost를 출력 파일(log.txt)에 출력한다
-// 출력 시 vertex, shortest path, cost 순서로 출력하며, shortest path는
-// 해당 vertex에서 기준 vertex까지의 경로를 역순으로 출력한다
-// 기준 vertex에서 도달할 수 없는 vertex의 경우 ‘x’를 출력한다.
+
 bool Dijkstra(Graph *graph, int vertex)
 {
     priority_queue<iPair, vector<iPair>, greater<iPair>> pq;
-    fstream ftmp("log.txt", ios::app);
+    ofstream ftmp("log.txt", ios::app);
 
     vector<int> dist(graph->getSize(), INFINITY);
     int prev[graph->getSize()];
@@ -232,11 +232,12 @@ bool Bellmanford(Graph *graph, int s_vertex, int e_vertex)
         dist[i] = 214748364;
     }
     dist[s_vertex] = 0;
-    fstream ftmp("log.txt", ios::app);
+    ofstream ftmp("log.txt", ios::app);
 
     for (auto adj : graph->getAdjacentEdges(s_vertex))
     {
         dist[adj.first] = adj.second;
+        prev[adj.first] = s_vertex;
     }
     map<int, int> incoming[graph->getSize()];
     for (int i = 0; i < graph->getSize(); i++) // incomming
@@ -246,31 +247,39 @@ bool Bellmanford(Graph *graph, int s_vertex, int e_vertex)
             incoming[it.first].insert({i, it.second});
         }
     }
-    for (int k = 2; k <= graph->getSize() - 1; k++)
+
+    for (int k = 2; k <= graph->getSize() - 1; k++) // 엣지 개수 증가
     {
-        for (int v = 0; v < graph->getSize(); v++)
+        for (int v = 0; v < graph->getSize(); v++) // 모든 버택스 순회
         {
-            if (v == s_vertex && incoming[v].empty())
+            if (v == s_vertex || incoming[v].empty())
                 continue;
             for (int w = 0; w < graph->getSize(); w++)
             {
-                if (w == v && graph->getAdjacentEdges(w).find(v) == graph->getAdjacentEdges(w).end())
+                if (w == v)
                     continue;
-                if (dist[v] > dist[w] + graph->getAdjacentEdges(w).find(v)->second)
+                for (auto it : graph->getAdjacentEdges(w))
                 {
-                    dist[v] = dist[w] + graph->getAdjacentEdges(w).find(v)->second;
-                    prev[v] = w;
+                    if (it.first == v)
+                    {
+                        if (dist[v] > dist[w] + graph->getAdjacentEdges(w).find(v)->second)
+                        {
+                            dist[v] = dist[w] + graph->getAdjacentEdges(w).find(v)->second;
+                            prev[v] = w;
+                        }
+                    }
                 }
+                // dist[v] = min(dist[v], dist[w] + graph->getAdjacentEdges(w).find(v)->second);
             }
         }
     }
 
     stack<int> S;
     int end = e_vertex;
-    while (prev[e_vertex] != s_vertex)
+    while (prev[end] != s_vertex)
     {
-        S.push(prev[e_vertex]);
-        e_vertex = prev[e_vertex];
+        S.push(prev[end]);
+        end = prev[end];
     }
     ftmp << s_vertex << " -> ";
     while (!S.empty())
@@ -278,13 +287,14 @@ bool Bellmanford(Graph *graph, int s_vertex, int e_vertex)
         ftmp << S.top() << " -> ";
         S.pop();
     }
-    ftmp << "cost: " << dist[end] << "\n";
+    ftmp << e_vertex << '\n';
+    ftmp << "cost: " << dist[e_vertex] << "\n";
     ftmp.close();
 }
 
 bool FLOYD(Graph *graph)
 {
-    fstream ftmp("log.txt", ios::app);
+    ofstream ftmp("log.txt", ios::app);
 
     int A[graph->getSize()][graph->getSize()];
 
@@ -322,12 +332,23 @@ bool FLOYD(Graph *graph)
 
     for (int i = 0; i < graph->getSize(); i++)
     {
+        if (i == 0)
+        {
+            ftmp << "   ";
+            for (int k = 0; k <= 6; k++)
+                ftmp << "[" << k << "]"
+                     << " ";
+            ftmp << "\n";
+        }
         for (int j = 0; j < graph->getSize(); j++)
         {
+            if (j == 0)
+                ftmp << "[" << i << "]"
+                     << " ";
             if (A[i][j] == 21474836)
-                ftmp << 'x' << ' ';
+                ftmp << 'x' << "   ";
             else
-                ftmp << A[i][j] << ' ';
+                ftmp << A[i][j] << "   ";
         }
         ftmp << "\n";
     }

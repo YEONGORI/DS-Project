@@ -1,4 +1,5 @@
 #include "ListGraph.h"
+#include "Manager.h"
 
 ListGraph::ListGraph(bool type, int size) : Graph(type, size)
 {

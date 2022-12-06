@@ -7,10 +7,10 @@ class Manager
 {
 private:
 	Graph *graph;
-	ofstream fout;
 	int load;
 
 public:
+	ofstream fout;
 	Manager();
 	~Manager();
 
