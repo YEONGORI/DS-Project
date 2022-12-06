@@ -1,5 +1,6 @@
 #include "ListGraph.h"
 #include "Manager.h"
+#include "GraphMethod.h"
 
 ListGraph::ListGraph(bool type, int size) : Graph(type, size)
 {
@@ -22,20 +23,20 @@ void ListGraph::insertEdge(int from, int to, int weight)
 	m_List[from].insert({to, weight});
 }
 
-bool ListGraph::printGraph()
+bool ListGraph::printGraph(ofstream *ftq)
 {
-	fstream ftmp("log.txt", ios::app);
+	if (m_List->empty())
+		return 0;
 	for (int i = 0; i < m_Size; i++)
 	{
-		ftmp << "[" << i << "]";
+		*ftq << "[" << i << "]";
 
-		for (auto it_ = m_List[i].begin(); it_ != m_List[i].end() && ftmp << " -> "; it_++)
+		for (auto it_ = m_List[i].begin(); it_ != m_List[i].end() && *ftq << " -> "; it_++)
 		{
-			ftmp << "(" << it_->first << "," << it_->second << ")";
+			*ftq << "(" << it_->first << "," << it_->second << ")";
 		}
-		ftmp << endl;
+		*ftq << endl;
 	}
-	ftmp << endl;
-	ftmp.close();
+	*ftq << endl;
 	return 1;
 }

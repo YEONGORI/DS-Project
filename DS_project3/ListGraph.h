@@ -13,7 +13,7 @@ public:
 
 	map<int, int> getAdjacentEdges(int vertex);
 	void insertEdge(int from, int to, int weight);
-	bool printGraph();
+	bool printGraph(ofstream *ftq);
 };
 
 #endif

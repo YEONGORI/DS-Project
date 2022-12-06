@@ -8,6 +8,7 @@ class Manager
 private:
 	Graph *graph;
 	int load;
+	vector<int> store;
 
 public:
 	ofstream fout;
@@ -17,7 +18,7 @@ public:
 	void run(const char *command_txt);
 
 	bool LOAD(char *filename);
-	bool PRINT();
+	bool PRINT(ofstream *fout);
 
 	bool mBFS(int vertex);
 	bool mDFS_R(int vertex);

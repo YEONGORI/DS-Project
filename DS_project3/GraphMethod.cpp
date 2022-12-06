@@ -4,23 +4,28 @@
 #include <iostream>
 #include <stack>
 #include <tuple>
-#include <bits/stdc++.h>
 
 using namespace std;
 
 typedef pair<int, int> iPair;
 
+ofstream *ffff;
+
+void fetch1(ofstream *of)
+{
+    ffff = of;
+}
+
 bool BFS(Graph *graph, int vertex)
 {
-    ofstream ftmp("log.txt", ios::app);
     queue<int> QU;
     int vis[graph->getSize() + 1] = {0};
     int cnt = 1;
 
     QU.push(vertex);
     vis[vertex] = 1;
-    ftmp << "startvertex: " << vertex << "\n";
-    ftmp << vertex << " -> ";
+    *ffff << "startvertex: " << vertex << "\n";
+    *ffff << vertex << " -> ";
     while (!QU.empty())
     {
         auto cur = QU.front();
@@ -31,33 +36,31 @@ bool BFS(Graph *graph, int vertex)
                 continue;
             vis[edges.first] = 1;
             QU.push(edges.first);
-            ftmp << edges.first;
+            *ffff << edges.first;
             if (++cnt < graph->getSize())
-                ftmp << " -> ";
+                *ffff << " -> ";
         }
     }
-    ftmp << "\n";
-    ftmp.close();
+    *ffff << "\n";
     return true;
 }
 
 bool DFS(Graph *graph, int vertex)
 {
-    ofstream ftmp("log.txt", ios::app);
     stack<int> ST;
     int vis[graph->getSize() + 1] = {0};
     int cnt = 1;
 
     ST.push(vertex);
     vis[vertex] = 1;
-    ftmp << "startvertex: " << vertex << "\n";
+    *ffff << "startvertex: " << vertex << "\n";
     while (!ST.empty())
     {
         auto cur = ST.top();
         ST.pop();
-        ftmp << cur;
+        *ffff << cur;
         if (cnt++ < graph->getSize())
-            ftmp << " -> ";
+            *ffff << " -> ";
         for (auto edges : graph->getAdjacentEdges(cur))
         {
             if (vis[edges.first])
@@ -66,20 +69,20 @@ bool DFS(Graph *graph, int vertex)
             vis[edges.first] = 1;
         }
     }
-    ftmp << "\n";
-    ftmp.close();
+    *ffff << "\n";
     return true;
 }
-int a = 0;
+
+int a = 1;
 bool DFS_R(Graph *graph, vector<bool> *visit, int vertex)
 {
     visit[0][vertex] = true;
-    ofstream ftmp("log.txt", ios::app);
-    ftmp << vertex;
+    *ffff << vertex;
     a++;
-    if (a != 6)
-        ftmp << " -> ";
-    ftmp.close();
+    if (a < graph->getSize())
+        *ffff << " -> ";
+    else
+        *ffff << "\n";
     for (auto edges : graph->getAdjacentEdges(vertex))
     {
         if (!visit[0][edges.first])
@@ -119,7 +122,6 @@ bool Kruskal(Graph *graph)
 {
     int sum = 0;
     int *parent = new int[graph->getSize()];
-    ofstream ftmp("log.txt", ios::app);
 
     for (int i = 0; i < graph->getSize(); i++)
     {
@@ -149,31 +151,32 @@ bool Kruskal(Graph *graph)
             m[get<2>(tmp)].insert({get<1>(tmp), get<0>(tmp)});
         }
     }
+    if (sum < 0)
+        return false;
     for (int i = 0; i < graph->getSize() && !edges.empty(); i++)
     {
-        ftmp << "[" << i << "] ";
+        *ffff << "[" << i << "] ";
         for (auto t : m[i])
         {
-            ftmp << t.first << "(" << t.second * -1 << ") ";
+            *ffff << t.first << "(" << t.second * -1 << ") ";
         }
-        ftmp << "\n";
+        *ffff << "\n";
     }
 
-    ftmp << "cost: " << sum << "\n";
-    ftmp.close();
+    *ffff << "cost: " << sum << "\n";
+    return true;
 }
 
 bool Dijkstra(Graph *graph, int vertex)
 {
     priority_queue<iPair, vector<iPair>, greater<iPair>> pq;
-    ofstream ftmp("log.txt", ios::app);
 
     vector<int> dist(graph->getSize(), INFINITY);
     int prev[graph->getSize()];
     for (int i = 0; i < graph->getSize(); i++)
         prev[i] = i;
     pq.push(make_pair(0, vertex));
-    ftmp << "startvertex: " << vertex << "\n";
+    *ffff << "startvertex: " << vertex << "\n";
     dist[vertex] = 0;
     while (!pq.empty())
     {
@@ -197,7 +200,7 @@ bool Dijkstra(Graph *graph, int vertex)
     {
         if (i == vertex)
             continue;
-        ftmp << "[" << i << "] ";
+        *ffff << "[" << i << "] ";
         int j = i;
         if (prev[j] != j)
         {
@@ -207,19 +210,18 @@ bool Dijkstra(Graph *graph, int vertex)
                 S.push(prev[i]);
                 i = prev[i];
             }
-            ftmp << vertex << " -> ";
+            *ffff << vertex << " -> ";
             while (!S.empty())
             {
-                ftmp << S.top() << " -> ";
+                *ffff << S.top() << " -> ";
                 S.pop();
             }
-            ftmp << j << " (" << dist[j] << ")\n";
+            *ffff << j << " (" << dist[j] << ")\n";
         }
         else
-            ftmp << "x\n";
+            *ffff << "x\n";
         i = j;
     }
-    ftmp.close();
 }
 
 bool Bellmanford(Graph *graph, int s_vertex, int e_vertex)
@@ -232,7 +234,6 @@ bool Bellmanford(Graph *graph, int s_vertex, int e_vertex)
         dist[i] = 214748364;
     }
     dist[s_vertex] = 0;
-    ofstream ftmp("log.txt", ios::app);
 
     for (auto adj : graph->getAdjacentEdges(s_vertex))
     {
@@ -266,6 +267,8 @@ bool Bellmanford(Graph *graph, int s_vertex, int e_vertex)
                         {
                             dist[v] = dist[w] + graph->getAdjacentEdges(w).find(v)->second;
                             prev[v] = w;
+                            if (dist[v] < 0)
+                                return false;
                         }
                     }
                 }
@@ -281,21 +284,19 @@ bool Bellmanford(Graph *graph, int s_vertex, int e_vertex)
         S.push(prev[end]);
         end = prev[end];
     }
-    ftmp << s_vertex << " -> ";
+    *ffff << s_vertex << " -> ";
     while (!S.empty())
     {
-        ftmp << S.top() << " -> ";
+        *ffff << S.top() << " -> ";
         S.pop();
     }
-    ftmp << e_vertex << '\n';
-    ftmp << "cost: " << dist[e_vertex] << "\n";
-    ftmp.close();
+    *ffff << e_vertex << '\n';
+    *ffff << "cost: " << dist[e_vertex] << "\n";
+    return true;
 }
 
 bool FLOYD(Graph *graph)
 {
-    ofstream ftmp("log.txt", ios::app);
-
     int A[graph->getSize()][graph->getSize()];
 
     for (int i = 0; i < graph->getSize(); i++)
@@ -326,6 +327,8 @@ bool FLOYD(Graph *graph)
                 if (i == j || j == k || i == k || A[i][j] == A[i][k] + A[k][j])
                     continue;
                 A[i][j] = min(A[i][j], A[i][k] + A[k][j]);
+                if (A[i][j] < 0) //에러처리
+                    return false;
             }
         }
     }
@@ -334,23 +337,23 @@ bool FLOYD(Graph *graph)
     {
         if (i == 0)
         {
-            ftmp << "   ";
+            *ffff << "   ";
             for (int k = 0; k <= 6; k++)
-                ftmp << "[" << k << "]"
-                     << " ";
-            ftmp << "\n";
+                *ffff << "[" << k << "]"
+                      << " ";
+            *ffff << "\n";
         }
         for (int j = 0; j < graph->getSize(); j++)
         {
             if (j == 0)
-                ftmp << "[" << i << "]"
-                     << " ";
+                *ffff << "[" << i << "]"
+                      << " ";
             if (A[i][j] == 21474836)
-                ftmp << 'x' << "   ";
+                *ffff << 'x' << "   ";
             else
-                ftmp << A[i][j] << "   ";
+                *ffff << A[i][j] << "   ";
         }
-        ftmp << "\n";
+        *ffff << "\n";
     }
-    ftmp.close();
+    return true;
 }

@@ -26,15 +26,13 @@ void Manager::run(const char *command_txt)
 {
 	ifstream fin;
 	fin.open(command_txt);
-
+	fetch1(&fout);
 	if (!fin)
 	{
 		fout << "[ERROR] command file open error!" << endl;
 		return;
 	}
 
-	// char *str = NULL;
-	// char *str2 = NULL;
 	char buf[129] = {0};
 	char *cmd = NULL;
 	char *str = NULL;
@@ -54,7 +52,7 @@ void Manager::run(const char *command_txt)
 		else if (strcmp(cmd, "PRINT") == 0)
 		{
 			fout << "=======PRINT======\n";
-			if (PRINT())
+			if (PRINT(&fout))
 				printSuccessCode();
 			else
 				printErrorCode(200);
@@ -63,28 +61,34 @@ void Manager::run(const char *command_txt)
 		{
 			fout << "========BFS=======\n";
 			str = strtok(NULL, "\n");
+			if (str == NULL)
+				printErrorCode(300);
 			if (mBFS(stoi(str)))
 				printSuccessCode();
 			else
-				printErrorCode(200);
+				printErrorCode(300);
 		}
 		else if (strcmp(cmd, "DFS") == 0)
 		{
 			fout << "========DFS=======\n";
 			str = strtok(NULL, "\n");
+			if (str == NULL)
+				printErrorCode(400);
 			if (mDFS(stoi(str)))
 				printSuccessCode();
 			else
-				printErrorCode(200);
+				printErrorCode(400);
 		}
 		else if (strcmp(cmd, "DFS_R") == 0)
 		{
 			fout << "========DFS_R=======\n";
 			str = strtok(NULL, "\n");
+			if (str == NULL)
+				printErrorCode(500);
 			if (mDFS_R(stoi(str)))
 				printSuccessCode();
 			else
-				printErrorCode(200);
+				printErrorCode(500);
 		}
 		else if (strcmp(cmd, "KRUSKAL") == 0)
 		{
@@ -92,26 +96,30 @@ void Manager::run(const char *command_txt)
 			if (mKRUSKAL())
 				printSuccessCode();
 			else
-				printErrorCode(200);
+				printErrorCode(600);
 		}
 		else if (strcmp(cmd, "DIJKSTRA") == 0)
 		{
 			str = strtok(NULL, "\n");
 			fout << "========DIJKSTRA=======\n";
+			if (str == NULL)
+				printErrorCode(700);
 			if (mDIJKSTRA(stoi(str)))
 				printSuccessCode();
 			else
-				printErrorCode(200);
+				printErrorCode(700);
 		}
 		else if (strcmp(cmd, "BELLMANFORD") == 0)
 		{
 			str = strtok(NULL, " ");
 			str2 = strtok(NULL, "\n");
 			fout << "========BELLMANFORD=======\n";
+			if (str == NULL || str2 == NULL)
+				printErrorCode(800);
 			if (mBELLMANFORD(stoi(str), stoi(str2)))
 				printSuccessCode();
 			else
-				printErrorCode(200);
+				printErrorCode(800);
 		}
 		else if (strcmp(cmd, "FLOYD") == 0)
 		{
@@ -119,7 +127,10 @@ void Manager::run(const char *command_txt)
 			if (mFLOYD())
 				printSuccessCode();
 			else
-				printErrorCode(200);
+				printErrorCode(900);
+		}
+		else if (strcmp(cmd, "EXIT") == 0)
+		{
 		}
 		memset(buf, 0, 129);
 	}
@@ -160,6 +171,7 @@ bool Manager::LOAD(char *filename)
 				tok = strtok(NULL, "\n");
 				weight = stoi(tok);
 				graph->insertEdge(from, to, weight);
+				store.push_back(from);
 			}
 		}
 	}
@@ -168,15 +180,17 @@ bool Manager::LOAD(char *filename)
 	return true;
 }
 
-bool Manager::PRINT()
+bool Manager::PRINT(ofstream *fout)
 {
-	if (graph->printGraph())
+	if (graph->printGraph(fout))
 		return true;
 	return false;
 }
 
 bool Manager::mBFS(int vertex)
 {
+	if (find(store.begin(), store.end(), vertex) == store.end())
+		return false;
 	if (BFS(graph, vertex))
 		return true;
 	return false;
@@ -184,6 +198,8 @@ bool Manager::mBFS(int vertex)
 
 bool Manager::mDFS(int vertex)
 {
+	if (find(store.begin(), store.end(), vertex) == store.end())
+		return false;
 	if (DFS(graph, vertex))
 		return true;
 	return false;
@@ -191,6 +207,8 @@ bool Manager::mDFS(int vertex)
 
 bool Manager::mDFS_R(int vertex)
 {
+	if (find(store.begin(), store.end(), vertex) == store.end())
+		return false;
 	vector<bool> V;
 	for (int i = 0; i < graph->getSize(); i++)
 		V.push_back(false);
@@ -201,6 +219,8 @@ bool Manager::mDFS_R(int vertex)
 
 bool Manager::mDIJKSTRA(int vertex)
 {
+	if (find(store.begin(), store.end(), vertex) == store.end())
+		return false;
 	if (Dijkstra(graph, vertex))
 		return true;
 	return false;
@@ -215,6 +235,8 @@ bool Manager::mKRUSKAL()
 
 bool Manager::mBELLMANFORD(int s_vertex, int e_vertex)
 {
+	if (find(store.begin(), store.end(), s_vertex) == store.end())
+		return false;
 	if (Bellmanford(graph, s_vertex, e_vertex))
 		return true;
 	return false;

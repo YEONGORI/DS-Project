@@ -12,5 +12,6 @@ bool Kruskal(Graph *graph);
 bool Dijkstra(Graph *graph, int vertex);
 bool Bellmanford(Graph *graph, int s_vertex, int e_vertex);
 bool FLOYD(Graph *graph);
+void fetch1(ofstream *of);
 
 #endif
