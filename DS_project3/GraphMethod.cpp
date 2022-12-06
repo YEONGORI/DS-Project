@@ -4,6 +4,7 @@
 #include <iostream>
 #include <stack>
 #include <tuple>
+#include <bits/stdc++.h>
 
 using namespace std;
 
@@ -81,27 +82,65 @@ bool DFS_R(Graph *graph, vector<bool> *visit, int vertex)
     }
 }
 
+int find_parent(int *parent, int x)
+{
+    if (parent[x] == x)
+        return x;
+    else
+        return parent[x] = find_parent(parent, parent[x]);
+}
+bool check_same_parent(int *parent, int x, int y)
+{
+    x = find_parent(parent, x);
+    y = find_parent(parent, y);
+
+    if (x == y)
+        return true;
+    else
+        return false;
+}
+
+void union_parent(int *parent, int x, int y)
+{
+    x = find_parent(parent, x);
+    y = find_parent(parent, y);
+    if (x < y)
+        parent[y] = x;
+    else
+        parent[x] = y;
+}
+
 bool Kruskal(Graph *graph)
 {
-    int sum=0;
+    int sum = 0;
     int *parent = new int[graph->getSize()];
-    for(int i=0;i<graph->getSize();i++){
-        parent[i]=i;
+    for (int i = 0; i < graph->getSize(); i++)
+    {
+        parent[i] = i;
     }
-    priority_queue<int, int, int> edges; //weight, from, to 
-    for(int i=0;i<graph->getSize();i++){
-        for(auto it : graph->getAdjacentEdges(i)){
-            edges.push(make_tuple((it.second*-1), i, it.first));
+    priority_queue<int, int, int> edges; // weight, from, to
+    for (int i = 0; i < graph->getSize(); i++)
+    {
+        for (auto it : graph->getAdjacentEdges(i))
+        {
+            tuple<int, int, int> tmp_tuple = make_tuple((it.second * -1), i, it.first);
+            edges.push(tmp_tuple);
         }
     }
-    for(int i=0;i<graph->getSize()&&edges.empty();i++){
+
+    for (int i = 0; i < graph->getSize() && edges.empty(); i++)
+    {
         tuple<int, int, int> tmp = edges.top();
-        get<0>(tmp) = get<0>(tmp)*-1;
-        edges.pop();//delete
-        get<1>(tmp)
+        edges.pop(); // delete
+        if (!check_same_parent(parent, get<1>(tmp), get<2>(tmp)))
+        {
+            union_parent(parent, get<1>(tmp), get<2>(tmp));
+            sum += get<0>(tmp) * -1;
+        }
+        cout << "[" << i << "]" << get<2>(tmp) << "(" << get<0>(tmp) * -1 << ")"
+             << "\n";
     }
-
-
+    cout << "cost: " << sum << "\n";
 }
 
 bool Dijkstra(Graph *graph, int vertex)
