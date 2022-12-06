@@ -284,16 +284,52 @@ bool Bellmanford(Graph *graph, int s_vertex, int e_vertex)
 
 bool FLOYD(Graph *graph)
 {
+    fstream ftmp("log.txt", ios::app);
+
     int A[graph->getSize()][graph->getSize()];
 
-    for (int k = 1; k <= graph->getSize(); k++)
+    for (int i = 0; i < graph->getSize(); i++)
     {
-        for (int i = 1; i <= graph->getSize(); i++)
+        for (int j = 0; j < graph->getSize(); j++)
         {
-            for (int j = 1; j <= graph->getSize(); j++)
+            if (i == j)
+                A[i][j] = 0;
+            else
+                A[i][j] = 21474836;
+        }
+    }
+
+    for (int i = 0; i < graph->getSize(); i++)
+    {
+        for (auto it : graph->getAdjacentEdges(i))
+        {
+            A[i][it.first] = it.second;
+        }
+    }
+
+    for (int k = 0; k < graph->getSize(); k++)
+    {
+        for (int i = 0; i < graph->getSize(); i++)
+        {
+            for (int j = 0; j < graph->getSize(); j++)
             {
+                if (i == j || j == k || i == k || A[i][j] == A[i][k] + A[k][j])
+                    continue;
                 A[i][j] = min(A[i][j], A[i][k] + A[k][j]);
             }
         }
     }
+
+    for (int i = 0; i < graph->getSize(); i++)
+    {
+        for (int j = 0; j < graph->getSize(); j++)
+        {
+            if (A[i][j] == 21474836)
+                ftmp << 'x' << ' ';
+            else
+                ftmp << A[i][j] << ' ';
+        }
+        ftmp << "\n";
+    }
+    ftmp.close();
 }
