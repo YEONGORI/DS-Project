@@ -33,10 +33,12 @@ void Manager::run(const char *command_txt)
 		return;
 	}
 
-	char *str = NULL;
-	char *str2 = NULL;
+	// char *str = NULL;
+	// char *str2 = NULL;
 	char buf[129] = {0};
 	char *cmd = NULL;
+	char *str = NULL;
+	char *str2 = NULL;
 
 	while (fin.getline(buf, 128))
 	{
@@ -92,8 +94,36 @@ void Manager::run(const char *command_txt)
 			else
 				printErrorCode(200);
 		}
+		else if (strcmp(cmd, "DIJKSTRA") == 0)
+		{
+			str = strtok(NULL, "\n");
+			fout << "========DIJKSTRA=======\n";
+			if (mDIJKSTRA(stoi(str)))
+				printSuccessCode();
+			else
+				printErrorCode(200);
+		}
+		else if (strcmp(cmd, "BELLMANFORD") == 0)
+		{
+			str = strtok(NULL, " ");
+			str2 = strtok(NULL, "\n");
+			fout << "========BELLMANFORD=======\n";
+			if (mBELLMANFORD(stoi(str), stoi(str2)))
+				printSuccessCode();
+			else
+				printErrorCode(200);
+		}
+		else if (strcmp(cmd, "FLOYD") == 0)
+		{
+			fout << "========FLOYD=======\n";
+			if (mFLOYD())
+				printSuccessCode();
+			else
+				printErrorCode(200);
+		}
 		memset(buf, 0, 129);
 	}
+
 	fin.close();
 }
 
@@ -171,7 +201,9 @@ bool Manager::mDFS_R(int vertex)
 
 bool Manager::mDIJKSTRA(int vertex)
 {
-
+	if (Dijkstra(graph, vertex))
+		return true;
+	return false;
 }
 
 bool Manager::mKRUSKAL()
@@ -183,10 +215,16 @@ bool Manager::mKRUSKAL()
 
 bool Manager::mBELLMANFORD(int s_vertex, int e_vertex)
 {
+	if (Bellmanford(graph, s_vertex, e_vertex))
+		return true;
+	return false;
 }
 
 bool Manager::mFLOYD()
 {
+	if (FLOYD(graph))
+		return true;
+	return false;
 }
 
 void Manager::printSuccessCode(void)
