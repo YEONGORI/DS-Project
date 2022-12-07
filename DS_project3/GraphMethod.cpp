@@ -172,7 +172,7 @@ bool Kruskal(Graph *graph, ofstream &fout)
     for (int i = 0; i < graph_size; i++)
         parent[i] = i;
 
-    quick_sort(edges, 0, edges.size() - 1);
+    quick_sort(edges, 0, edges.size() - 1); // sorting edges
 
     for (int i = 0; i < graph_size && !edges.empty(); i++) // Making MST
     {

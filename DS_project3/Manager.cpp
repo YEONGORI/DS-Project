@@ -45,7 +45,17 @@ void Manager::run(const char *command_txt)
 		if (strcmp(cmd, "LOAD") == 0)
 		{
 			fout << "========LOAD========\n";
-			if (LOAD("graph.txt"))
+			str = strtok(NULL, "\n");
+			if (str == NULL)
+				printErrorCode(100);
+
+			// if (str == "graph_M.txt")
+			if (strcmp(str, "graph_M.txt") == 0)
+			{
+				fout << "Please input graph_L.txt\n";
+				return;
+			}
+			if (LOAD(str))
 				printSuccessCode();
 			else
 				printErrorCode(100);
@@ -64,6 +74,7 @@ void Manager::run(const char *command_txt)
 			str = strtok(NULL, "\n");
 			if (str == NULL) // Check vertex is exist
 				printErrorCode(300);
+
 			if (mBFS(stoi(str), fout))
 				printSuccessCode();
 			else
