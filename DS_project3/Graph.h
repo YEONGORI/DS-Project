@@ -33,7 +33,7 @@ public:
 
 	virtual map<int, int> getAdjacentEdges(int vertex) = 0;
 	virtual void insertEdge(int from, int to, int weight) = 0;
-	virtual bool printGraph(ofstream *ftq) = 0;
+	virtual bool printGraph(ofstream &fout) = 0;
 };
 
 #endif

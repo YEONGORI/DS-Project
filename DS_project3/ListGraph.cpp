@@ -1,5 +1,5 @@
-#include "ListGraph.h"
 #include "Manager.h"
+#include "ListGraph.h"
 #include "GraphMethod.h"
 
 ListGraph::ListGraph(bool type, int size) : Graph(type, size)
@@ -15,7 +15,7 @@ ListGraph::~ListGraph()
 
 map<int, int> ListGraph::getAdjacentEdges(int vertex)
 {
-	return m_List[vertex];
+	return (m_List[vertex]);
 }
 
 void ListGraph::insertEdge(int from, int to, int weight)
@@ -23,20 +23,20 @@ void ListGraph::insertEdge(int from, int to, int weight)
 	m_List[from].insert({to, weight});
 }
 
-bool ListGraph::printGraph(ofstream *ftq)
+bool ListGraph::printGraph(ofstream &fout)
 {
 	if (m_List->empty())
-		return 0;
+		return false;
 	for (int i = 0; i < m_Size; i++)
 	{
-		*ftq << "[" << i << "]";
+		fout << "[" << i << "]";
 
-		for (auto it_ = m_List[i].begin(); it_ != m_List[i].end() && *ftq << " -> "; it_++)
+		for (auto it_ = m_List[i].begin(); it_ != m_List[i].end() && fout << " -> "; it_++)
 		{
-			*ftq << "(" << it_->first << "," << it_->second << ")";
+			fout << "(" << it_->first << "," << it_->second << ")";
 		}
-		*ftq << endl;
+		fout << "\n";
 	}
-	*ftq << endl;
-	return 1;
+	fout << "\n";
+	return true;
 }

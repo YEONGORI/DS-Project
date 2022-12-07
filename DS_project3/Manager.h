@@ -6,9 +6,9 @@
 class Manager
 {
 private:
-	Graph *graph;
 	int load;
-	vector<int> store;
+	Graph *graph;
+	vector<int> value_checker;
 
 public:
 	ofstream fout;
@@ -18,15 +18,15 @@ public:
 	void run(const char *command_txt);
 
 	bool LOAD(char *filename);
-	bool PRINT(ofstream *fout);
+	bool PRINT(ofstream &out);
 
-	bool mBFS(int vertex);
-	bool mDFS_R(int vertex);
-	bool mDFS(int vertex);
-	bool mDIJKSTRA(int vertex);
-	bool mKRUSKAL();
-	bool mBELLMANFORD(int s_vertex, int e_vertex);
-	bool mFLOYD();
+	bool mBFS(int vertex, ofstream &fout);
+	bool mDFS_R(int vertex, ofstream &fout);
+	bool mDFS(int vertex, ofstream &fout);
+	bool mDIJKSTRA(int vertex, ofstream &fout);
+	bool mKRUSKAL(ofstream &fout);
+	bool mBELLMANFORD(int s_vertex, int e_vertex, ofstream &fout);
+	bool mFLOYD(ofstream &fout);
 
 	void printSuccessCode(void);
 	void printErrorCode(int n);

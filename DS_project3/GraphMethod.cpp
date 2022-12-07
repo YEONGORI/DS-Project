@@ -1,208 +1,248 @@
-#include "GraphMethod.h"
+#include <bits/stdc++.h>
 #include "ListGraph.h"
-#include <queue>
-#include <iostream>
-#include <stack>
-#include <tuple>
+#include "GraphMethod.h"
 
+#define BIGBIG_NUM 214748364
 using namespace std;
 
 typedef pair<int, int> iPair;
 
-ofstream *ffff;
+int dfs_cnt = 1;
 
-void fetch1(ofstream *of)
+void insertion_sort(vector<tuple<int, int, int>> *a, const int n)
 {
-    ffff = of;
+    for (int j = 2; j <= n; j++)
+    {
+        vector<tuple<int, int, int>> temp = a[j];
+        insertion(temp, a, j - 1);
+    }
 }
 
-bool BFS(Graph *graph, int vertex)
+void insertion(vector<tuple<int, int, int>> &e, vector<tuple<int, int, int>> *a, int i)
 {
-    queue<int> QU;
-    int vis[graph->getSize() + 1] = {0};
-    int cnt = 1;
-
-    QU.push(vertex);
-    vis[vertex] = 1;
-    *ffff << "startvertex: " << vertex << "\n";
-    *ffff << vertex << " -> ";
-    while (!QU.empty())
+    a[0] = e;
+    while (e < a[i])
     {
-        auto cur = QU.front();
-        QU.pop();
-        for (auto edges : graph->getAdjacentEdges(cur))
+        a[i + 1] = a[i];
+        i--;
+    }
+    a[i + 1] = e;
+}
+
+void quick_sort(vector<tuple<int, int, int>> *a, const int left, const int right)
+{
+    if (left < right)
+    {
+        int i = left,
+            j = right + 1;
+        vector<tuple<int, int, int>> pivot = a[left];
+        do
         {
-            if (vis[edges.first])
-                continue;
-            vis[edges.first] = 1;
-            QU.push(edges.first);
-            *ffff << edges.first;
-            if (++cnt < graph->getSize())
-                *ffff << " -> ";
-        }
+            do
+                i++;
+            while (a[i] < pivot);
+            do
+                j--;
+            while (a[j] > pivot);
+            if (i < j)
+                swap(a[i], a[j]);
+        } while (i < j);
+
+        swap(a[left], a[j]);
+
+        quick_sort(a, left, j - 1);
+        quick_sort(a, j + 1, right);
     }
-    *ffff << "\n";
-    return true;
 }
 
-bool DFS(Graph *graph, int vertex)
+void sorting_method(vector<tuple<int, int, int>> &a, int low, int high, int segment_size)
 {
-    stack<int> ST;
-    int vis[graph->getSize() + 1] = {0};
-    int cnt = 1;
-
-    ST.push(vertex);
-    vis[vertex] = 1;
-    *ffff << "startvertex: " << vertex << "\n";
-    while (!ST.empty())
+    if (low < high)
     {
-        auto cur = ST.top();
-        ST.pop();
-        *ffff << cur;
-        if (cnt++ < graph->getSize())
-            *ffff << " -> ";
-        for (auto edges : graph->getAdjacentEdges(cur))
-        {
-            if (vis[edges.first])
-                continue;
-            ST.push(edges.first);
-            vis[edges.first] = 1;
-        }
-    }
-    *ffff << "\n";
-    return true;
-}
-
-int a = 1;
-bool DFS_R(Graph *graph, vector<bool> *visit, int vertex)
-{
-    visit[0][vertex] = true;
-    *ffff << vertex;
-    a++;
-    if (a < graph->getSize())
-        *ffff << " -> ";
-    else
-        *ffff << "\n";
-    for (auto edges : graph->getAdjacentEdges(vertex))
-    {
-        if (!visit[0][edges.first])
-            DFS_R(graph, visit, edges.first);
+        if (high - low + 1 <= segment_size)
+            insertion_sort(&a, low, high);
+        else
     }
 }
 
-int find_parent(int *parent, int x)
+int find_par_vertex(int *&par_vertex, int x)
 {
-    if (parent[x] == x)
+    if (par_vertex[x] == x)
         return x;
     else
-        return parent[x] = find_parent(parent, parent[x]);
-}
-bool check_same_parent(int *parent, int x, int y)
-{
-    x = find_parent(parent, x);
-    y = find_parent(parent, y);
-
-    if (x == y)
-        return true;
-    else
-        return false;
+        return par_vertex[x] = find_par_vertex(par_vertex, par_vertex[x]);
 }
 
-void union_parent(int *parent, int x, int y)
+void union_par_vertex(int *&par_vertex, int x, int y)
 {
-    x = find_parent(parent, x);
-    y = find_parent(parent, y);
+    x = find_par_vertex(par_vertex, x);
+    y = find_par_vertex(par_vertex, y);
     if (x < y)
-        parent[y] = x;
+        par_vertex[y] = x;
     else
-        parent[x] = y;
+        par_vertex[x] = y;
 }
 
-bool Kruskal(Graph *graph)
+bool BFS(Graph *graph, int vertex, ofstream &fout)
 {
-    int sum = 0;
-    int *parent = new int[graph->getSize()];
+    int cnt = 1;
+    int vis[graph->getSize() + 2] = {0}; // Check for vertex already visited
 
-    for (int i = 0; i < graph->getSize(); i++)
-    {
-        parent[i] = i;
-    }
-    priority_queue<tuple<int, int, int>> edges; // weight, from, to
-    map<int, int> m[graph->getSize()];
+    queue<int> Q;
+    Q.push(vertex);
 
-    for (int i = 0; i < graph->getSize(); i++)
+    vis[vertex] = 1;
+    fout << "startvertex: " << vertex << "\n"
+         << vertex << " -> ";
+    while (!Q.empty()) // Start BFS
     {
-        for (auto it : graph->getAdjacentEdges(i))
+        auto cur = Q.front();
+        Q.pop();
+        for (auto edge : graph->getAdjacentEdges(cur)) // Searching Adjacent vertex
         {
-            tuple<int, int, int> tmp_tuple = make_tuple((it.second * -1), i, it.first);
-            edges.push(tmp_tuple);
+            if (vis[edge.first]) // Already vistied
+                continue;
+            vis[edge.first] = 1; // Newly visit
+            Q.push(edge.first);
+
+            fout << edge.first;
+            if (++cnt < graph->getSize())
+                fout << " -> ";
         }
     }
-
-    for (int i = 0; i < graph->getSize() && !edges.empty(); i++)
-    {
-        tuple<int, int, int> tmp = edges.top();
-        edges.pop(); // delete
-        if (!check_same_parent(parent, get<1>(tmp), get<2>(tmp)))
-        {
-            union_parent(parent, get<1>(tmp), get<2>(tmp));
-            sum += get<0>(tmp) * -1;
-            m[get<1>(tmp)].insert({get<2>(tmp), get<0>(tmp)});
-            m[get<2>(tmp)].insert({get<1>(tmp), get<0>(tmp)});
-        }
-    }
-    if (sum < 0)
-        return false;
-    for (int i = 0; i < graph->getSize() && !edges.empty(); i++)
-    {
-        *ffff << "[" << i << "] ";
-        for (auto t : m[i])
-        {
-            *ffff << t.first << "(" << t.second * -1 << ") ";
-        }
-        *ffff << "\n";
-    }
-
-    *ffff << "cost: " << sum << "\n";
+    fout << "\n";
     return true;
 }
 
-bool Dijkstra(Graph *graph, int vertex)
+bool DFS(Graph *graph, int vertex, ofstream &fout)
 {
+    int cnt = 0;
+    int graph_size = graph->getSize();
+    int vis[graph_size + 2] = {0}; // Check for vertex already visited
+
+    stack<int> S;
+    S.push(vertex);
+
+    vis[vertex] = 1;
+    fout << "startvertex: " << vertex << "\n";
+    while (!S.empty()) // Start DFS
+    {
+        auto cur = S.top();
+        S.pop(); // A visiting vertex
+        fout << cur;
+        if (++cnt < graph_size)
+            fout << " -> ";
+        for (auto edges : graph->getAdjacentEdges(cur)) // Searching Adjacent vertex
+        {
+            if (vis[edges.first])
+                continue;
+            vis[edges.first] = 1;
+            S.push(edges.first);
+        }
+    }
+    fout << "\n";
+    return true;
+}
+
+bool DFS_R(Graph *graph, vector<bool> *visit, int vertex, ofstream &fout)
+{
+    visit[0][vertex] = true;
+    fout << vertex;
+    if (++dfs_cnt < graph->getSize())
+        fout << " -> ";
+    else // When visit all the vertex,
+        fout << "\n";
+    for (auto edges : graph->getAdjacentEdges(vertex)) // Searching Adjacent vertex
+    {
+        if (!visit[0][edges.first])
+            DFS_R(graph, visit, edges.first, fout); // Increasing depth
+    }
+}
+
+bool Kruskal(Graph *graph, ofstream &fout)
+{
+    int sum = 0;
+    int graph_size = graph->getSize();
+    int *parent = new int[graph_size];
+    map<int, int> MST[graph_size];              // Minnium Spanning Tree
+    priority_queue<tuple<int, int, int>> edges; // The relationship between all vertex and edge
+    vector<tuple<int, int, int>> edges2;
+
+    for (int i = 0; i < graph_size; i++)
+    {
+        for (auto edge : graph->getAdjacentEdges(i))
+        {
+            tuple<int, int, int> tmp = make_tuple(edge.second * -1, i, edge.first); // Make min Heap
+            edges2.push(tmp);
+        }
+    }
+    for (int i = 0; i < graph_size; i++)
+        parent[i] = i;
+    sort(edges2.begin(), edges2.end());
+    for (int i = 0; i < graph_size && !edges.empty(); i++) // Making MST
+    {
+        tuple<int, int, int> cur = edges.top();
+        edges.pop();
+        if (find_par_vertex(parent, get<1>(cur)) != find_par_vertex(parent, get<2>(cur))) // Check if a cycle is formed
+        {
+            union_par_vertex(parent, get<1>(cur), get<2>(cur));
+            MST[get<1>(cur)].insert({get<2>(cur), get<0>(cur)});
+            MST[get<2>(cur)].insert({get<1>(cur), get<0>(cur)});
+            sum += get<0>(cur) * -1;
+        }
+    }
+    for (int i = 0; i < graph_size; i++)
+    {
+        fout << "[" << i << "] ";
+        for (auto cur : MST[i])
+            fout << cur.first << "(" << cur.second * -1 << ") ";
+        fout << "\n";
+    }
+    fout << "cost: " << sum << "\n";
+    if (sum < 0) // If MST cannot be created
+        return false;
+    return true;
+}
+
+bool Dijkstra(Graph *graph, int vertex, ofstream &fout)
+{
+    int graph_size = graph->getSize();
+    int prev[graph_size];
+
+    vector<int> dist(graph_size, BIGBIG_NUM);
     priority_queue<iPair, vector<iPair>, greater<iPair>> pq;
 
-    vector<int> dist(graph->getSize(), INFINITY);
-    int prev[graph->getSize()];
-    for (int i = 0; i < graph->getSize(); i++)
-        prev[i] = i;
-    pq.push(make_pair(0, vertex));
-    *ffff << "startvertex: " << vertex << "\n";
     dist[vertex] = 0;
-    while (!pq.empty())
+    pq.push(make_pair(0, vertex));
+    fout << "startvertex: " << vertex << "\n";
+
+    for (int i = 0; i < graph_size; i++) // Show past paths
+        prev[i] = i;
+    while (!pq.empty()) // Start Dijkstra
     {
-        int u = pq.top().second;
+        int via_vertex = pq.top().second; // via vertex
         pq.pop();
 
-        for (auto i : graph->getAdjacentEdges(u))
+        for (auto edge : graph->getAdjacentEdges(via_vertex)) // Check adjacent vertex
         {
-            int v = i.first;
-            int weight = i.second;
+            int dest_vertex = edge.first;
+            int weight_vertex = edge.second;
 
-            if (dist[v] > dist[u] + weight)
+            if (dist[dest_vertex] > dist[via_vertex] + weight_vertex) // If it's faster to go straight than a layover,
             {
-                dist[v] = dist[u] + weight;
-                pq.push(make_pair(dist[v], v));
-                prev[v] = u;
+                dist[dest_vertex] = dist[via_vertex] + weight_vertex;
+                pq.push(make_pair(dist[dest_vertex], dest_vertex));
+                prev[dest_vertex] = via_vertex;
             }
         }
     }
-    for (int i = 0; i < graph->getSize(); i++)
+    for (int i = 0; i < graph_size; i++) // Print the past path
     {
         if (i == vertex)
             continue;
-        *ffff << "[" << i << "] ";
-        int j = i;
-        if (prev[j] != j)
+        fout << "[" << i << "] ";
+        int cur_vertex = i;
+        if (prev[cur_vertex] != cur_vertex)
         {
             stack<int> S;
             while (prev[i] != vertex)
@@ -210,150 +250,150 @@ bool Dijkstra(Graph *graph, int vertex)
                 S.push(prev[i]);
                 i = prev[i];
             }
-            *ffff << vertex << " -> ";
+            fout << vertex << " -> ";
             while (!S.empty())
             {
-                *ffff << S.top() << " -> ";
+                fout << S.top() << " -> ";
                 S.pop();
             }
-            *ffff << j << " (" << dist[j] << ")\n";
+            fout << cur_vertex << " (" << dist[cur_vertex] << ")"
+                 << "\n";
         }
         else
-            *ffff << "x\n";
-        i = j;
+            fout << "x"
+                 << "\n";
+        i = cur_vertex;
     }
+    return true;
 }
 
-bool Bellmanford(Graph *graph, int s_vertex, int e_vertex)
+bool Bellmanford(Graph *graph, int s_vertex, int e_vertex, ofstream &fout)
 {
-    int dist[graph->getSize()];
-    int prev[graph->getSize()];
-    for (int i = 0; i < graph->getSize(); i++)
+    stack<int> S;
+    int end_vertex;
+    int graph_size = graph->getSize();
+    int prev[graph_size];
+    int dist[graph_size];
+
+    map<int, int> lead_up_vertex[graph_size]; // the vertexes leading up to the present vertex
+    for (int i = 0; i < graph_size; i++)
     {
         prev[i] = i;
-        dist[i] = 214748364;
+        dist[i] = BIGBIG_NUM;
     }
-    dist[s_vertex] = 0;
+    dist[s_vertex] = 0; // The number of edges 0
 
-    for (auto adj : graph->getAdjacentEdges(s_vertex))
+    for (auto edge : graph->getAdjacentEdges(s_vertex)) // The numer of s_vertex's adjancent edge
     {
-        dist[adj.first] = adj.second;
-        prev[adj.first] = s_vertex;
+        dist[edge.first] = edge.second;
+        prev[edge.first] = s_vertex;
     }
-    map<int, int> incoming[graph->getSize()];
-    for (int i = 0; i < graph->getSize(); i++) // incomming
+    for (int i = 0; i < graph_size; i++) // Find leading up vertices
     {
-        for (auto it : graph->getAdjacentEdges(i))
-        {
-            incoming[it.first].insert({i, it.second});
-        }
+        for (auto edge : graph->getAdjacentEdges(i))
+            lead_up_vertex[edge.first].insert({i, edge.second});
     }
 
-    for (int k = 2; k <= graph->getSize() - 1; k++) // 엣지 개수 증가
+    for (int k = 2; k <= graph_size - 1; k++) // Number of available edges
     {
-        for (int v = 0; v < graph->getSize(); v++) // 모든 버택스 순회
+        for (int v = 0; v < graph_size; v++) // Check shortest distance for all vertices
         {
-            if (v == s_vertex || incoming[v].empty())
+            if (lead_up_vertex[v].empty() || v == s_vertex)
                 continue;
-            for (int w = 0; w < graph->getSize(); w++)
+            for (int w = 0; w < graph_size; w++) // A direct comparison between diesel and non-stop
             {
                 if (w == v)
                     continue;
-                for (auto it : graph->getAdjacentEdges(w))
+                for (auto edge : graph->getAdjacentEdges(w))
                 {
-                    if (it.first == v)
+                    if (v == edge.first)
                     {
                         if (dist[v] > dist[w] + graph->getAdjacentEdges(w).find(v)->second)
                         {
-                            dist[v] = dist[w] + graph->getAdjacentEdges(w).find(v)->second;
                             prev[v] = w;
-                            if (dist[v] < 0)
+                            dist[v] = dist[w] + graph->getAdjacentEdges(w).find(v)->second;
+                            if (dist[v] < 0) // The negative number cycle generates
                                 return false;
                         }
                     }
                 }
-                // dist[v] = min(dist[v], dist[w] + graph->getAdjacentEdges(w).find(v)->second);
             }
         }
     }
 
-    stack<int> S;
-    int end = e_vertex;
-    while (prev[end] != s_vertex)
+    end_vertex = e_vertex;
+    while (prev[end_vertex] != s_vertex) // Print Shortest distance path from start to finish
     {
-        S.push(prev[end]);
-        end = prev[end];
+        S.push(prev[end_vertex]);
+        end_vertex = prev[end_vertex];
     }
-    *ffff << s_vertex << " -> ";
+    fout << s_vertex << " -> ";
     while (!S.empty())
     {
-        *ffff << S.top() << " -> ";
+        fout << S.top() << " -> ";
         S.pop();
     }
-    *ffff << e_vertex << '\n';
-    *ffff << "cost: " << dist[e_vertex] << "\n";
+    fout << e_vertex << "\n"
+         << "cost: " << dist[e_vertex] << "\n";
     return true;
 }
 
-bool FLOYD(Graph *graph)
+bool FLOYD(Graph *graph, ofstream &fout)
 {
-    int A[graph->getSize()][graph->getSize()];
+    int graph_size = graph->getSize();
+    int dist_board[graph_size][graph_size];
 
-    for (int i = 0; i < graph->getSize(); i++)
+    for (int i = 0; i < graph_size; i++) // Initialize distance board 1
     {
-        for (int j = 0; j < graph->getSize(); j++)
+        for (int j = 0; j < graph_size; j++)
         {
             if (i == j)
-                A[i][j] = 0;
+                dist_board[i][j] = 0;
             else
-                A[i][j] = 21474836;
+                dist_board[i][j] = BIGBIG_NUM;
         }
     }
 
-    for (int i = 0; i < graph->getSize(); i++)
+    for (int i = 0; i < graph_size; i++) // Initialize distance board 2
     {
-        for (auto it : graph->getAdjacentEdges(i))
-        {
-            A[i][it.first] = it.second;
-        }
+        for (auto edge : graph->getAdjacentEdges(i))
+            dist_board[i][edge.first] = edge.second;
     }
 
-    for (int k = 0; k < graph->getSize(); k++)
+    for (int k = 0; k < graph_size; k++) // As the edge increases, the minimum distance is found again.
     {
-        for (int i = 0; i < graph->getSize(); i++)
+        for (int i = 0; i < graph_size; i++)
         {
-            for (int j = 0; j < graph->getSize(); j++)
+            for (int j = 0; j < graph_size; j++)
             {
-                if (i == j || j == k || i == k || A[i][j] == A[i][k] + A[k][j])
+                if (i == j || j == k || i == k || dist_board[i][j] == dist_board[i][k] + dist_board[k][j])
                     continue;
-                A[i][j] = min(A[i][j], A[i][k] + A[k][j]);
-                if (A[i][j] < 0) //에러처리
+                dist_board[i][j] = min(dist_board[i][j], dist_board[i][k] + dist_board[k][j]); // Find smallest distance
+                if (dist_board[i][j] < 0)                                                      // The negative number cycle generates
                     return false;
             }
         }
     }
 
-    for (int i = 0; i < graph->getSize(); i++)
+    for (int i = 0; i < graph_size; i++) // Print distance board
     {
         if (i == 0)
         {
-            *ffff << "   ";
-            for (int k = 0; k <= 6; k++)
-                *ffff << "[" << k << "]"
-                      << " ";
-            *ffff << "\n";
+            fout << "     ";
+            for (int k = 0; k < graph_size; k++)
+                fout << "[" << k << "]\t";
+            fout << "\n";
         }
-        for (int j = 0; j < graph->getSize(); j++)
+        for (int j = 0; j < graph_size; j++)
         {
             if (j == 0)
-                *ffff << "[" << i << "]"
-                      << " ";
-            if (A[i][j] == 21474836)
-                *ffff << 'x' << "   ";
+                fout << "[" << i << "]\t";
+            if (dist_board[i][j] == BIGBIG_NUM)
+                fout << 'x' << "\t";
             else
-                *ffff << A[i][j] << "   ";
+                fout << dist_board[i][j] << "\t";
         }
-        *ffff << "\n";
+        fout << "\n";
     }
     return true;
 }
