@@ -9,15 +9,6 @@ typedef pair<int, int> iPair;
 
 int dfs_cnt = 1;
 
-void insertion_sort(vector<tuple<int, int, int>> *a, const int n)
-{
-    for (int j = 2; j <= n; j++)
-    {
-        vector<tuple<int, int, int>> temp = a[j];
-        insertion(temp, a, j - 1);
-    }
-}
-
 void insertion(vector<tuple<int, int, int>> &e, vector<tuple<int, int, int>> *a, int i)
 {
     a[0] = e;
@@ -29,10 +20,28 @@ void insertion(vector<tuple<int, int, int>> &e, vector<tuple<int, int, int>> *a,
     a[i + 1] = e;
 }
 
+void insertion_sort(vector<tuple<int, int, int>> *a, const int low, const int high)
+{
+    for (int j = low; j <= high; j++)
+    {
+        vector<tuple<int, int, int>> temp = a[j];
+        insertion(temp, a, j - 1);
+    }
+}
+
 void quick_sort(vector<tuple<int, int, int>> *a, const int left, const int right)
 {
     if (left < right)
     {
+
+        if (right - left + 1 <= 6)
+            insertion_sort(a, left, right);
+        else
+        {
+            int pivot = (right - left) / 2;
+            quick_sort(a, left, pivot);
+            quick_sort(a, pivot + 1, right);
+        }
         int i = left,
             j = right + 1;
         vector<tuple<int, int, int>> pivot = a[left];
@@ -52,16 +61,6 @@ void quick_sort(vector<tuple<int, int, int>> *a, const int left, const int right
 
         quick_sort(a, left, j - 1);
         quick_sort(a, j + 1, right);
-    }
-}
-
-void sorting_method(vector<tuple<int, int, int>> &a, int low, int high, int segment_size)
-{
-    if (low < high)
-    {
-        if (high - low + 1 <= segment_size)
-            insertion_sort(&a, low, high);
-        else
     }
 }
 
@@ -164,31 +163,32 @@ bool Kruskal(Graph *graph, ofstream &fout)
     int sum = 0;
     int graph_size = graph->getSize();
     int *parent = new int[graph_size];
-    map<int, int> MST[graph_size];              // Minnium Spanning Tree
-    priority_queue<tuple<int, int, int>> edges; // The relationship between all vertex and edge
-    vector<tuple<int, int, int>> edges2;
+    map<int, int> MST[graph_size];      // Minnium Spanning Tree
+    vector<tuple<int, int, int>> edges; // The relationship between all vertex and edge
 
     for (int i = 0; i < graph_size; i++)
     {
         for (auto edge : graph->getAdjacentEdges(i))
         {
-            tuple<int, int, int> tmp = make_tuple(edge.second * -1, i, edge.first); // Make min Heap
-            edges2.push(tmp);
+            tuple<int, int, int> tmp = make_tuple(edge.second, i, edge.first); // Make min Heap
+            edges.push_back(tmp);
         }
     }
     for (int i = 0; i < graph_size; i++)
         parent[i] = i;
-    sort(edges2.begin(), edges2.end());
+
+    quick_sort(&edges, 0, edges.size() - 1);
+
     for (int i = 0; i < graph_size && !edges.empty(); i++) // Making MST
     {
-        tuple<int, int, int> cur = edges.top();
-        edges.pop();
+        tuple<int, int, int> cur = edges.front();
+        edges.erase(edges.begin());
         if (find_par_vertex(parent, get<1>(cur)) != find_par_vertex(parent, get<2>(cur))) // Check if a cycle is formed
         {
             union_par_vertex(parent, get<1>(cur), get<2>(cur));
             MST[get<1>(cur)].insert({get<2>(cur), get<0>(cur)});
             MST[get<2>(cur)].insert({get<1>(cur), get<0>(cur)});
-            sum += get<0>(cur) * -1;
+            sum += get<0>(cur);
         }
     }
     for (int i = 0; i < graph_size; i++)
