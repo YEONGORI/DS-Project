@@ -9,10 +9,9 @@ typedef pair<int, int> iPair;
 
 int dfs_cnt = 1;
 
-void insertion(vector<tuple<int, int, int>> &e, vector<tuple<int, int, int>> *a, int i)
+void insertion(tuple<int, int, int> &e, vector<tuple<int, int, int>> &a, int i)
 {
-    a[0] = e;
-    while (e < a[i])
+    while (i >= 0 && e < a[i])
     {
         a[i + 1] = a[i];
         i--;
@@ -20,16 +19,16 @@ void insertion(vector<tuple<int, int, int>> &e, vector<tuple<int, int, int>> *a,
     a[i + 1] = e;
 }
 
-void insertion_sort(vector<tuple<int, int, int>> *a, const int low, const int high)
+void insertion_sort(vector<tuple<int, int, int>> &a, const int low, const int high)
 {
     for (int j = low; j <= high; j++)
     {
-        vector<tuple<int, int, int>> temp = a[j];
+        tuple<int, int, int> temp = a[j];
         insertion(temp, a, j - 1);
     }
 }
 
-void quick_sort(vector<tuple<int, int, int>> *a, const int left, const int right)
+void quick_sort(vector<tuple<int, int, int>> &a, const int left, const int right)
 {
     if (left < right)
     {
@@ -44,7 +43,7 @@ void quick_sort(vector<tuple<int, int, int>> *a, const int left, const int right
         }
         int i = left,
             j = right + 1;
-        vector<tuple<int, int, int>> pivot = a[left];
+        tuple<int, int, int> pivot = a[left];
         do
         {
             do
@@ -177,7 +176,7 @@ bool Kruskal(Graph *graph, ofstream &fout)
     for (int i = 0; i < graph_size; i++)
         parent[i] = i;
 
-    quick_sort(&edges, 0, edges.size() - 1);
+    quick_sort(edges, 0, edges.size() - 1);
 
     for (int i = 0; i < graph_size && !edges.empty(); i++) // Making MST
     {
@@ -195,7 +194,7 @@ bool Kruskal(Graph *graph, ofstream &fout)
     {
         fout << "[" << i << "] ";
         for (auto cur : MST[i])
-            fout << cur.first << "(" << cur.second * -1 << ") ";
+            fout << cur.first << "(" << cur.second << ") ";
         fout << "\n";
     }
     fout << "cost: " << sum << "\n";
