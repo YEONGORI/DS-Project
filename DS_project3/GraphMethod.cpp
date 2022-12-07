@@ -11,7 +11,7 @@ int dfs_cnt = 1;
 
 void insertion(tuple<int, int, int> &e, vector<tuple<int, int, int>> &a, int i)
 {
-    while (i >= 0 && e < a[i])
+    while (i > -1 && e < a[i]) // Insertion sort using sentinel
     {
         a[i + 1] = a[i];
         i--;
@@ -21,7 +21,7 @@ void insertion(tuple<int, int, int> &e, vector<tuple<int, int, int>> &a, int i)
 
 void insertion_sort(vector<tuple<int, int, int>> &a, const int low, const int high)
 {
-    for (int j = low; j <= high; j++)
+    for (int j = low; j <= high; j++) // Check Every Element
     {
         tuple<int, int, int> temp = a[j];
         insertion(temp, a, j - 1);
@@ -34,36 +34,32 @@ void quick_sort(vector<tuple<int, int, int>> &a, const int left, const int right
     {
 
         if (right - left + 1 <= 6)
-            insertion_sort(a, left, right);
+            insertion_sort(a, left, right); // if segment size is lower than 7 Do insertion sort
         else
         {
-            int pivot = (right - left) / 2;
-            quick_sort(a, left, pivot);
-            quick_sort(a, pivot + 1, right);
+            int i = left;
+            int j = right + 1;
+            tuple<int, int, int> pivot = a[left];
+            do // Compare using pivot
+            {
+                do
+                    i++;
+                while (a[i] < pivot);
+                do
+                    j--;
+                while (a[j] > pivot);
+                if (i < j)
+                    swap(a[i], a[j]);
+            } while (i < j);
+            swap(a[left], a[j]);
+
+            quick_sort(a, left, j - 1);  // divide
+            quick_sort(a, j + 1, right); // divide
         }
-        int i = left,
-            j = right + 1;
-        tuple<int, int, int> pivot = a[left];
-        do
-        {
-            do
-                i++;
-            while (a[i] < pivot);
-            do
-                j--;
-            while (a[j] > pivot);
-            if (i < j)
-                swap(a[i], a[j]);
-        } while (i < j);
-
-        swap(a[left], a[j]);
-
-        quick_sort(a, left, j - 1);
-        quick_sort(a, j + 1, right);
     }
 }
 
-int find_par_vertex(int *&par_vertex, int x)
+int find_par_vertex(int *&par_vertex, int x) // find parent vertex
 {
     if (par_vertex[x] == x)
         return x;
@@ -71,7 +67,7 @@ int find_par_vertex(int *&par_vertex, int x)
         return par_vertex[x] = find_par_vertex(par_vertex, par_vertex[x]);
 }
 
-void union_par_vertex(int *&par_vertex, int x, int y)
+void union_par_vertex(int *&par_vertex, int x, int y) // union parent vertex
 {
     x = find_par_vertex(par_vertex, x);
     y = find_par_vertex(par_vertex, y);
